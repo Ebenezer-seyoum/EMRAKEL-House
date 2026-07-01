@@ -1,0 +1,23 @@
+{
+  "name": "emrakel-house",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "lint": "next lint",
+    "typecheck": "next build",
+    "db:migrate": "node database/run-migration.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.50.3",
+    "next": "^15.3.4",
+    "pg": "^8.22.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.29.0",
+    "eslint-config-next": "^15.3.4"
+  }
+}
