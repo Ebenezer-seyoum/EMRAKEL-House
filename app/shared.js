@@ -12,13 +12,9 @@ const links = [
 export function Header() {
   return (
     <header className="siteHeader">
-      <Link className="brandMark" href="/">
+      <Link className="brandMark" href="/" aria-label="EMRAKEL home">
         <span className="logoShell">
-          <img src="/logo.png" alt="EMRAKEL" />
-        </span>
-        <span>
-          <strong>{brand.name}</strong>
-          <small>{brand.subtitle}</small>
+          <img src="/logo.png" alt="" />
         </span>
       </Link>
       <nav>
