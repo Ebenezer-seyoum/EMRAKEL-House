@@ -36,6 +36,9 @@ export function Header({ brandData = brand }) {
         <Link className="button buttonLine compact bookHeaderButton" href="/book-table">
           Book a Table
         </Link>
+        <Link className="button buttonLine compact loginHeaderButton" href="/login">
+          Login
+        </Link>
         <Link className="cartButton" href="/menu" aria-label="Cart">
           Cart<span>3</span>
         </Link>
@@ -52,6 +55,7 @@ export function Footer({ brandData = brand, footerData }) {
         <div>
           <h2>{brandData.name}</h2>
           <p>{brandData.subtitle}</p>
+          <p className="footerCredit">{footerData?.note || "Designed & Developed by Eyoben Technologies PLC"}</p>
         </div>
       </div>
       <div>
@@ -71,6 +75,15 @@ export function Footer({ brandData = brand, footerData }) {
             {label}
           </Link>
         ))}
+        <Link href="/book-table">Book Table</Link>
+      </div>
+      <div>
+        <h3>Social</h3>
+        <div className="footerSocial">
+          <a href="#" aria-label="Facebook">f</a>
+          <a href="#" aria-label="Instagram">ig</a>
+          <a href="#" aria-label="WhatsApp">wa</a>
+        </div>
       </div>
       <div className="copyright">
         <p>{footerData?.copyright || "Copyright 2026 EMRAKEL. All rights reserved."}</p>

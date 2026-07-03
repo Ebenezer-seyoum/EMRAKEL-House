@@ -117,7 +117,7 @@ export default function MenuOrderClient({ categories, items }) {
                 <div className="menuListGrid">
                   {categoryItems(section.id).map((item) => (
                     <article className="menuListItem revealCard" key={item.id}>
-                      <img src={item.image} alt="" />
+                      <img src={item.image || "/uploads/house/menu-board-reference.jpg"} alt="" />
                       <div>
                         <span>{section.name}</span>
                         <h4>{item.name}</h4>

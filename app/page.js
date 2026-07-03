@@ -64,7 +64,7 @@ export default async function HomePage() {
               <img key={`${image}-${index}`} src={image} alt="" />
             ))}
           </div>
-          <button aria-label="Next gallery image">›</button>
+          <button aria-label="Next gallery image">&gt;</button>
         </section>
 
         <section className="refLower">
@@ -118,20 +118,31 @@ export default async function HomePage() {
         </section>
 
         <footer className="refHomeFooter">
-          <p>EMRAKEL Burger House</p>
+          <div className="refFooterBrand">
+            <p>EMRAKEL Burger House</p>
+            <span>Designed &amp; Developed by Eyoben Technologies PLC</span>
+          </div>
           <nav>
+            <strong>Quick Links</strong>
             <Link href="/">Home</Link>
             <Link href="/menu">Menu</Link>
             <Link href="/gallery">Gallery</Link>
             <Link href="/about">About Us</Link>
             <Link href="/contact">Contact</Link>
+            <Link href="/book-table">Book Table</Link>
           </nav>
-          <div>
+          <div className="refFooterSocial">
+            <strong>Social Media</strong>
             <span>f</span>
             <span>ig</span>
             <span>wa</span>
           </div>
-          <p>Copyright 2025 EMRAKEL Burger House</p>
+          <div className="refFooterContact">
+            <strong>Contact</strong>
+            <p>{content.brand.phone}</p>
+            <p>{content.brand.address}</p>
+            <p>Copyright 2026 EMRAKEL Burger House</p>
+          </div>
         </footer>
       </main>
     </>
