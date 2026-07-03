@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Footer, Header } from "./shared";
-import { galleryImages, homeSettings, menuItems } from "@/lib/data";
+import { brandImage, galleryImages, homeSettings, menuItems } from "@/lib/data";
 
 export default function HomePage() {
   const featured = menuItems.slice(0, 3);
@@ -10,7 +10,9 @@ export default function HomePage() {
       <Header />
       <main>
         <section className="hero">
-          <video className="heroVideo" src="/house-interior.mp4" autoPlay muted loop playsInline poster="/logo.png" />
+          <div className="heroBrandImage" aria-hidden="true">
+            <img src={brandImage} alt="" />
+          </div>
           <div className="heroShade" />
           <div className="heroContent">
             <p className="eyebrow">{homeSettings.eyebrow}</p>
@@ -30,11 +32,11 @@ export default function HomePage() {
         <section className="section introGrid">
           <div>
             <p className="eyebrow">House palette</p>
-            <h2>Warm ivory, charcoal, antique gold, and a touch of ember orange.</h2>
+            <h2>Clean black, bright white, and disciplined spacing for a premium burger brand.</h2>
           </div>
           <p>
-            The look follows your logo and interior video direction: classic restaurant warmth, clean premium contrast,
-            and small gold details that feel suitable for burgers, pizza, cocktails, and evening dining.
+            The website now follows the supplied EMRAKEL Burger House logo. Product and gallery images use the logo as
+            a default fallback, so future admin uploads can replace them cleanly.
           </p>
         </section>
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { brand } from "@/lib/data";
+import { brand, brandImage } from "@/lib/data";
 
 const links = [
   ["Home", "/"],
@@ -14,7 +14,11 @@ export function Header() {
     <header className="siteHeader">
       <Link className="brandMark" href="/" aria-label="EMRAKEL home">
         <span className="logoShell">
-          <img src="/logo.png" alt="" />
+          <img src={brandImage} alt="" />
+        </span>
+        <span className="brandText">
+          <strong>{brand.name}</strong>
+          <small>{brand.subtitle}</small>
         </span>
       </Link>
       <nav>
@@ -40,7 +44,7 @@ export function Footer() {
   return (
     <footer className="footer">
       <div className="footerBrand">
-        <img src="/logo.png" alt="" />
+        <img src={brandImage} alt="" />
         <div>
           <h2>{brand.name}</h2>
           <p>{brand.subtitle}</p>

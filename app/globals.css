@@ -1,13 +1,13 @@
 :root {
-  --ivory: #fbf6ea;
-  --paper: #fffdf7;
-  --charcoal: #151515;
-  --charcoal-soft: #2b2925;
-  --gold: #bf8a2c;
-  --gold-dark: #8d641d;
-  --ember: #d75a24;
+  --ivory: #f7f4ee;
+  --paper: #ffffff;
+  --charcoal: #090a0c;
+  --charcoal-soft: #24262a;
+  --gold: #111111;
+  --gold-dark: #000000;
+  --ember: #4d4f55;
   --line: rgba(21, 21, 21, 0.14);
-  --muted: #6f675c;
+  --muted: #666a70;
 }
 
 * {
@@ -18,7 +18,7 @@ body {
   margin: 0;
   background: var(--ivory);
   color: var(--charcoal);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
 }
 
 a {
@@ -41,7 +41,7 @@ video {
   align-items: center;
   gap: 24px;
   padding: 14px clamp(18px, 4vw, 56px);
-  background: rgba(251, 246, 234, 0.93);
+  background: rgba(247, 244, 238, 0.94);
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(16px);
 }
@@ -54,26 +54,28 @@ video {
 }
 
 .logoShell {
-  width: 74px;
-  height: 48px;
+  width: 58px;
+  height: 58px;
   display: grid;
   place-items: center;
   overflow: hidden;
-  border: 1px solid rgba(191, 138, 44, 0.55);
-  border-radius: 999px / 62%;
-  background: var(--paper);
-  box-shadow: 0 10px 22px rgba(40, 28, 10, 0.08);
+  border: 1px solid rgba(9, 10, 12, 0.14);
+  border-radius: 50%;
+  background: #0b0d10;
+  box-shadow: 0 12px 28px rgba(9, 10, 12, 0.12);
 }
 
 .logoShell img {
-  width: 86px;
+  width: 58px;
+  height: 58px;
   max-width: none;
+  object-fit: cover;
 }
 
 .brandMark strong {
   display: block;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 20px;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: 19px;
   letter-spacing: 0;
 }
 
@@ -126,12 +128,12 @@ nav a:hover,
 }
 
 .buttonGold {
-  background: var(--gold);
-  color: #fffdf7;
+  background: var(--charcoal);
+  color: #fff;
 }
 
 .buttonGold:hover {
-  background: var(--gold-dark);
+  background: #2a2d31;
 }
 
 .buttonGhost {
@@ -151,16 +153,32 @@ nav a:hover,
 
 .hero {
   position: relative;
-  min-height: 76vh;
+  min-height: 78vh;
   display: flex;
   align-items: center;
   overflow: hidden;
+  background: #080a0d;
 }
 
-.heroVideo,
+.heroBrandImage,
 .heroShade {
   position: absolute;
   inset: 0;
+}
+
+.heroBrandImage {
+  display: grid;
+  place-items: center end;
+  padding: clamp(24px, 7vw, 88px);
+}
+
+.heroBrandImage img {
+  width: min(48vw, 560px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 0.9;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.42);
 }
 
 .heroVideo {
@@ -171,8 +189,8 @@ nav a:hover,
 
 .heroShade {
   background:
-    linear-gradient(90deg, rgba(21, 21, 21, 0.78), rgba(21, 21, 21, 0.36), rgba(21, 21, 21, 0.18)),
-    linear-gradient(0deg, rgba(21, 21, 21, 0.3), rgba(21, 21, 21, 0));
+    linear-gradient(90deg, rgba(8, 10, 13, 0.95), rgba(8, 10, 13, 0.66), rgba(8, 10, 13, 0.18)),
+    radial-gradient(circle at 82% 50%, rgba(255, 255, 255, 0.11), transparent 36%);
 }
 
 .heroContent {
@@ -200,7 +218,7 @@ p {
 
 h1,
 h2 {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   letter-spacing: 0;
 }
 
@@ -266,13 +284,14 @@ h2 {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--paper);
-  box-shadow: 0 18px 38px rgba(40, 28, 10, 0.08);
+  box-shadow: 0 18px 38px rgba(9, 10, 12, 0.08);
 }
 
 .menuCard img {
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
+  background: #090a0c;
 }
 
 .menuCard div {
@@ -314,6 +333,7 @@ h2 {
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 8px;
+  background: #090a0c;
 }
 
 .bookingBand {
@@ -415,10 +435,10 @@ textarea {
 }
 
 .footerBrand img {
-  width: 84px;
-  height: 58px;
+  width: 74px;
+  height: 74px;
   object-fit: cover;
-  border-radius: 999px / 62%;
+  border-radius: 50%;
   background: var(--paper);
 }
 
@@ -474,6 +494,15 @@ textarea {
 
   .heroContent {
     margin-inline: 18px;
+  }
+
+  .heroBrandImage {
+    place-items: end center;
+    opacity: 0.22;
+  }
+
+  .heroBrandImage img {
+    width: min(86vw, 420px);
   }
 
   .cardGrid,
