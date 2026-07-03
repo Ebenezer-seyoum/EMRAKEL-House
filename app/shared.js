@@ -29,11 +29,15 @@ export function Header({ brandData = brand }) {
         ))}
       </nav>
       <div className="navActions">
-        <Link className="button buttonGold compact" href="/book-table">
+        <a className="headerPhone" href={`tel:${brandData.phone}`}>
+          <span />
+          {brandData.phone}
+        </a>
+        <Link className="button buttonLine compact bookHeaderButton" href="/book-table">
           Book a Table
         </Link>
-        <Link className="button buttonLine compact" href="/login">
-          Login
+        <Link className="cartButton" href="/menu" aria-label="Cart">
+          Cart<span>3</span>
         </Link>
       </div>
     </header>
