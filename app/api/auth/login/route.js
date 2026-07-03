@@ -5,8 +5,8 @@ import { getSupabaseServer } from "@/lib/supabase";
 const users = [
   {
     role: "admin",
-    email: process.env.ADMIN_EMAIL || "admin@emrakel.house",
-    password: process.env.ADMIN_PASSWORD || "admin123",
+    email: process.env.ADMIN_EMAIL || "admin@emrakel.com",
+    password: process.env.ADMIN_PASSWORD || "kena@12345",
     name: "EMRAKEL Admin"
   },
   {

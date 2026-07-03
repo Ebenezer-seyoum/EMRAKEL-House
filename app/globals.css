@@ -605,74 +605,216 @@ textarea {
   background: #090a0c;
 }
 
-.adminWorkspace {
-  padding-top: 0;
+.adminAuthState {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #f4f4f2;
 }
 
-.adminTopbar,
-.metricGrid,
-.adminForm,
-.adminStack {
-  margin-bottom: 24px;
+.adminShell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  background: #f4f4f2;
+}
+
+.adminSidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 24px;
+  padding: 24px 18px;
+  background: #090a0c;
+  color: rgba(255, 255, 255, 0.76);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.adminBrandBlock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+}
+
+.adminBrandBlock img {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+}
+
+.adminBrandBlock strong,
+.adminSidebarFooter strong {
+  display: block;
+  color: #fff;
+}
+
+.adminBrandBlock span,
+.adminSidebarFooter span {
+  display: block;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 13px;
+}
+
+.adminSideNav {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  color: inherit;
+}
+
+.adminSideNav button {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 0 14px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.68);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  text-align: left;
+}
+
+.adminSideNav button:hover,
+.adminSideNav button.active {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.adminSideNav small {
+  min-width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #fff;
+  color: #090a0c;
+  font-size: 12px;
+}
+
+.adminSidebarFooter {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.adminSidebarFooter .buttonLine {
+  width: 100%;
+  margin-top: 8px;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.adminMain {
+  min-width: 0;
+  padding: 28px;
 }
 
 .adminTopbar {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 18px;
+  gap: 24px;
+  margin-bottom: 22px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 18px 38px rgba(9, 10, 12, 0.06);
+}
+
+.adminTopbar h1 {
+  margin-bottom: 8px;
+  font-size: clamp(36px, 4vw, 58px);
+  color: var(--charcoal);
+}
+
+.adminTopbar p:not(.eyebrow) {
+  max-width: 680px;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.adminTopActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .metricGrid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.metricGrid .panel span {
-  display: block;
-  color: var(--muted);
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-
-.metricGrid .panel strong {
-  display: block;
-  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
-  font-size: 42px;
-}
-
-.adminTabs {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
   margin-bottom: 22px;
-  border-bottom: 1px solid var(--line);
 }
 
-.adminTabs button {
-  min-height: 44px;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  background: transparent;
+.adminMetricCard {
+  min-height: 148px;
+  display: grid;
+  align-content: space-between;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  background: #fff;
+  box-shadow: 0 16px 32px rgba(9, 10, 12, 0.05);
+}
+
+.adminMetricCard span {
   color: var(--muted);
-  font: inherit;
   font-weight: 800;
-  padding: 0 14px;
-  cursor: pointer;
+  font-size: 13px;
 }
 
-.adminTabs button.active {
-  border-bottom-color: var(--charcoal);
+.adminMetricCard strong {
   color: var(--charcoal);
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: 46px;
+  line-height: 1;
+}
+
+.adminMetricCard small {
+  color: var(--muted);
+}
+
+.adminContentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.adminContentHeader h2 {
+  margin: 0;
+  font-size: clamp(28px, 3vw, 40px);
 }
 
 .adminStatus {
+  max-width: 520px;
+  margin: 0;
   border: 1px solid var(--line);
   border-radius: 8px;
-  padding: 14px 16px;
+  padding: 12px 14px;
   background: #fff;
   color: var(--muted);
+  line-height: 1.5;
 }
 
 .adminStatus.success {
@@ -696,6 +838,11 @@ textarea {
   grid-column: 1 / -1;
 }
 
+.adminForm .panel,
+.adminStack .panel {
+  box-shadow: 0 16px 32px rgba(9, 10, 12, 0.05);
+}
+
 .adminStack {
   display: grid;
   gap: 18px;
@@ -713,6 +860,7 @@ textarea {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--paper);
+  box-shadow: 0 16px 32px rgba(9, 10, 12, 0.05);
 }
 
 .adminTable {
@@ -724,16 +872,21 @@ textarea {
 .adminTable th,
 .adminTable td {
   border-bottom: 1px solid var(--line);
-  padding: 12px;
+  padding: 14px;
   text-align: left;
   vertical-align: top;
 }
 
 .adminTable th {
+  background: #fafafa;
   color: var(--muted);
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+.adminTable tr:last-child td {
+  border-bottom: 0;
 }
 
 .adminTable input,
@@ -812,6 +965,31 @@ textarea {
     grid-template-columns: 1fr;
   }
 
+  .adminShell {
+    grid-template-columns: 1fr;
+  }
+
+  .adminSidebar {
+    position: static;
+    height: auto;
+    grid-template-rows: auto auto auto;
+    gap: 14px;
+  }
+
+  .adminSideNav {
+    grid-template-columns: repeat(5, minmax(120px, 1fr));
+    overflow-x: auto;
+  }
+
+  .adminSidebarFooter {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+
+  .adminSidebarFooter .buttonLine {
+    margin-top: 0;
+  }
+
   .orderAside {
     position: static;
   }
@@ -822,6 +1000,12 @@ textarea {
   }
 
   .adminTopbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .adminTopActions,
+  .adminContentHeader {
     align-items: flex-start;
     flex-direction: column;
   }
@@ -861,6 +1045,26 @@ textarea {
   .galleryGrid,
   .galleryStrip,
   .footer {
+    grid-template-columns: 1fr;
+  }
+
+  .adminMain {
+    padding: 18px;
+  }
+
+  .adminSidebar {
+    padding: 18px;
+  }
+
+  .adminSideNav {
+    grid-template-columns: 1fr;
+  }
+
+  .adminSidebarFooter {
+    grid-template-columns: 1fr;
+  }
+
+  .inlineFields {
     grid-template-columns: 1fr;
   }
 }

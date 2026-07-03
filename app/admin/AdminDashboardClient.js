@@ -4,6 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import { brandImage } from "@/lib/data";
 
 const emptyStatus = { type: "", message: "" };
+const navItems = [
+  ["home", "Home"],
+  ["menu", "Menu"],
+  ["gallery", "Gallery"],
+  ["bookings", "Bookings"],
+  ["orders", "Orders"]
+];
 
 function adminHeaders() {
   return {
@@ -38,7 +45,10 @@ export default function AdminDashboardClient() {
     () => ({
       pendingBookings: bookings.filter((booking) => booking.status === "pending").length,
       pendingOrders: orders.filter((order) => order.status === "pending").length,
-      menuItems: items.length
+      menuItems: items.length,
+      totalOrders: orders.length,
+      totalBookings: bookings.length,
+      revenue: orders.reduce((sum, order) => sum + Number(order.total_amount || 0), 0)
     }),
     [bookings, items, orders]
   );
@@ -170,7 +180,7 @@ export default function AdminDashboardClient() {
 
   if (!session || session.role !== "admin") {
     return (
-      <section className="section">
+      <section className="adminAuthState">
         <div className="panel">
           <h2>Admin login required</h2>
           <p className="contactText">Go to Login and sign in as admin to manage this dashboard.</p>
@@ -181,7 +191,7 @@ export default function AdminDashboardClient() {
 
   if (!brand || !home) {
     return (
-      <section className="section">
+      <section className="adminAuthState">
         <div className="panel">
           <h2>Loading dashboard</h2>
           <p className="contactText">Preparing admin controls.</p>
@@ -191,47 +201,80 @@ export default function AdminDashboardClient() {
   }
 
   return (
-    <section className="section adminWorkspace">
-      <div className="adminTopbar">
-        <div>
-          <p className="eyebrow">Signed in as admin</p>
-          <h2>{session.name}</h2>
+    <section className="adminShell">
+      <aside className="adminSidebar">
+        <div className="adminBrandBlock">
+          <img src="/logo.jpg" alt="" />
+          <div>
+            <strong>EMRAKEL</strong>
+            <span>Admin console</span>
+          </div>
         </div>
-        <button className="button buttonLine" type="button" onClick={logout}>
-          Logout
-        </button>
-      </div>
-
-      <div className="metricGrid">
-        <div className="panel">
-          <span>Pending bookings</span>
-          <strong>{totals.pendingBookings}</strong>
-        </div>
-        <div className="panel">
-          <span>Pending orders</span>
-          <strong>{totals.pendingOrders}</strong>
-        </div>
-        <div className="panel">
-          <span>Menu items</span>
-          <strong>{totals.menuItems}</strong>
-        </div>
-      </div>
-
-      <div className="adminTabs">
-        {[
-          ["home", "Home"],
-          ["menu", "Menu"],
-          ["gallery", "Gallery"],
-          ["bookings", "Bookings"],
-          ["orders", "Orders"]
-        ].map(([id, label]) => (
-          <button className={activeTab === id ? "active" : ""} key={id} onClick={() => setActiveTab(id)} type="button">
-            {label}
+        <nav className="adminSideNav" aria-label="Admin sections">
+          {navItems.map(([id, label]) => (
+            <button className={activeTab === id ? "active" : ""} key={id} onClick={() => setActiveTab(id)} type="button">
+              <span>{label}</span>
+              {id === "bookings" && totals.pendingBookings ? <small>{totals.pendingBookings}</small> : null}
+              {id === "orders" && totals.pendingOrders ? <small>{totals.pendingOrders}</small> : null}
+            </button>
+          ))}
+        </nav>
+        <div className="adminSidebarFooter">
+          <span>Signed in</span>
+          <strong>{session.name}</strong>
+          <button className="button buttonLine compact" type="button" onClick={logout}>
+            Logout
           </button>
-        ))}
-      </div>
+        </div>
+      </aside>
 
-      {status.message ? <p className={`adminStatus ${status.type}`}>{status.message}</p> : null}
+      <div className="adminMain">
+        <header className="adminTopbar">
+          <div>
+            <p className="eyebrow">Restaurant operations</p>
+            <h1>Dashboard</h1>
+            <p>Manage content, menu items, reservations, and online orders from one workspace.</p>
+          </div>
+          <div className="adminTopActions">
+            <button className="button buttonLine compact" type="button" onClick={loadDashboard}>
+              Refresh
+            </button>
+            <a className="button buttonDark compact" href="/" target="_blank">
+              View Site
+            </a>
+          </div>
+        </header>
+
+        <div className="metricGrid">
+          <div className="adminMetricCard">
+            <span>Pending orders</span>
+            <strong>{totals.pendingOrders}</strong>
+            <small>{totals.totalOrders} total orders</small>
+          </div>
+          <div className="adminMetricCard">
+            <span>Pending bookings</span>
+            <strong>{totals.pendingBookings}</strong>
+            <small>{totals.totalBookings} total bookings</small>
+          </div>
+          <div className="adminMetricCard">
+            <span>Menu items</span>
+            <strong>{totals.menuItems}</strong>
+            <small>{categories.length} categories</small>
+          </div>
+          <div className="adminMetricCard">
+            <span>Order value</span>
+            <strong>{totals.revenue}</strong>
+            <small>ETB recorded</small>
+          </div>
+        </div>
+
+        <div className="adminContentHeader">
+          <div>
+            <p className="eyebrow">Current section</p>
+            <h2>{navItems.find(([id]) => id === activeTab)?.[1]}</h2>
+          </div>
+          {status.message ? <p className={`adminStatus ${status.type}`}>{status.message}</p> : null}
+        </div>
 
       {activeTab === "home" ? (
         <form className="adminForm" onSubmit={saveSettings}>
@@ -520,6 +563,7 @@ export default function AdminDashboardClient() {
           </table>
         </div>
       ) : null}
+      </div>
     </section>
   );
 }
