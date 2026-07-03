@@ -1,10 +1,10 @@
 :root {
-  --ivory: #f7f4ee;
+  --ivory: #f5f5f3;
   --paper: #ffffff;
   --charcoal: #090a0c;
   --charcoal-soft: #24262a;
-  --gold: #111111;
-  --gold-dark: #000000;
+  --ink: #111111;
+  --ink-strong: #000000;
   --ember: #4d4f55;
   --line: rgba(21, 21, 21, 0.14);
   --muted: #666a70;
@@ -16,7 +16,8 @@
 
 body {
   margin: 0;
-  background: var(--ivory);
+  background:
+    linear-gradient(180deg, #ffffff 0%, #f5f5f3 42%, #ededeb 100%);
   color: var(--charcoal);
   font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
 }
@@ -41,7 +42,7 @@ video {
   align-items: center;
   gap: 24px;
   padding: 14px clamp(18px, 4vw, 56px);
-  background: rgba(247, 244, 238, 0.94);
+  background: rgba(255, 255, 255, 0.9);
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(16px);
 }
@@ -97,7 +98,7 @@ nav {
 nav a:hover,
 .sectionHead a:hover,
 .footer a:hover {
-  color: var(--gold-dark);
+  color: var(--ink-strong);
 }
 
 .navActions,
@@ -120,6 +121,17 @@ nav a:hover,
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(9, 10, 12, 0.14);
 }
 
 .compact {
@@ -137,8 +149,9 @@ nav a:hover,
 }
 
 .buttonGhost {
-  color: #fffdf7;
-  border-color: rgba(255, 253, 247, 0.72);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .buttonLine {
@@ -168,7 +181,7 @@ nav a:hover,
 
 .heroBrandImage {
   display: grid;
-  place-items: center end;
+  place-items: center flex-end;
   padding: clamp(24px, 7vw, 88px);
 }
 
@@ -179,6 +192,7 @@ nav a:hover,
   object-fit: cover;
   opacity: 0.9;
   box-shadow: 0 32px 90px rgba(0, 0, 0, 0.42);
+  animation: heroLogoFloat 6s ease-in-out infinite;
 }
 
 .heroVideo {
@@ -199,14 +213,22 @@ nav a:hover,
   margin-left: clamp(18px, 6vw, 82px);
   color: var(--paper);
   padding-block: 90px;
+  animation: revealUp 700ms ease both;
 }
 
 .eyebrow {
   margin: 0 0 12px;
-  color: var(--gold);
+  color: #111;
   font-weight: 800;
   text-transform: uppercase;
   font-size: 12px;
+  letter-spacing: 0.12em;
+}
+
+.hero .eyebrow,
+.bookingBand .eyebrow,
+.footer .eyebrow {
+  color: rgba(255, 255, 255, 0.72);
 }
 
 h1,
@@ -251,7 +273,7 @@ h2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 34px;
-  align-items: end;
+  align-items: flex-end;
 }
 
 .introGrid p:not(.eyebrow),
@@ -267,8 +289,8 @@ h2 {
 }
 
 .sectionHead a {
-  justify-self: end;
-  color: var(--gold-dark);
+  justify-self: flex-end;
+  color: var(--ink-strong);
   font-weight: 800;
 }
 
@@ -285,6 +307,18 @@ h2 {
   border-radius: 8px;
   background: var(--paper);
   box-shadow: 0 18px 38px rgba(9, 10, 12, 0.08);
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+
+.menuCard:hover,
+.panel:hover,
+.formPanel:hover {
+  transform: translateY(-3px);
+  border-color: rgba(9, 10, 12, 0.26);
+  box-shadow: 0 24px 52px rgba(9, 10, 12, 0.12);
 }
 
 .menuCard img {
@@ -292,6 +326,7 @@ h2 {
   aspect-ratio: 4 / 3;
   object-fit: cover;
   background: #090a0c;
+  filter: grayscale(1);
 }
 
 .menuCard div {
@@ -317,7 +352,27 @@ h2 {
 }
 
 .menuCard strong {
-  color: var(--gold-dark);
+  color: var(--ink-strong);
+}
+
+.menuCardBottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.quantityControl {
+  width: 96px;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.quantityControl input {
+  min-height: 38px;
+  padding: 8px 10px;
 }
 
 .galleryStrip {
@@ -334,6 +389,7 @@ h2 {
   object-fit: cover;
   border-radius: 8px;
   background: #090a0c;
+  filter: grayscale(1);
 }
 
 .bookingBand {
@@ -342,6 +398,7 @@ h2 {
   border-radius: 8px;
   background: var(--charcoal);
   color: var(--paper);
+  box-shadow: 0 28px 70px rgba(9, 10, 12, 0.22);
 }
 
 .pageHero {
@@ -375,6 +432,10 @@ h2 {
   border-radius: 8px;
   background: var(--paper);
   padding: 24px;
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
 }
 
 form {
@@ -400,6 +461,17 @@ select {
   padding: 12px 14px;
   color: var(--charcoal);
   font: inherit;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: rgba(9, 10, 12, 0.54);
+  box-shadow: 0 0 0 4px rgba(9, 10, 12, 0.08);
 }
 
 textarea {
@@ -442,6 +514,80 @@ textarea {
   background: var(--paper);
 }
 
+.orderSection {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(320px, 520px);
+  gap: 24px;
+  padding-top: 0;
+}
+
+.orderSummary {
+  align-self: start;
+  position: sticky;
+  top: 118px;
+}
+
+.orderLines {
+  display: grid;
+  gap: 10px;
+  margin: 24px 0;
+}
+
+.orderLines p,
+.orderTotal {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.orderLines p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.orderTotal {
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  font-size: 20px;
+}
+
+.adminPanelImage {
+  width: 72px;
+  height: 72px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  filter: grayscale(1);
+  background: #090a0c;
+}
+
+.revealCard {
+  animation: revealUp 520ms ease both;
+}
+
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroLogoFloat {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(-10px) scale(1.015);
+  }
+}
+
 .copyright {
   grid-column: 1 / -1;
   border-top: 1px solid rgba(255, 253, 247, 0.16);
@@ -465,8 +611,13 @@ textarea {
   .bookingBand,
   .formWrap,
   .adminGrid,
-  .contactGrid {
+  .contactGrid,
+  .orderSection {
     grid-template-columns: 1fr;
+  }
+
+  .orderSummary {
+    position: static;
   }
 
   .cardGrid,
@@ -497,7 +648,7 @@ textarea {
   }
 
   .heroBrandImage {
-    place-items: end center;
+    place-items: flex-end center;
     opacity: 0.22;
   }
 

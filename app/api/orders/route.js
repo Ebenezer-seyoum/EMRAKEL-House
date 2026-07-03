@@ -3,6 +3,7 @@ import { getSupabaseServer } from "@/lib/supabase";
 
 export async function POST(request) {
   const body = await request.json();
+  const totalAmount = Number(body.total_amount || 0);
 
   if (!body.customer_name || !body.phone || !Array.isArray(body.items) || body.items.length === 0) {
     return badRequest("Customer name, phone, and at least one order item are required.");
@@ -20,7 +21,7 @@ export async function POST(request) {
     address: body.address || null,
     notes: body.notes || null,
     status: "pending",
-    total_amount: Number(body.total_amount || 0)
+    total_amount: Number.isFinite(totalAmount) ? totalAmount : 0
   };
 
   const supabase = getSupabaseServer();
@@ -35,9 +36,10 @@ export async function POST(request) {
     return Response.json({ error: orderError.message }, { status: 500 });
   }
 
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   const orderItems = body.items.map((item) => ({
     order_id: savedOrder.id,
-    menu_item_id: item.menu_item_id,
+    menu_item_id: uuidPattern.test(item.menu_item_id || "") ? item.menu_item_id : null,
     name: item.name,
     quantity: Number(item.quantity || 1),
     unit_price: Number(item.unit_price || 0)

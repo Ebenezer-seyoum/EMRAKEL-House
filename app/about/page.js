@@ -7,18 +7,18 @@ export default function AboutPage() {
       <main>
         <section className="pageHero">
           <p className="eyebrow">About us</p>
-          <h1>EMRAKEL is built as a classic food and cocktail house.</h1>
+          <h1>EMRAKEL is built as a precise black-and-white burger house.</h1>
           <p className="pageLead">
-            The brand combines bold comfort food with a refined interior mood: warm ivory surfaces, charcoal contrast,
-            antique gold trim, and ember-orange accents from the food and cocktail identity.
+            The brand combines bold comfort food with a refined interior mood: black contrast, white clarity, and clean
+            modern spacing that keeps the logo at the center.
           </p>
         </section>
         <section className="section introGrid">
           <div className="panel">
             <h2>House style</h2>
             <p className="contactText">
-              The interior video direction suggests a warm, polished room. The website follows that feeling with classic
-              typography, restrained color, and large real media instead of decorative gradients.
+              The website follows the supplied logo with a restrained monochrome palette, crisp typography, and subtle
+              motion instead of decorative color effects.
             </p>
           </div>
           <div className="panel">

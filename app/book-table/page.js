@@ -32,15 +32,15 @@ export default function BookTablePage() {
       <main>
         <section className="pageHero">
           <p className="eyebrow">Book a table</p>
-          <h1>Reserve a warm table for your meal or cocktail night.</h1>
+          <h1>Reserve a table inside the EMRAKEL black-and-white house.</h1>
           <p className="pageLead">Customers can book as guests now, and the same table supports customer accounts later.</p>
         </section>
         <section className="section formWrap">
           <div className="panel">
             <h2>Booking flow</h2>
             <p className="contactText">
-              The backend stores customer name, phone, email, date, time, guests, and notes. Admin can approve, cancel,
-              or mark the booking as completed.
+              The booking route stores customer name, phone, email, date, time, guests, and notes when Supabase keys are
+              configured. Without keys, it still returns a local success message so the form can be tested.
             </p>
           </div>
           <div className="formPanel">
