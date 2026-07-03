@@ -40,13 +40,9 @@ export function Header({ brandData = brand }) {
           <Link className="button buttonLine compact loginHeaderButton" href="/login">
             Login
           </Link>
-          <Link className="navIconButton" href="/menu" aria-label="Open menu order cart">
+          <Link className="navCartButton" href="/menu" aria-label="Open menu cart">
             <span className="cartGlyph" />
-            <small>Order</small>
-          </Link>
-          <Link className="navIconButton" href="/customer" aria-label="Open customer account">
-            <span className="userGlyph" />
-            <small>Account</small>
+            <small>Cart</small>
           </Link>
         </div>
       </header>
