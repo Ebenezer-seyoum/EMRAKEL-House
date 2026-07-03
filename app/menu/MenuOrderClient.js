@@ -25,6 +25,16 @@ export default function MenuOrderClient({ categories, items }) {
   const topCategories = categories.filter((category) => !category.parentId);
   const childCategories = (parentId) => categories.filter((category) => category.parentId === parentId);
   const categoryItems = (categoryId) => items.filter((item) => item.category === categoryId);
+  const boardSections = topCategories.slice(0, 6).map((category) => {
+    const children = childCategories(category.id);
+    const sections = children.length ? children : [category];
+    const boardItems = sections.flatMap((section) => categoryItems(section.id).slice(0, 5));
+
+    return {
+      ...category,
+      items: boardItems
+    };
+  });
 
   useEffect(() => {
     const currentMenuUrl = `${window.location.origin}/menu`;
@@ -98,6 +108,38 @@ export default function MenuOrderClient({ categories, items }) {
 
   return (
     <>
+      <section className="section menuBoardShowcase">
+        <div className="menuBoardPoster">
+          <img src="/uploads/house/menu-board-reference.jpg" alt="" />
+        </div>
+        <div className="menuBoardDynamic">
+          <p className="eyebrow">Grand opening menu</p>
+          <h2>House menu board</h2>
+          <div className="menuBoardPanels">
+            {boardSections.map((section, index) => (
+              <article className={index % 2 === 0 ? "menuBoardPanel dark" : "menuBoardPanel light"} key={section.id}>
+                <h3>{section.name}</h3>
+                {section.items.length ? (
+                  section.items.map((item) => (
+                    <p key={item.id}>
+                      <span>{item.name}</span>
+                      <i />
+                      <strong>{item.price} birr</strong>
+                    </p>
+                  ))
+                ) : (
+                  <p>
+                    <span>Coming soon</span>
+                    <i />
+                    <strong>--</strong>
+                  </p>
+                )}
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="section">
         {topCategories.map((category) => {
           const children = childCategories(category.id);

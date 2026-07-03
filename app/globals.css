@@ -2467,3 +2467,434 @@ label {
     min-height: 360px;
   }
 }
+
+/* Warm black and gold polish requested after reference pass */
+body {
+  background:
+    radial-gradient(circle at 70% -10%, rgba(216, 168, 62, 0.1), transparent 32%),
+    linear-gradient(180deg, #0b0805 0%, #120d08 46%, #080604 100%);
+}
+
+main:not(.adminMain),
+.referenceHome {
+  background:
+    radial-gradient(circle at 16% 10%, rgba(216, 168, 62, 0.09), transparent 26%),
+    linear-gradient(180deg, #0b0805 0%, #130d08 52%, #080604 100%);
+}
+
+.topSupportBar {
+  position: sticky;
+  top: 0;
+  z-index: 31;
+  display: flex;
+  justify-content: center;
+  gap: clamp(14px, 3vw, 34px);
+  padding: 8px clamp(18px, 4vw, 56px);
+  border-bottom: 1px solid rgba(216, 168, 62, 0.24);
+  background: #d8a83e;
+  color: #0b0805;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.topSupportBar a {
+  color: #0b0805;
+}
+
+.siteHeader {
+  top: 33px;
+  grid-template-columns: auto minmax(420px, 1fr) auto;
+  background: rgba(8, 6, 4, 0.96);
+  border-bottom-color: rgba(216, 168, 62, 0.44);
+}
+
+.brandText {
+  display: none;
+}
+
+.brandMark {
+  width: 82px;
+}
+
+.siteHeader .logoShell,
+.siteHeader .logoShell img {
+  width: 66px;
+  height: 66px;
+}
+
+.siteHeader nav a {
+  position: relative;
+  color: rgba(247, 239, 226, 0.86);
+}
+
+.siteHeader nav a:hover,
+.siteHeader nav a:first-child,
+.siteHeader nav a:focus-visible {
+  color: #f0c761;
+}
+
+.siteHeader nav a::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: -13px;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: center;
+  background: #f0c761;
+  transition: transform 180ms ease;
+}
+
+.siteHeader nav a:hover::after,
+.siteHeader nav a:first-child::after {
+  transform: scaleX(1);
+}
+
+.headerPhone,
+.cartButton {
+  display: none;
+}
+
+.navActions {
+  display: grid;
+  grid-template-columns: auto auto 54px 54px;
+  align-items: center;
+  gap: 10px;
+}
+
+.navIconButton {
+  min-width: 54px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  border: 1px solid rgba(216, 168, 62, 0.56);
+  border-radius: 8px;
+  color: #d8a83e;
+  background: rgba(216, 168, 62, 0.06);
+}
+
+.navIconButton small {
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.navIconButton:hover {
+  transform: translateY(-2px);
+  background: #d8a83e;
+  color: #0b0805;
+  box-shadow: 0 14px 32px rgba(216, 168, 62, 0.22);
+}
+
+.cartGlyph,
+.userGlyph {
+  position: relative;
+  width: 22px;
+  height: 18px;
+  display: block;
+}
+
+.cartGlyph::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  top: 4px;
+  height: 10px;
+  border: 2px solid currentColor;
+  border-top: 0;
+  border-radius: 2px 2px 5px 5px;
+}
+
+.cartGlyph::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  bottom: 0;
+  height: 4px;
+  border-left: 4px solid currentColor;
+  border-right: 4px solid currentColor;
+  border-radius: 50%;
+}
+
+.userGlyph::before {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 1px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+
+.userGlyph::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  bottom: 1px;
+  height: 8px;
+  border: 2px solid currentColor;
+  border-radius: 10px 10px 3px 3px;
+}
+
+.refHero .heroShade {
+  background:
+    linear-gradient(90deg, rgba(8, 6, 4, 0.98) 0%, rgba(8, 6, 4, 0.9) 34%, rgba(8, 6, 4, 0.2) 76%, rgba(8, 6, 4, 0.06)),
+    linear-gradient(0deg, rgba(8, 6, 4, 0.28), rgba(8, 6, 4, 0.04));
+}
+
+.pageHero {
+  background:
+    linear-gradient(90deg, rgba(8, 6, 4, 0.96), rgba(8, 6, 4, 0.68)),
+    url("/uploads/house/interior-08.jpg") center / cover;
+}
+
+.menuBoardShowcase {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1.28fr);
+  gap: clamp(24px, 5vw, 58px);
+  align-items: stretch;
+  padding-top: clamp(34px, 5vw, 64px);
+}
+
+.menuBoardPoster {
+  min-height: 620px;
+  border: 1px solid rgba(216, 168, 62, 0.72);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0b0805;
+  box-shadow: 0 28px 72px rgba(0, 0, 0, 0.38);
+}
+
+.menuBoardPoster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.menuBoardDynamic {
+  position: relative;
+  border: 1px solid rgba(216, 168, 62, 0.58);
+  border-radius: 10px;
+  padding: clamp(24px, 4vw, 42px);
+  background:
+    linear-gradient(90deg, rgba(8, 6, 4, 0.92), rgba(8, 6, 4, 0.84)),
+    url("/uploads/house/interior-03.jpg") center / cover;
+  box-shadow: 0 28px 72px rgba(0, 0, 0, 0.34);
+  overflow: hidden;
+}
+
+.menuBoardDynamic h2 {
+  color: #f7efe2;
+  font-size: clamp(40px, 5vw, 72px);
+  text-transform: uppercase;
+}
+
+.menuBoardPanels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.menuBoardPanel {
+  min-height: 250px;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: inset 0 0 0 1px rgba(216, 168, 62, 0.36);
+}
+
+.menuBoardPanel.dark {
+  background: rgba(8, 6, 4, 0.88);
+  color: #f7efe2;
+}
+
+.menuBoardPanel.light {
+  background: #efe5cf;
+  color: #1f170d;
+}
+
+.menuBoardPanel h3 {
+  display: inline-block;
+  margin: 0 0 18px;
+  border-radius: 4px;
+  padding: 8px 18px;
+  background: #d8a83e;
+  color: #0b0805;
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.menuBoardPanel.light h3 {
+  background: #48633d;
+  color: #f7efe2;
+}
+
+.menuBoardPanel p {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 8px;
+  align-items: end;
+  margin: 0 0 12px;
+  color: inherit;
+  font-size: 15px;
+}
+
+.menuBoardPanel i {
+  display: block;
+  border-bottom: 1px dotted currentColor;
+  opacity: 0.55;
+  transform: translateY(-4px);
+}
+
+.menuBoardPanel strong {
+  color: inherit;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.menuPosterSection {
+  background:
+    radial-gradient(circle at top right, rgba(216, 168, 62, 0.1), transparent 30%),
+    linear-gradient(145deg, rgba(8, 6, 4, 0.96), rgba(21, 14, 8, 0.94));
+}
+
+.menuListItem {
+  background:
+    linear-gradient(135deg, rgba(13, 9, 5, 0.92), rgba(25, 17, 9, 0.86));
+}
+
+.footer {
+  background:
+    linear-gradient(180deg, #15100a 0%, #070504 100%);
+  border-top: 1px solid rgba(216, 168, 62, 0.58);
+}
+
+.footerBrand {
+  align-items: flex-start;
+}
+
+.footerBrand h2 {
+  font-size: clamp(28px, 3vw, 42px);
+}
+
+.footer h3 {
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(216, 168, 62, 0.32);
+}
+
+.footer a {
+  color: rgba(247, 239, 226, 0.78);
+}
+
+.footer a:hover {
+  color: #d8a83e;
+}
+
+.footerSocial {
+  display: grid;
+  gap: 12px;
+}
+
+.footerSocial a {
+  width: auto;
+  height: auto;
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  border: 0;
+  border-radius: 0;
+  color: rgba(247, 239, 226, 0.78);
+  text-transform: none;
+}
+
+.footerSocial a:hover {
+  background: transparent;
+  color: #d8a83e;
+  box-shadow: none;
+}
+
+.footerSocial span {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(216, 168, 62, 0.7);
+  border-radius: 50%;
+  color: #d8a83e;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.copyright {
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(216, 168, 62, 0.28);
+}
+
+.copyright p:last-child {
+  color: #d8a83e;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.refHomeFooter {
+  background: linear-gradient(180deg, #15100a 0%, #070504 100%);
+}
+
+@media (max-width: 1100px) {
+  .siteHeader {
+    grid-template-columns: auto 1fr;
+  }
+
+  .siteHeader nav {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+
+  .menuBoardShowcase {
+    grid-template-columns: 1fr;
+  }
+
+  .menuBoardPoster {
+    min-height: 520px;
+  }
+}
+
+@media (max-width: 700px) {
+  .topSupportBar {
+    position: static;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .siteHeader {
+    top: 0;
+  }
+
+  .navActions {
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .navIconButton {
+    width: 100%;
+  }
+
+  .menuBoardPanels {
+    grid-template-columns: 1fr;
+  }
+
+  .menuBoardPoster {
+    min-height: 460px;
+  }
+}
