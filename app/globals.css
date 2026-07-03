@@ -3044,3 +3044,182 @@ main:not(.adminMain),
     height: 86px;
   }
 }
+
+/* Final mobile responsiveness polish */
+@media (max-width: 900px) {
+  .siteHeader {
+    grid-template-columns: auto 1fr;
+    gap: 18px;
+    padding: 12px 18px 16px;
+  }
+
+  .siteHeader nav {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 10px 2px 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .siteHeader nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .navActions {
+    justify-self: end;
+    grid-template-columns: auto auto 58px;
+    gap: 8px;
+  }
+
+  .bookHeaderButton,
+  .loginHeaderButton {
+    min-height: 42px;
+    padding-inline: 12px;
+    font-size: 12px;
+  }
+
+  .refHeroContent {
+    width: min(680px, calc(100% - 36px));
+    margin-inline: 18px;
+  }
+
+  .refSubtitle {
+    max-width: 100%;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .refFeatureRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 0;
+  }
+
+  .refFeature:nth-child(2) {
+    border-right: 0;
+  }
+
+  .menuBoardShowcase,
+  .orderSection,
+  .formWrap,
+  .contactGrid,
+  .introGrid,
+  .mediaPageHero {
+    grid-template-columns: 1fr;
+  }
+
+  .orderAside {
+    position: static;
+  }
+
+  .footer,
+  .refHomeFooter {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .topSupportBar {
+    padding: 9px 14px;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .siteHeader {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .siteHeader .logoShell {
+    width: 92px;
+    height: 92px;
+  }
+
+  .siteHeader nav {
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    gap: 14px 18px;
+    overflow-x: visible;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+  }
+
+  .navActions {
+    width: 100%;
+    grid-template-columns: 1fr 1fr 58px;
+    justify-self: stretch;
+  }
+
+  .bookHeaderButton,
+  .loginHeaderButton {
+    width: 100%;
+  }
+
+  .navCartButton {
+    width: 58px;
+    min-width: 58px;
+  }
+
+  .refHero {
+    min-height: auto;
+  }
+
+  .refHeroContent {
+    padding-block: 62px;
+  }
+
+  .refHeroContent h1 {
+    font-size: clamp(46px, 16vw, 64px);
+  }
+
+  .refSubtitle {
+    font-size: 16px;
+    letter-spacing: 0.1em;
+  }
+
+  .refSubtitle::before,
+  .refSubtitle::after {
+    display: none;
+  }
+
+  .refFeatureRow,
+  .refThumbGrid,
+  .refMenuCards,
+  .refSideCards,
+  .menuBoardPanels,
+  .menuListGrid,
+  .footer,
+  .refHomeFooter {
+    grid-template-columns: 1fr;
+  }
+
+  .refThumbStrip,
+  .refLower,
+  .section,
+  .pageHero {
+    padding-inline: 16px;
+  }
+
+  .menuBoardPoster {
+    min-height: 420px;
+  }
+
+  .menuBoardPanel {
+    padding: 18px;
+  }
+
+  .galleryGrid figure,
+  .galleryGrid figure:nth-child(n) {
+    min-height: 330px;
+  }
+
+  .footerBrand {
+    display: grid;
+  }
+
+  .copyright {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

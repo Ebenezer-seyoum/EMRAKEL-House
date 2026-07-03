@@ -37,7 +37,7 @@ export default async function HomePage() {
           <div className="refHeroContent">
             <p className="refWelcome">Welcome to</p>
             <h1>EMRAKEL</h1>
-            <p className="refSubtitle">Burger House</p>
+            <p className="refSubtitle">Burger, Pizza &amp; Cocktail House</p>
             <div className="refFeatureRow">
               {featureBadges.map(([top, bottom]) => (
                 <div className="refFeature" key={top}>
@@ -119,7 +119,7 @@ export default async function HomePage() {
 
         <footer className="refHomeFooter">
           <div className="refFooterBrand">
-            <p>EMRAKEL Burger House</p>
+            <p>EMRAKEL Burger, Pizza &amp; Cocktail House</p>
             <span>Designed &amp; Developed by Eyoben Technologies PLC</span>
           </div>
           <nav>
@@ -141,7 +141,7 @@ export default async function HomePage() {
             <strong>Contact</strong>
             <p>{content.brand.phone}</p>
             <p>{content.brand.address}</p>
-            <p>Copyright 2026 EMRAKEL Burger House</p>
+            <p>Copyright 2026 EMRAKEL Burger, Pizza &amp; Cocktail House</p>
           </div>
         </footer>
       </main>

@@ -9,6 +9,11 @@ const links = [
   ["Contact", "/contact"]
 ];
 
+function displayBrandName(brandData) {
+  const subtitle = brandData.subtitle || "";
+  return subtitle ? `${brandData.name} ${subtitle}` : brandData.name;
+}
+
 export function Header({ brandData = brand }) {
   return (
     <>
@@ -51,12 +56,18 @@ export function Header({ brandData = brand }) {
 }
 
 export function Footer({ brandData = brand, footerData }) {
+  const fullBrandName = displayBrandName(brandData);
+  const copyrightText =
+    footerData?.copyright === "Copyright 2026 EMRAKEL. All rights reserved."
+      ? `Copyright 2026 ${fullBrandName}. All rights reserved.`
+      : footerData?.copyright || `Copyright 2026 ${fullBrandName}. All rights reserved.`;
+
   return (
     <footer className="footer">
       <div className="footerBrand">
         <img src={brandImage} alt="" />
         <div>
-          <h2>{brandData.name}</h2>
+          <h2>{fullBrandName}</h2>
           <p>{brandData.subtitle}</p>
           <p>Premium burgers, stone-style pizza, crafted cocktails, and warm house hospitality.</p>
         </div>
@@ -89,7 +100,7 @@ export function Footer({ brandData = brand, footerData }) {
         </div>
       </div>
       <div className="copyright">
-        <p>{footerData?.copyright || "Copyright 2026 EMRAKEL Burger House. All rights reserved."}</p>
+        <p>{copyrightText}</p>
         <p>{footerData?.note || "Designed & Developed by Eyoben Technologies PLC"}</p>
       </div>
     </footer>
