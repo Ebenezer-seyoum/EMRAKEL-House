@@ -1,25 +1,34 @@
 import { Footer, Header } from "../shared";
+import { getPublicContent } from "@/lib/cms";
 
-export default function AboutPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AboutPage() {
+  const content = await getPublicContent();
+  const { about } = content;
+
   return (
     <>
-      <Header />
+      <Header brandData={content.brand} />
       <main>
-        <section className="pageHero">
-          <p className="eyebrow">About us</p>
-          <h1>EMRAKEL is built as a precise black-and-white burger house.</h1>
-          <p className="pageLead">
-            The brand combines bold comfort food with a refined interior mood: black contrast, white clarity, and clean
-            modern spacing that keeps the logo at the center.
-          </p>
+        <section className="pageHero mediaPageHero">
+          <div>
+            <p className="eyebrow">{about.eyebrow}</p>
+            <h1>{about.headline}</h1>
+            <p className="pageLead">{about.description}</p>
+          </div>
+          <img src={about.image} alt="" />
         </section>
         <section className="section introGrid">
           <div className="panel">
             <h2>House style</h2>
             <p className="contactText">
-              The website follows the supplied logo with a restrained monochrome palette, crisp typography, and subtle
-              motion instead of decorative color effects.
+              A dark blue, charcoal, ivory, and brass palette follows the real interior mood: warm lights, leafy ceiling
+              details, black marble, and hand-painted walls.
             </p>
+          </div>
+          <div className="panel imagePanel">
+            <img src={about.secondaryImage} alt="" />
           </div>
           <div className="panel">
             <h2>Food focus</h2>
@@ -30,7 +39,7 @@ export default function AboutPage() {
           </div>
         </section>
       </main>
-      <Footer />
+      <Footer brandData={content.brand} footerData={content.footer} />
     </>
   );
 }

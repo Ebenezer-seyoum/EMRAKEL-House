@@ -59,7 +59,8 @@ try {
         'gallery_images',
         'table_bookings',
         'orders',
-        'order_items'
+        'order_items',
+        'contact_messages'
       )
     order by table_name;
   `);

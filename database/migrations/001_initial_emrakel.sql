@@ -33,6 +33,7 @@ create table if not exists public.menu_categories (
   slug text not null unique,
   name text not null,
   description text,
+  parent_slug text,
   sort_order integer not null default 0,
   is_active boolean not null default true,
   created_at timestamptz not null default now(),
@@ -103,6 +104,20 @@ create table if not exists public.order_items (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.contact_messages (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  phone text,
+  email text,
+  subject text,
+  message text not null,
+  status text not null default 'new' check (status in ('new', 'read', 'archived')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.menu_categories add column if not exists parent_slug text;
+
 alter table public.profiles enable row level security;
 alter table public.app_users enable row level security;
 alter table public.site_settings enable row level security;
@@ -112,6 +127,7 @@ alter table public.gallery_images enable row level security;
 alter table public.table_bookings enable row level security;
 alter table public.orders enable row level security;
 alter table public.order_items enable row level security;
+alter table public.contact_messages enable row level security;
 
 drop policy if exists "Public can read active categories" on public.menu_categories;
 drop policy if exists "Public can read available menu items" on public.menu_items;
@@ -120,6 +136,7 @@ drop policy if exists "Public can read site settings" on public.site_settings;
 drop policy if exists "Customers can create bookings" on public.table_bookings;
 drop policy if exists "Customers can create orders" on public.orders;
 drop policy if exists "Customers can create order items" on public.order_items;
+drop policy if exists "Customers can create contact messages" on public.contact_messages;
 
 create policy "Public can read active categories" on public.menu_categories
   for select using (is_active = true);
@@ -142,18 +159,55 @@ create policy "Customers can create orders" on public.orders
 create policy "Customers can create order items" on public.order_items
   for insert with check (true);
 
+create policy "Customers can create contact messages" on public.contact_messages
+  for insert with check (true);
+
 insert into public.menu_categories (slug, name, sort_order)
 values
   ('burgers', 'Burgers', 1),
   ('pizza', 'Pizza', 2),
-  ('cocktails', 'Cocktails', 3)
-on conflict (slug) do nothing;
+  ('drinks', 'Drinks', 3),
+  ('shakes', 'Shakes', 4),
+  ('mojito', 'Mojito', 5)
+on conflict (slug) do update set
+  name = excluded.name,
+  sort_order = excluded.sort_order,
+  is_active = true,
+  updated_at = now();
+
+update public.menu_categories set parent_slug = 'drinks' where slug in ('shakes', 'mojito');
+update public.menu_categories set is_active = false where slug = 'cocktails';
+update public.menu_items set image_url = '/uploads/house/menu-board-reference.jpg' where image_url is null or image_url = '/logo.jpg';
+
+delete from public.gallery_images where image_url = '/logo.jpg';
+
+insert into public.gallery_images (title, image_url, sort_order, is_active)
+select 'Interior mural and counter', '/uploads/house/interior-03.jpg', 1, true
+where not exists (select 1 from public.gallery_images where image_url = '/uploads/house/interior-03.jpg');
+
+insert into public.gallery_images (title, image_url, sort_order, is_active)
+select 'Evening seating area', '/uploads/house/interior-08.jpg', 2, true
+where not exists (select 1 from public.gallery_images where image_url = '/uploads/house/interior-08.jpg');
+
+insert into public.gallery_images (title, image_url, sort_order, is_active)
+select 'Warm lounge counter', '/uploads/house/interior-05.jpg', 3, true
+where not exists (select 1 from public.gallery_images where image_url = '/uploads/house/interior-05.jpg');
+
+insert into public.gallery_images (title, image_url, sort_order, is_active)
+select 'Welcome mural', '/uploads/house/interior-11.jpg', 4, true
+where not exists (select 1 from public.gallery_images where image_url = '/uploads/house/interior-11.jpg');
 
 insert into public.site_settings (setting_key, setting_value)
 values
   ('brand', '{"name":"EMRAKEL","subtitle":"Burger, Pizza & Cocktail House"}'),
-  ('home', '{"headline":"Burgers, stone-style pizza, and crafted cocktails in one warm house."}')
-on conflict (setting_key) do nothing;
+  ('home', '{"eyebrow":"Burger, pizza and cocktail house","headline":"EMRAKEL Burger House","description":"A warm evening house for burgers, pizza, cocktails, and relaxed table moments.","primaryAction":"Book a Table","secondaryAction":"View Menu","heroImage":"/uploads/house/interior-08.jpg","featureImage":"/uploads/house/interior-05.jpg","galleryImage":"/uploads/house/interior-11.jpg"}'),
+  ('about', '{"eyebrow":"About EMRAKEL","headline":"A warm burger house shaped by murals, lights, plants, and evening energy.","description":"EMRAKEL blends burger, pizza, cocktail, and lounge culture inside a distinctive house interior with hand-painted walls, warm chandeliers, dark marble counters, and green ceiling details.","image":"/uploads/house/interior-05.jpg","secondaryImage":"/uploads/house/interior-11.jpg"}'),
+  ('contact', '{"eyebrow":"Contact","headline":"Visit, call, or send a message.","description":"Send feedback, ask about bookings, or contact the EMRAKEL team directly.","image":"/uploads/house/interior-08.jpg"}'),
+  ('footer', '{"note":"Designed & Developed by Eyoben Technologies PLC","copyright":"Copyright 2026 EMRAKEL. All rights reserved."}'),
+  ('jazz', '{"enabled":true,"eyebrow":"Jazz night","title":"Live evening sessions at EMRAKEL","description":"Warm lights, house drinks, and a relaxed evening atmosphere for guests.","date":"Every Friday","time":"7:30 PM - 10:30 PM","image":"/uploads/house/interior-06.jpg"}')
+on conflict (setting_key) do update set
+  setting_value = excluded.setting_value || public.site_settings.setting_value,
+  updated_at = now();
 
 insert into public.app_users (email, password_hash, name, role)
 values (

@@ -8,8 +8,14 @@ const navItems = [
   ["home", "Home"],
   ["menu", "Menu"],
   ["gallery", "Gallery"],
-  ["bookings", "Bookings"],
-  ["orders", "Orders"]
+  ["about", "About Us"],
+  ["contact", "Contact"],
+  ["footer", "Footer"],
+  ["orders", "Orders"],
+  ["bookings", "Book Tables"],
+  ["customers", "Customers"],
+  ["feedback", "Feedback"],
+  ["jazz", "Jazz"]
 ];
 
 function adminHeaders() {
@@ -35,11 +41,17 @@ export default function AdminDashboardClient() {
   const [status, setStatus] = useState(emptyStatus);
   const [brand, setBrand] = useState(null);
   const [home, setHome] = useState(null);
+  const [about, setAbout] = useState(null);
+  const [contact, setContact] = useState(null);
+  const [footer, setFooter] = useState(null);
+  const [jazz, setJazz] = useState(null);
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [feedback, setFeedback] = useState([]);
 
   const totals = useMemo(
     () => ({
@@ -48,9 +60,11 @@ export default function AdminDashboardClient() {
       menuItems: items.length,
       totalOrders: orders.length,
       totalBookings: bookings.length,
+      customers: customers.length,
+      newFeedback: feedback.filter((item) => item.status === "new").length,
       revenue: orders.reduce((sum, order) => sum + Number(order.total_amount || 0), 0)
     }),
-    [bookings, items, orders]
+    [bookings, customers, feedback, items, orders]
   );
 
   useEffect(() => {
@@ -67,29 +81,39 @@ export default function AdminDashboardClient() {
 
   async function loadDashboard() {
     setStatus({ type: "", message: "Loading dashboard..." });
-    const [settingsRes, menuRes, galleryRes, bookingsRes, ordersRes] = await Promise.all([
+    const [settingsRes, menuRes, galleryRes, bookingsRes, ordersRes, customersRes, feedbackRes] = await Promise.all([
       fetch("/api/settings"),
       fetch("/api/menu"),
       fetch("/api/gallery"),
       fetch("/api/bookings", { headers: { "x-emrakel-role": "admin" } }),
-      fetch("/api/orders", { headers: { "x-emrakel-role": "admin" } })
+      fetch("/api/orders", { headers: { "x-emrakel-role": "admin" } }),
+      fetch("/api/customers", { headers: { "x-emrakel-role": "admin" } }),
+      fetch("/api/feedback", { headers: { "x-emrakel-role": "admin" } })
     ]);
 
-    const [settingsData, menuData, galleryData, bookingsData, ordersData] = await Promise.all([
+    const [settingsData, menuData, galleryData, bookingsData, ordersData, customersData, feedbackData] = await Promise.all([
       settingsRes.json(),
       menuRes.json(),
       galleryRes.json(),
       bookingsRes.json(),
-      ordersRes.json()
+      ordersRes.json(),
+      customersRes.json(),
+      feedbackRes.json()
     ]);
 
     setBrand(settingsData.brand);
     setHome(settingsData.home);
+    setAbout(settingsData.about);
+    setContact(settingsData.contact);
+    setFooter(settingsData.footer);
+    setJazz(settingsData.jazz);
     setCategories(menuData.categories || []);
     setItems(menuData.items || []);
     setGallery(galleryData.gallery || []);
     setBookings(bookingsData.bookings || []);
     setOrders(ordersData.orders || []);
+    setCustomers(customersData.customers || []);
+    setFeedback(feedbackData.feedback || []);
     setStatus(emptyStatus);
   }
 
@@ -98,7 +122,7 @@ export default function AdminDashboardClient() {
     const response = await fetch("/api/settings", {
       method: "PUT",
       headers: adminHeaders(),
-      body: JSON.stringify({ brand, home })
+      body: JSON.stringify({ brand, home, about, contact, footer, jazz })
     });
     const data = await response.json();
     setStatus({ type: response.ok ? "success" : "error", message: data.message || data.error });
@@ -148,6 +172,35 @@ export default function AdminDashboardClient() {
     await loadDashboard();
   }
 
+  async function updateFeedback(id, nextStatus) {
+    const response = await fetch("/api/feedback", {
+      method: "PATCH",
+      headers: adminHeaders(),
+      body: JSON.stringify({ id, status: nextStatus })
+    });
+    const data = await response.json();
+    setStatus({ type: response.ok ? "success" : "error", message: data.message || data.error });
+    await loadDashboard();
+  }
+
+  function addCategory(parentId = "") {
+    const id = parentId ? `subsection-${Date.now()}` : `section-${Date.now()}`;
+    setCategories((current) => [
+      ...current,
+      {
+        id,
+        parentId,
+        name: parentId ? "New Subsection" : "New Section",
+        description: ""
+      }
+    ]);
+  }
+
+  function deleteCategory(categoryId) {
+    setCategories((current) => current.filter((category) => category.id !== categoryId && category.parentId !== categoryId));
+    setItems((current) => current.filter((item) => item.category !== categoryId));
+  }
+
   function addMenuItem() {
     setItems((current) => [
       ...current,
@@ -162,6 +215,10 @@ export default function AdminDashboardClient() {
     ]);
   }
 
+  function deleteMenuItem(itemId) {
+    setItems((current) => current.filter((item) => item.id !== itemId));
+  }
+
   function addGalleryImage() {
     setGallery((current) => [
       ...current,
@@ -171,6 +228,10 @@ export default function AdminDashboardClient() {
         image: brandImage
       }
     ]);
+  }
+
+  function deleteGalleryImage(imageId) {
+    setGallery((current) => current.filter((image) => image.id !== imageId));
   }
 
   function logout() {
@@ -189,7 +250,7 @@ export default function AdminDashboardClient() {
     );
   }
 
-  if (!brand || !home) {
+  if (!brand || !home || !about || !contact || !footer || !jazz) {
     return (
       <section className="adminAuthState">
         <div className="panel">
@@ -216,6 +277,7 @@ export default function AdminDashboardClient() {
               <span>{label}</span>
               {id === "bookings" && totals.pendingBookings ? <small>{totals.pendingBookings}</small> : null}
               {id === "orders" && totals.pendingOrders ? <small>{totals.pendingOrders}</small> : null}
+              {id === "feedback" && totals.newFeedback ? <small>{totals.newFeedback}</small> : null}
             </button>
           ))}
         </nav>
@@ -257,14 +319,14 @@ export default function AdminDashboardClient() {
             <small>{totals.totalBookings} total bookings</small>
           </div>
           <div className="adminMetricCard">
-            <span>Menu items</span>
-            <strong>{totals.menuItems}</strong>
-            <small>{categories.length} categories</small>
+            <span>Customers</span>
+            <strong>{totals.customers}</strong>
+            <small>registered accounts</small>
           </div>
           <div className="adminMetricCard">
-            <span>Order value</span>
-            <strong>{totals.revenue}</strong>
-            <small>ETB recorded</small>
+            <span>New feedback</span>
+            <strong>{totals.newFeedback}</strong>
+            <small>{totals.menuItems} menu items</small>
           </div>
         </div>
 
@@ -327,13 +389,135 @@ export default function AdminDashboardClient() {
         </form>
       ) : null}
 
+      {activeTab === "about" ? (
+        <form className="adminForm" onSubmit={saveSettings}>
+          <div className="panel">
+            <h2>About Page</h2>
+            <TextInput label="Eyebrow" value={about.eyebrow} onChange={(value) => setAbout({ ...about, eyebrow: value })} />
+            <TextInput label="Headline" value={about.headline} onChange={(value) => setAbout({ ...about, headline: value })} />
+            <TextInput
+              label="Description"
+              textarea
+              value={about.description}
+              onChange={(value) => setAbout({ ...about, description: value })}
+            />
+          </div>
+          <div className="panel">
+            <h2>About Images</h2>
+            <TextInput label="Main image URL" value={about.image} onChange={(value) => setAbout({ ...about, image: value })} />
+            <TextInput
+              label="Secondary image URL"
+              value={about.secondaryImage}
+              onChange={(value) => setAbout({ ...about, secondaryImage: value })}
+            />
+          </div>
+          <button className="button buttonGold" type="submit">
+            Save About Page
+          </button>
+        </form>
+      ) : null}
+
+      {activeTab === "contact" ? (
+        <form className="adminForm" onSubmit={saveSettings}>
+          <div className="panel">
+            <h2>Contact Page</h2>
+            <TextInput label="Eyebrow" value={contact.eyebrow} onChange={(value) => setContact({ ...contact, eyebrow: value })} />
+            <TextInput
+              label="Headline"
+              value={contact.headline}
+              onChange={(value) => setContact({ ...contact, headline: value })}
+            />
+            <TextInput
+              label="Description"
+              textarea
+              value={contact.description}
+              onChange={(value) => setContact({ ...contact, description: value })}
+            />
+          </div>
+          <div className="panel">
+            <h2>Contact Image</h2>
+            <TextInput label="Image URL" value={contact.image} onChange={(value) => setContact({ ...contact, image: value })} />
+          </div>
+          <button className="button buttonGold" type="submit">
+            Save Contact Page
+          </button>
+        </form>
+      ) : null}
+
+      {activeTab === "footer" ? (
+        <form className="adminForm" onSubmit={saveSettings}>
+          <div className="panel">
+            <h2>Footer Content</h2>
+            <TextInput
+              label="Copyright"
+              value={footer.copyright}
+              onChange={(value) => setFooter({ ...footer, copyright: value })}
+            />
+            <TextInput label="Credit note" value={footer.note} onChange={(value) => setFooter({ ...footer, note: value })} />
+          </div>
+          <div className="panel">
+            <h2>Brand Contact</h2>
+            <TextInput label="Phone" value={brand.phone} onChange={(value) => setBrand({ ...brand, phone: value })} />
+            <TextInput label="Email" value={brand.email} onChange={(value) => setBrand({ ...brand, email: value })} />
+            <TextInput
+              label="Address"
+              value={brand.address}
+              onChange={(value) => setBrand({ ...brand, address: value })}
+            />
+            <TextInput label="Hours" value={brand.hours} onChange={(value) => setBrand({ ...brand, hours: value })} />
+          </div>
+          <button className="button buttonGold" type="submit">
+            Save Footer
+          </button>
+        </form>
+      ) : null}
+
+      {activeTab === "jazz" ? (
+        <form className="adminForm" onSubmit={saveSettings}>
+          <div className="panel">
+            <h2>Jazz Section</h2>
+            <label className="checkRow">
+              <input
+                checked={Boolean(jazz.enabled)}
+                onChange={(event) => setJazz({ ...jazz, enabled: event.target.checked })}
+                type="checkbox"
+              />
+              Show section on home page
+            </label>
+            <TextInput label="Eyebrow" value={jazz.eyebrow} onChange={(value) => setJazz({ ...jazz, eyebrow: value })} />
+            <TextInput label="Title" value={jazz.title} onChange={(value) => setJazz({ ...jazz, title: value })} />
+            <TextInput
+              label="Description"
+              textarea
+              value={jazz.description}
+              onChange={(value) => setJazz({ ...jazz, description: value })}
+            />
+          </div>
+          <div className="panel">
+            <h2>Date and Image</h2>
+            <TextInput label="Date" value={jazz.date} onChange={(value) => setJazz({ ...jazz, date: value })} />
+            <TextInput label="Time" value={jazz.time} onChange={(value) => setJazz({ ...jazz, time: value })} />
+            <TextInput label="Image URL" value={jazz.image} onChange={(value) => setJazz({ ...jazz, image: value })} />
+          </div>
+          <button className="button buttonGold" type="submit">
+            Save Jazz Section
+          </button>
+        </form>
+      ) : null}
+
       {activeTab === "menu" ? (
         <form className="adminStack" onSubmit={saveMenu}>
           <div className="panel">
-            <h2>Categories</h2>
+            <div className="adminPanelHead">
+              <h2>Menu Sections</h2>
+              <button className="button buttonLine compact" type="button" onClick={() => addCategory("")}>
+                Add Section
+              </button>
+            </div>
             {categories.map((category, index) => (
-              <div className="inlineFields" key={category.id}>
+              <div className="menuCategoryEditor" key={category.id}>
                 <input
+                  aria-label="Section key"
                   value={category.id}
                   onChange={(event) =>
                     setCategories((current) =>
@@ -343,7 +527,28 @@ export default function AdminDashboardClient() {
                     )
                   }
                 />
+                <select
+                  aria-label="Parent section"
+                  value={category.parentId || ""}
+                  onChange={(event) =>
+                    setCategories((current) =>
+                      current.map((item, itemIndex) =>
+                        itemIndex === index ? { ...item, parentId: event.target.value } : item
+                      )
+                    )
+                  }
+                >
+                  <option value="">Main section</option>
+                  {categories
+                    .filter((item) => item.id !== category.id && !item.parentId)
+                    .map((item) => (
+                      <option key={item.id} value={item.id}>
+                        Under {item.name}
+                      </option>
+                    ))}
+                </select>
                 <input
+                  aria-label="Section name"
                   value={category.name}
                   onChange={(event) =>
                     setCategories((current) =>
@@ -353,6 +558,24 @@ export default function AdminDashboardClient() {
                     )
                   }
                 />
+                <input
+                  aria-label="Section description"
+                  placeholder="Description"
+                  value={category.description || ""}
+                  onChange={(event) =>
+                    setCategories((current) =>
+                      current.map((item, itemIndex) =>
+                        itemIndex === index ? { ...item, description: event.target.value } : item
+                      )
+                    )
+                  }
+                />
+                <button className="button buttonLine compact" type="button" onClick={() => addCategory(category.id)}>
+                  Add Subsection
+                </button>
+                <button className="button buttonLine compact" type="button" onClick={() => deleteCategory(category.id)}>
+                  Delete
+                </button>
               </div>
             ))}
           </div>
@@ -365,6 +588,7 @@ export default function AdminDashboardClient() {
                   <th>Price</th>
                   <th>Image URL</th>
                   <th>Description</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -437,6 +661,11 @@ export default function AdminDashboardClient() {
                         }
                       />
                     </td>
+                    <td>
+                      <button className="button buttonLine compact" type="button" onClick={() => deleteMenuItem(item.id)}>
+                        Delete
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -477,6 +706,9 @@ export default function AdminDashboardClient() {
                     )
                   }
                 />
+                <button className="button buttonLine compact" type="button" onClick={() => deleteGalleryImage(image.id)}>
+                  Delete Image
+                </button>
               </div>
             ))}
           </div>
@@ -518,6 +750,69 @@ export default function AdminDashboardClient() {
                       <option value="confirmed">Confirmed</option>
                       <option value="cancelled">Cancelled</option>
                       <option value="completed">Completed</option>
+                    </select>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
+
+      {activeTab === "customers" ? (
+        <div className="adminTableWrap">
+          <table className="adminTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              {customers.map((customer) => (
+                <tr key={customer.id || customer.email}>
+                  <td>{customer.name}</td>
+                  <td>{customer.email}</td>
+                  <td>{customer.phone || "-"}</td>
+                  <td>{customer.role}</td>
+                  <td>{customer.created_at ? new Date(customer.created_at).toLocaleDateString() : "-"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
+
+      {activeTab === "feedback" ? (
+        <div className="adminTableWrap">
+          <table className="adminTable">
+            <thead>
+              <tr>
+                <th>Sender</th>
+                <th>Contact</th>
+                <th>Subject</th>
+                <th>Message</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {feedback.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.name}</td>
+                  <td>
+                    <p>{item.phone || "-"}</p>
+                    <p>{item.email || "-"}</p>
+                  </td>
+                  <td>{item.subject || "Website feedback"}</td>
+                  <td>{item.message}</td>
+                  <td>
+                    <select value={item.status} onChange={(event) => updateFeedback(item.id, event.target.value)}>
+                      <option value="new">New</option>
+                      <option value="read">Read</option>
+                      <option value="archived">Archived</option>
                     </select>
                   </td>
                 </tr>

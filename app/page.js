@@ -10,12 +10,13 @@ export default async function HomePage() {
   const featured = content.items.slice(0, 3);
   const galleryImages = content.gallery.map((image) => image.image);
   const heroImage = content.home.heroImage || brandImage;
+  const visibleGallery = galleryImages.slice(0, 5);
 
   return (
     <>
-      <Header />
+      <Header brandData={content.brand} />
       <main>
-        <section className="hero">
+        <section className="hero luxuryHero">
           <div className="heroBrandImage" aria-hidden="true">
             <img src={heroImage} alt="" />
           </div>
@@ -35,15 +36,27 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="section introGrid">
+        <section className="section introGrid houseIntro">
           <div>
-            <p className="eyebrow">House palette</p>
-            <h2>Clean black, bright white, and disciplined spacing for a premium burger brand.</h2>
+            <p className="eyebrow">Inside the house</p>
+            <h2>Dark ceilings, warm lights, green details, and a restaurant mood that feels like EMRAKEL.</h2>
           </div>
           <p>
-            The website now follows the supplied EMRAKEL Burger House logo. Product and gallery images use the logo as
-            a default fallback, so future admin uploads can replace them cleanly.
+            The public website now uses the real interior images as the visual identity. Admin updates can replace the
+            words and images at any time without changing the layout.
           </p>
+        </section>
+
+        <section className="section featureSplit">
+          <img src={content.home.featureImage || visibleGallery[0]} alt="" />
+          <div>
+            <p className="eyebrow">House experience</p>
+            <h2>Designed for burgers, pizza, cocktails, and relaxed evenings.</h2>
+            <p>
+              Warm chandelier light, mural walls, black marble counters, and plant details create a recognizable
+              restaurant atmosphere across the site.
+            </p>
+          </div>
         </section>
 
         <section className="section">
@@ -69,8 +82,23 @@ export default async function HomePage() {
           </div>
         </section>
 
-        <section className="section galleryStrip">
-          {galleryImages.map((image, index) => (
+        {content.jazz?.enabled ? (
+          <section className="section jazzBand">
+            <div>
+              <p className="eyebrow">{content.jazz.eyebrow}</p>
+              <h2>{content.jazz.title}</h2>
+              <p>{content.jazz.description}</p>
+              <div className="jazzMeta">
+                <span>{content.jazz.date}</span>
+                <span>{content.jazz.time}</span>
+              </div>
+            </div>
+            <img src={content.jazz.image} alt="" />
+          </section>
+        ) : null}
+
+        <section className="section galleryStrip animatedGalleryStrip">
+          {visibleGallery.map((image, index) => (
             <img key={`${image}-${index}`} src={image} alt="" />
           ))}
         </section>
@@ -90,7 +118,7 @@ export default async function HomePage() {
           </div>
         </section>
       </main>
-      <Footer />
+      <Footer brandData={content.brand} footerData={content.footer} />
     </>
   );
 }

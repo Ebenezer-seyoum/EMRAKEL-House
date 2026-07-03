@@ -1,14 +1,24 @@
 import { Footer, Header } from "../shared";
-import { brand } from "@/lib/data";
+import { getPublicContent } from "@/lib/cms";
+import ContactFormClient from "./ContactFormClient";
 
-export default function ContactPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ContactPage() {
+  const content = await getPublicContent();
+  const { brand, contact } = content;
+
   return (
     <>
-      <Header />
+      <Header brandData={content.brand} />
       <main>
-        <section className="pageHero">
-          <p className="eyebrow">Contact</p>
-          <h1>Visit, call, or send a message.</h1>
+        <section className="pageHero mediaPageHero">
+          <div>
+            <p className="eyebrow">{contact.eyebrow}</p>
+            <h1>{contact.headline}</h1>
+            <p className="pageLead">{contact.description}</p>
+          </div>
+          <img src={contact.image} alt="" />
         </section>
         <section className="section contactGrid">
           <div className="panel">
@@ -19,27 +29,11 @@ export default function ContactPage() {
             <p className="contactText">{brand.email}</p>
           </div>
           <div className="formPanel">
-            <form>
-              <label>
-                Name
-                <input name="name" placeholder="Your name" />
-              </label>
-              <label>
-                Phone
-                <input name="phone" placeholder="Phone number" />
-              </label>
-              <label>
-                Message
-                <textarea name="message" placeholder="How can we help?" />
-              </label>
-              <button className="button buttonGold" type="submit">
-                Send Message
-              </button>
-            </form>
+            <ContactFormClient />
           </div>
         </section>
       </main>
-      <Footer />
+      <Footer brandData={content.brand} footerData={content.footer} />
     </>
   );
 }

@@ -30,10 +30,13 @@ export async function PUT(request) {
   const categoryRows = categories.map((category, index) => ({
     slug: category.id,
     name: category.name,
+    description: category.description || "",
+    parent_slug: category.parentId || null,
     sort_order: index + 1,
     is_active: true
   }));
 
+  await supabase.from("menu_categories").update({ is_active: false }).neq("slug", "__never__");
   const { data: savedCategories, error: categoryError } = await supabase
     .from("menu_categories")
     .upsert(categoryRows, { onConflict: "slug" })
@@ -55,6 +58,7 @@ export async function PUT(request) {
     is_available: true
   }));
 
+  await supabase.from("menu_items").update({ is_available: false }).neq("slug", "__never__");
   const { error: itemError } = await supabase.from("menu_items").upsert(itemRows, { onConflict: "slug" });
 
   if (itemError) {

@@ -9,7 +9,7 @@ const links = [
   ["Contact", "/contact"]
 ];
 
-export function Header() {
+export function Header({ brandData = brand }) {
   return (
     <header className="siteHeader">
       <Link className="brandMark" href="/" aria-label="EMRAKEL home">
@@ -17,8 +17,8 @@ export function Header() {
           <img src={brandImage} alt="" />
         </span>
         <span className="brandText">
-          <strong>{brand.name}</strong>
-          <small>{brand.subtitle}</small>
+          <strong>{brandData.name}</strong>
+          <small>{brandData.subtitle}</small>
         </span>
       </Link>
       <nav>
@@ -40,25 +40,25 @@ export function Header() {
   );
 }
 
-export function Footer() {
+export function Footer({ brandData = brand, footerData }) {
   return (
     <footer className="footer">
       <div className="footerBrand">
         <img src={brandImage} alt="" />
         <div>
-          <h2>{brand.name}</h2>
-          <p>{brand.subtitle}</p>
+          <h2>{brandData.name}</h2>
+          <p>{brandData.subtitle}</p>
         </div>
       </div>
       <div>
         <h3>Visit</h3>
-        <p>{brand.address}</p>
-        <p>{brand.hours}</p>
+        <p>{brandData.address}</p>
+        <p>{brandData.hours}</p>
       </div>
       <div>
         <h3>Contact</h3>
-        <p>{brand.phone}</p>
-        <p>{brand.email}</p>
+        <p>{brandData.phone}</p>
+        <p>{brandData.email}</p>
       </div>
       <div>
         <h3>Quick Links</h3>
@@ -69,8 +69,8 @@ export function Footer() {
         ))}
       </div>
       <div className="copyright">
-        <p>Copyright 2026 EMRAKEL. All rights reserved.</p>
-        <p>Designed & Developed by Eyoben Technologies PLC</p>
+        <p>{footerData?.copyright || "Copyright 2026 EMRAKEL. All rights reserved."}</p>
+        <p>{footerData?.note || "Designed & Developed by Eyoben Technologies PLC"}</p>
       </div>
     </footer>
   );

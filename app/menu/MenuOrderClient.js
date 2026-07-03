@@ -22,6 +22,9 @@ export default function MenuOrderClient({ categories, items }) {
   );
 
   const total = selectedItems.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
+  const topCategories = categories.filter((category) => !category.parentId);
+  const childCategories = (parentId) => categories.filter((category) => category.parentId === parentId);
+  const categoryItems = (categoryId) => items.filter((item) => item.category === categoryId);
 
   useEffect(() => {
     const currentMenuUrl = `${window.location.origin}/menu`;
@@ -96,41 +99,49 @@ export default function MenuOrderClient({ categories, items }) {
   return (
     <>
       <section className="section">
-        {categories.map((category) => (
-          <div className="categoryBlock" key={category.id}>
+        {topCategories.map((category) => {
+          const children = childCategories(category.id);
+          const sections = children.length ? children : [category];
+
+          return (
+          <div className="menuPosterSection" key={category.id}>
             <div className="sectionHead">
-              <h2>{category.name}</h2>
+              <div>
+                <p className="eyebrow">{category.description || "Menu section"}</p>
+                <h2>{category.name}</h2>
+              </div>
             </div>
-            <div className="cardGrid">
-              {items
-                .filter((item) => item.category === category.id)
-                .map((item) => (
-                  <article className="menuCard revealCard" key={item.id}>
-                    <img src={item.image} alt="" />
-                    <div>
-                      <span>{category.name}</span>
-                      <h3>{item.name}</h3>
-                      <p>{item.description}</p>
-                      <div className="menuCardBottom">
-                        <strong>{item.price} ETB</strong>
-                        <label className="quantityControl">
-                          Qty
-                          <input
-                            aria-label={`${item.name} quantity`}
-                            min="0"
-                            name={`quantity-${item.id}`}
-                            onChange={(event) => updateQuantity(item.id, event.target.value)}
-                            type="number"
-                            value={quantities[item.id] || ""}
-                          />
-                        </label>
+            {sections.map((section) => (
+              <div className="menuSubsection" key={section.id}>
+                {children.length ? <h3>{section.name}</h3> : null}
+                <div className="menuListGrid">
+                  {categoryItems(section.id).map((item) => (
+                    <article className="menuListItem revealCard" key={item.id}>
+                      <img src={item.image} alt="" />
+                      <div>
+                        <span>{section.name}</span>
+                        <h4>{item.name}</h4>
+                        <p>{item.description}</p>
                       </div>
-                    </div>
-                  </article>
-                ))}
-            </div>
+                      <strong>{item.price} ETB</strong>
+                      <label className="quantityControl">
+                        Qty
+                        <input
+                          aria-label={`${item.name} quantity`}
+                          min="0"
+                          name={`quantity-${item.id}`}
+                          onChange={(event) => updateQuantity(item.id, event.target.value)}
+                          type="number"
+                          value={quantities[item.id] || ""}
+                        />
+                      </label>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        )})}
       </section>
 
       <section className="section orderSection">

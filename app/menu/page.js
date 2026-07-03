@@ -9,19 +9,18 @@ export default async function MenuPage() {
 
   return (
     <>
-      <Header />
+      <Header brandData={content.brand} />
       <main>
         <section className="pageHero">
-          <p className="eyebrow">Order online</p>
-          <h1>Choose your EMRAKEL order in a clean black-and-white menu.</h1>
+          <p className="eyebrow">Grand opening menu</p>
+          <h1>Choose burgers, pizza, shakes, mojito, and house favorites.</h1>
           <p className="pageLead">
-            Item names, prices, descriptions, and images stay data-driven for admin updates. The logo is only the
-            fallback image until real menu photos are uploaded.
+            Sections, subsections, prices, descriptions, and item images are controlled from the admin dashboard.
           </p>
         </section>
         <MenuOrderClient categories={content.categories} items={content.items} />
       </main>
-      <Footer />
+      <Footer brandData={content.brand} footerData={content.footer} />
     </>
   );
 }
