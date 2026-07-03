@@ -8,6 +8,7 @@ export default function MenuOrderClient({ categories, items }) {
   const [menuUrl, setMenuUrl] = useState("");
   const [qrDataUrl, setQrDataUrl] = useState("");
   const [status, setStatus] = useState("");
+  const [customer, setCustomer] = useState({ customer_name: "", phone: "", email: "" });
 
   const selectedItems = useMemo(
     () =>
@@ -26,6 +27,15 @@ export default function MenuOrderClient({ categories, items }) {
     const currentMenuUrl = `${window.location.origin}/menu`;
     setMenuUrl(currentMenuUrl);
 
+    const session = JSON.parse(localStorage.getItem("emrakelSession") || "null");
+    if (session?.role === "customer") {
+      setCustomer({
+        customer_name: session.name || "",
+        phone: session.phone || "",
+        email: session.email || ""
+      });
+    }
+
     QRCode.toDataURL(currentMenuUrl, {
       color: {
         dark: "#090a0c",
@@ -40,6 +50,10 @@ export default function MenuOrderClient({ categories, items }) {
   function updateQuantity(itemId, value) {
     const quantity = Math.max(0, Number(value || 0));
     setQuantities((current) => ({ ...current, [itemId]: quantity }));
+  }
+
+  function updateCustomer(field, value) {
+    setCustomer((current) => ({ ...current, [field]: value }));
   }
 
   async function submitOrder(event) {
@@ -156,15 +170,33 @@ export default function MenuOrderClient({ categories, items }) {
           <form onSubmit={submitOrder}>
             <label>
               Full name
-              <input name="customer_name" required placeholder="Customer name" />
+              <input
+                name="customer_name"
+                onChange={(event) => updateCustomer("customer_name", event.target.value)}
+                required
+                placeholder="Customer name"
+                value={customer.customer_name}
+              />
             </label>
             <label>
               Phone
-              <input name="phone" required placeholder="Phone number" />
+              <input
+                name="phone"
+                onChange={(event) => updateCustomer("phone", event.target.value)}
+                required
+                placeholder="Phone number"
+                value={customer.phone}
+              />
             </label>
             <label>
               Email
-              <input name="email" type="email" placeholder="Email address" />
+              <input
+                name="email"
+                onChange={(event) => updateCustomer("email", event.target.value)}
+                placeholder="Email address"
+                type="email"
+                value={customer.email}
+              />
             </label>
             <label>
               Order type

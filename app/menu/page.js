@@ -1,8 +1,12 @@
 import { Footer, Header } from "../shared";
-import { menuCategories, menuItems } from "@/lib/data";
+import { getPublicContent } from "@/lib/cms";
 import MenuOrderClient from "./MenuOrderClient";
 
-export default function MenuPage() {
+export const dynamic = "force-dynamic";
+
+export default async function MenuPage() {
+  const content = await getPublicContent();
+
   return (
     <>
       <Header />
@@ -15,7 +19,7 @@ export default function MenuPage() {
             fallback image until real menu photos are uploaded.
           </p>
         </section>
-        <MenuOrderClient categories={menuCategories} items={menuItems} />
+        <MenuOrderClient categories={content.categories} items={content.items} />
       </main>
       <Footer />
     </>

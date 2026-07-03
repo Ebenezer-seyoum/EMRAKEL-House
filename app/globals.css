@@ -443,6 +443,34 @@ form {
   gap: 14px;
 }
 
+.authSwitch {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 18px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #f4f4f2;
+}
+
+.authSwitch button {
+  min-height: 40px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.authSwitch button.active {
+  background: var(--charcoal);
+  color: var(--paper);
+  box-shadow: 0 10px 22px rgba(9, 10, 12, 0.12);
+}
+
 label {
   display: grid;
   gap: 8px;
@@ -577,6 +605,147 @@ textarea {
   background: #090a0c;
 }
 
+.adminWorkspace {
+  padding-top: 0;
+}
+
+.adminTopbar,
+.metricGrid,
+.adminForm,
+.adminStack {
+  margin-bottom: 24px;
+}
+
+.adminTopbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.metricGrid .panel span {
+  display: block;
+  color: var(--muted);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.metricGrid .panel strong {
+  display: block;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: 42px;
+}
+
+.adminTabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.adminTabs button {
+  min-height: 44px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 800;
+  padding: 0 14px;
+  cursor: pointer;
+}
+
+.adminTabs button.active {
+  border-bottom-color: var(--charcoal);
+  color: var(--charcoal);
+}
+
+.adminStatus {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: #fff;
+  color: var(--muted);
+}
+
+.adminStatus.success {
+  border-color: rgba(9, 10, 12, 0.32);
+  color: var(--charcoal);
+}
+
+.adminStatus.error {
+  border-color: rgba(120, 0, 0, 0.35);
+  color: #780000;
+}
+
+.adminForm {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.adminForm > .button,
+.adminStack > .actions {
+  grid-column: 1 / -1;
+}
+
+.adminStack {
+  display: grid;
+  gap: 18px;
+}
+
+.inlineFields {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.7fr) minmax(180px, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.adminTableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+}
+
+.adminTable {
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
+}
+
+.adminTable th,
+.adminTable td {
+  border-bottom: 1px solid var(--line);
+  padding: 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.adminTable th {
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.adminTable input,
+.adminTable select,
+.adminTable textarea {
+  min-width: 150px;
+}
+
+.adminTable textarea {
+  min-height: 84px;
+}
+
 .revealCard {
   animation: revealUp 520ms ease both;
 }
@@ -637,7 +806,9 @@ textarea {
   .formWrap,
   .adminGrid,
   .contactGrid,
-  .orderSection {
+  .orderSection,
+  .adminForm,
+  .metricGrid {
     grid-template-columns: 1fr;
   }
 
@@ -648,6 +819,11 @@ textarea {
   .cardGrid,
   .galleryGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .adminTopbar {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .footer {

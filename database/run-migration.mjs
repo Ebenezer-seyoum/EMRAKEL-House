@@ -1,6 +1,32 @@
 import { readFile } from "node:fs/promises";
 import { Client } from "pg";
 
+async function loadEnvFile(filePath) {
+  try {
+    const file = await readFile(filePath, "utf8");
+
+    for (const line of file.split(/\r?\n/)) {
+      const trimmed = line.trim();
+
+      if (!trimmed || trimmed.startsWith("#") || !trimmed.includes("=")) {
+        continue;
+      }
+
+      const [key, ...valueParts] = trimmed.split("=");
+      const value = valueParts.join("=").replace(/^["']|["']$/g, "");
+
+      if (!process.env[key]) {
+        process.env[key] = value;
+      }
+    }
+  } catch {
+    // Optional local env file.
+  }
+}
+
+await loadEnvFile(".env");
+await loadEnvFile(".env.local");
+
 const databaseUrl = process.env.DATABASE_URL;
 const migrationPath = process.argv[2] || "database/migrations/001_initial_emrakel.sql";
 
@@ -26,6 +52,7 @@ try {
     where table_schema = 'public'
       and table_name in (
         'profiles',
+        'app_users',
         'site_settings',
         'menu_categories',
         'menu_items',

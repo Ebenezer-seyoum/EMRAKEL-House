@@ -1,9 +1,15 @@
 import Link from "next/link";
 import { Footer, Header } from "./shared";
-import { brandImage, galleryImages, homeSettings, menuItems } from "@/lib/data";
+import { brandImage } from "@/lib/data";
+import { getPublicContent } from "@/lib/cms";
 
-export default function HomePage() {
-  const featured = menuItems.slice(0, 3);
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const content = await getPublicContent();
+  const featured = content.items.slice(0, 3);
+  const galleryImages = content.gallery.map((image) => image.image);
+  const heroImage = content.home.heroImage || brandImage;
 
   return (
     <>
@@ -11,19 +17,19 @@ export default function HomePage() {
       <main>
         <section className="hero">
           <div className="heroBrandImage" aria-hidden="true">
-            <img src={brandImage} alt="" />
+            <img src={heroImage} alt="" />
           </div>
           <div className="heroShade" />
           <div className="heroContent">
-            <p className="eyebrow">{homeSettings.eyebrow}</p>
-            <h1>{homeSettings.headline}</h1>
-            <p>{homeSettings.description}</p>
+            <p className="eyebrow">{content.home.eyebrow}</p>
+            <h1>{content.home.headline}</h1>
+            <p>{content.home.description}</p>
             <div className="actions">
               <Link className="button buttonGold" href="/book-table">
-                {homeSettings.primaryAction}
+                {content.home.primaryAction}
               </Link>
               <Link className="button buttonGhost" href="/menu">
-                {homeSettings.secondaryAction}
+                {content.home.secondaryAction}
               </Link>
             </div>
           </div>
@@ -64,8 +70,8 @@ export default function HomePage() {
         </section>
 
         <section className="section galleryStrip">
-          {galleryImages.map((image) => (
-            <img key={image} src={image} alt="" />
+          {galleryImages.map((image, index) => (
+            <img key={`${image}-${index}`} src={image} alt="" />
           ))}
         </section>
 

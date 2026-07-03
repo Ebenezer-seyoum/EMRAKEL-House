@@ -1,10 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Footer, Header } from "../shared";
 
 export default function BookTablePage() {
   const [status, setStatus] = useState("");
+  const [customer, setCustomer] = useState({ customer_name: "", phone: "", email: "" });
+
+  useEffect(() => {
+    const session = JSON.parse(localStorage.getItem("emrakelSession") || "null");
+    if (session?.role === "customer") {
+      setCustomer({
+        customer_name: session.name || "",
+        phone: session.phone || "",
+        email: session.email || ""
+      });
+    }
+  }, []);
+
+  function updateCustomer(field, value) {
+    setCustomer((current) => ({ ...current, [field]: value }));
+  }
 
   async function submitBooking(event) {
     event.preventDefault();
@@ -33,29 +49,47 @@ export default function BookTablePage() {
         <section className="pageHero">
           <p className="eyebrow">Book a table</p>
           <h1>Reserve a table inside the EMRAKEL black-and-white house.</h1>
-          <p className="pageLead">Customers can book as guests now, and the same table supports customer accounts later.</p>
+          <p className="pageLead">Customers can login first to prefill their details, then send a booking request.</p>
         </section>
         <section className="section formWrap">
           <div className="panel">
             <h2>Booking flow</h2>
             <p className="contactText">
-              The booking route stores customer name, phone, email, date, time, guests, and notes when Supabase keys are
-              configured. Without keys, it still returns a local success message so the form can be tested.
+              The booking route stores customer name, phone, email, date, time, guests, and notes. Admin can confirm or
+              update the request from the dashboard.
             </p>
           </div>
           <div className="formPanel">
             <form onSubmit={submitBooking}>
               <label>
                 Full name
-                <input name="customer_name" required placeholder="Customer name" />
+                <input
+                  name="customer_name"
+                  onChange={(event) => updateCustomer("customer_name", event.target.value)}
+                  required
+                  placeholder="Customer name"
+                  value={customer.customer_name}
+                />
               </label>
               <label>
                 Phone
-                <input name="phone" required placeholder="Phone number" />
+                <input
+                  name="phone"
+                  onChange={(event) => updateCustomer("phone", event.target.value)}
+                  required
+                  placeholder="Phone number"
+                  value={customer.phone}
+                />
               </label>
               <label>
                 Email
-                <input name="email" type="email" placeholder="Email address" />
+                <input
+                  name="email"
+                  onChange={(event) => updateCustomer("email", event.target.value)}
+                  placeholder="Email address"
+                  type="email"
+                  value={customer.email}
+                />
               </label>
               <label>
                 Date

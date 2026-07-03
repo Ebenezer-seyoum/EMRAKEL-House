@@ -9,6 +9,17 @@ create table if not exists public.profiles (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.app_users (
+  id uuid primary key default gen_random_uuid(),
+  email text not null unique,
+  password_hash text not null,
+  name text not null,
+  phone text,
+  role text not null default 'customer' check (role in ('customer', 'admin')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create table if not exists public.site_settings (
   id uuid primary key default gen_random_uuid(),
   setting_key text not null unique,
@@ -93,6 +104,7 @@ create table if not exists public.order_items (
 );
 
 alter table public.profiles enable row level security;
+alter table public.app_users enable row level security;
 alter table public.site_settings enable row level security;
 alter table public.menu_categories enable row level security;
 alter table public.menu_items enable row level security;
@@ -100,6 +112,14 @@ alter table public.gallery_images enable row level security;
 alter table public.table_bookings enable row level security;
 alter table public.orders enable row level security;
 alter table public.order_items enable row level security;
+
+drop policy if exists "Public can read active categories" on public.menu_categories;
+drop policy if exists "Public can read available menu items" on public.menu_items;
+drop policy if exists "Public can read active gallery images" on public.gallery_images;
+drop policy if exists "Public can read site settings" on public.site_settings;
+drop policy if exists "Customers can create bookings" on public.table_bookings;
+drop policy if exists "Customers can create orders" on public.orders;
+drop policy if exists "Customers can create order items" on public.order_items;
 
 create policy "Public can read active categories" on public.menu_categories
   for select using (is_active = true);
@@ -134,3 +154,16 @@ values
   ('brand', '{"name":"EMRAKEL","subtitle":"Burger, Pizza & Cocktail House"}'),
   ('home', '{"headline":"Burgers, stone-style pizza, and crafted cocktails in one warm house."}')
 on conflict (setting_key) do nothing;
+
+insert into public.app_users (email, password_hash, name, role)
+values (
+  'admin@emrakel.com',
+  'scrypt:a8fe5614b70bcd6715da8aa4e4c270e2:5b39f5032598e67b95602b4a216e2a55d98a6b031bd4f11838c5c980ab241ebd633b4fddad385c1200b5e65670c9ac54f63928b0091b13816d83fcdfa8a97da1',
+  'EMRAKEL Admin',
+  'admin'
+)
+on conflict (email) do update set
+  password_hash = excluded.password_hash,
+  name = excluded.name,
+  role = excluded.role,
+  updated_at = now();

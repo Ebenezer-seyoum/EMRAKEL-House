@@ -1,15 +1,20 @@
 import { Footer, Header } from "../shared";
-import { galleryImages } from "@/lib/data";
+import { getPublicContent } from "@/lib/cms";
 
-export default function GalleryPage() {
+export const dynamic = "force-dynamic";
+
+export default async function GalleryPage() {
+  const content = await getPublicContent();
+  const galleryImages = content.gallery.map((image) => image.image);
+
   return (
     <>
       <Header />
       <main>
         <section className="pageHero">
           <p className="eyebrow">Gallery</p>
-          <h1>A warm house atmosphere for lunch, dinner, and late drinks.</h1>
-          <p className="pageLead">The gallery is ready to connect to admin uploads through Supabase Storage.</p>
+          <h1>A black-and-white EMRAKEL gallery ready for real uploaded images.</h1>
+          <p className="pageLead">Gallery images can be updated from the admin dashboard.</p>
         </section>
         <section className="section galleryGrid">
           {galleryImages.concat(galleryImages.slice(0, 2)).map((image, index) => (

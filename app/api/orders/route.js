@@ -1,5 +1,30 @@
 import { badRequest, isEmail, ok } from "@/lib/api";
+import { forbidden, getLocalState, isAdminRequest, newId, saveLocalState } from "@/lib/cms";
 import { getSupabaseServer } from "@/lib/supabase";
+
+export async function GET(request) {
+  if (!isAdminRequest(request)) {
+    return forbidden();
+  }
+
+  const supabase = getSupabaseServer();
+
+  if (!supabase) {
+    const state = await getLocalState();
+    return ok({ orders: state.orders, source: "local" });
+  }
+
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*, order_items(*)")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+
+  return ok({ orders: data, source: "supabase" });
+}
 
 export async function POST(request) {
   const body = await request.json();
@@ -27,7 +52,15 @@ export async function POST(request) {
   const supabase = getSupabaseServer();
 
   if (!supabase) {
-    return ok({ message: "Order received locally. Add Supabase keys to store it in the database.", order }, 201);
+    const state = await getLocalState();
+    const savedOrder = {
+      id: newId("order"),
+      ...order,
+      items: body.items,
+      created_at: new Date().toISOString()
+    };
+    await saveLocalState({ ...state, orders: [savedOrder, ...state.orders] });
+    return ok({ message: "Order sent successfully.", order: savedOrder }, 201);
   }
 
   const { data: savedOrder, error: orderError } = await supabase.from("orders").insert(order).select().single();
@@ -52,4 +85,40 @@ export async function POST(request) {
   }
 
   return ok({ message: "Order sent successfully.", order: savedOrder }, 201);
+}
+
+export async function PATCH(request) {
+  if (!isAdminRequest(request)) {
+    return forbidden();
+  }
+
+  const body = await request.json();
+
+  if (!body.id || !body.status) {
+    return badRequest("Order id and status are required.");
+  }
+
+  const supabase = getSupabaseServer();
+
+  if (!supabase) {
+    const state = await getLocalState();
+    const orders = state.orders.map((order) =>
+      order.id === body.id ? { ...order, status: body.status, updated_at: new Date().toISOString() } : order
+    );
+    await saveLocalState({ ...state, orders });
+    return ok({ message: "Order updated locally.", orders, source: "local" });
+  }
+
+  const { data, error } = await supabase
+    .from("orders")
+    .update({ status: body.status, updated_at: new Date().toISOString() })
+    .eq("id", body.id)
+    .select()
+    .single();
+
+  if (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+
+  return ok({ message: "Order updated.", order: data, source: "supabase" });
 }
