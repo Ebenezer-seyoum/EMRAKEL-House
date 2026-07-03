@@ -68,7 +68,10 @@ export function Footer() {
           </Link>
         ))}
       </div>
-      <p className="copyright">Copyright 2026 EMRAKEL. All rights reserved.</p>
+      <div className="copyright">
+        <p>Copyright 2026 EMRAKEL. All rights reserved.</p>
+        <p>Designed & Developed by Eyoben Technologies PLC</p>
+      </div>
     </footer>
   );
 }

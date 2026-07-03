@@ -1,9 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import QRCode from "qrcode";
+import { useEffect, useMemo, useState } from "react";
 
 export default function MenuOrderClient({ categories, items }) {
   const [quantities, setQuantities] = useState({});
+  const [menuUrl, setMenuUrl] = useState("");
+  const [qrDataUrl, setQrDataUrl] = useState("");
   const [status, setStatus] = useState("");
 
   const selectedItems = useMemo(
@@ -18,6 +21,21 @@ export default function MenuOrderClient({ categories, items }) {
   );
 
   const total = selectedItems.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
+
+  useEffect(() => {
+    const currentMenuUrl = `${window.location.origin}/menu`;
+    setMenuUrl(currentMenuUrl);
+
+    QRCode.toDataURL(currentMenuUrl, {
+      color: {
+        dark: "#090a0c",
+        light: "#ffffff"
+      },
+      errorCorrectionLevel: "H",
+      margin: 1,
+      scale: 8
+    }).then(setQrDataUrl);
+  }, []);
 
   function updateQuantity(itemId, value) {
     const quantity = Math.max(0, Number(value || 0));
@@ -102,26 +120,35 @@ export default function MenuOrderClient({ categories, items }) {
       </section>
 
       <section className="section orderSection">
-        <div className="panel orderSummary">
-          <p className="eyebrow">Order summary</p>
-          <h2>Send your order</h2>
-          {selectedItems.length ? (
-            <div className="orderLines">
-              {selectedItems.map((item) => (
-                <p key={item.id}>
-                  <span>
-                    {item.quantity} x {item.name}
-                  </span>
-                  <strong>{Number(item.price) * item.quantity} ETB</strong>
-                </p>
-              ))}
+        <div className="orderAside">
+          <div className="panel qrPanel">
+            <p className="eyebrow">Menu QR</p>
+            <h2>Scan to open the live menu.</h2>
+            {qrDataUrl ? <img src={qrDataUrl} alt="QR code for the EMRAKEL menu page" /> : null}
+            <p className="contactText">{menuUrl || "Generating menu link..."}</p>
+          </div>
+
+          <div className="panel orderSummary">
+            <p className="eyebrow">Order summary</p>
+            <h2>Send your order</h2>
+            {selectedItems.length ? (
+              <div className="orderLines">
+                {selectedItems.map((item) => (
+                  <p key={item.id}>
+                    <span>
+                      {item.quantity} x {item.name}
+                    </span>
+                    <strong>{Number(item.price) * item.quantity} ETB</strong>
+                  </p>
+                ))}
+              </div>
+            ) : (
+              <p className="contactText">Choose quantities from the menu cards. Your total will appear here.</p>
+            )}
+            <div className="orderTotal">
+              <span>Total</span>
+              <strong>{total} ETB</strong>
             </div>
-          ) : (
-            <p className="contactText">Choose quantities from the menu cards. Your total will appear here.</p>
-          )}
-          <div className="orderTotal">
-            <span>Total</span>
-            <strong>{total} ETB</strong>
           </div>
         </div>
 
