@@ -2981,3 +2981,66 @@ main:not(.adminMain),
     justify-self: end;
   }
 }
+
+/* Final header logo/support alignment polish */
+.topSupportBar {
+  justify-content: flex-start;
+  padding-left: clamp(20px, 5vw, 78px);
+}
+
+.siteHeader {
+  grid-template-columns: 118px minmax(420px, 1fr) auto;
+  gap: clamp(24px, 4vw, 54px);
+  min-height: 104px;
+  padding-block: 12px;
+}
+
+.brandMark {
+  width: 118px;
+  justify-content: flex-start;
+}
+
+.siteHeader .logoShell {
+  width: 94px;
+  height: 94px;
+  padding: 5px;
+  border-width: 2px;
+  background: rgba(8, 6, 4, 0.48);
+}
+
+.siteHeader .logoShell img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.siteHeader nav {
+  justify-content: flex-start;
+}
+
+@media (max-width: 1100px) {
+  .siteHeader {
+    grid-template-columns: 118px 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .topSupportBar {
+    justify-content: flex-start;
+    padding-left: 18px;
+  }
+
+  .siteHeader {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .brandMark {
+    width: auto;
+  }
+
+  .siteHeader .logoShell {
+    width: 86px;
+    height: 86px;
+  }
+}
