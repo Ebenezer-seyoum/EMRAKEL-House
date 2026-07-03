@@ -13,9 +13,8 @@ export function Header({ brandData = brand }) {
   return (
     <>
       <div className="topSupportBar">
-        <span>Customer Support</span>
-        <a href={`tel:${brandData.phone}`}>{brandData.phone}</a>
-        <span>{brandData.hours}</span>
+        <span>Customer Support -</span>
+        <a href="tel:+251991486512">+251991486512</a>
       </div>
       <header className="siteHeader">
         <Link className="brandMark" href="/" aria-label="EMRAKEL home">
