@@ -1,3 +1,4 @@
+import { Footer, Header } from "../shared";
 import { getPublicContent } from "@/lib/cms";
 import MenuOrderClient from "./MenuOrderClient";
 
@@ -7,8 +8,12 @@ export default async function MenuPage() {
   const content = await getPublicContent();
 
   return (
-    <main>
-      <MenuOrderClient categories={content.categories} items={content.items} />
-    </main>
+    <>
+      <Header brandData={content.brand} />
+      <main>
+        <MenuOrderClient categories={content.categories} items={content.items} />
+      </main>
+      <Footer brandData={content.brand} footerData={content.footer} />
+    </>
   );
 }
