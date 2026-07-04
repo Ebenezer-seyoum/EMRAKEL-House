@@ -9,7 +9,12 @@ export default async function MenuPage() {
 
   return (
     <>
-      <Header brandData={content.brand} />
+      <Header
+        brandData={content.brand}
+        heroKicker="House menu"
+        heroTitle="EMRAKEL Menu"
+        heroText="Scan, choose, and enjoy burgers, pizza, shakes, mojito, cocktails, and house favorites."
+      />
       <main>
         <MenuOrderClient categories={content.categories} items={content.items} />
       </main>

@@ -4768,3 +4768,50 @@ main:not(.adminMain),
     grid-template-columns: 1fr;
   }
 }
+
+/* Unified second-screenshot public header */
+.homeHeroHeader .brandText {
+  display: none;
+}
+
+.homeHeroHeader .heroRotatingText {
+  display: grid;
+  gap: 12px;
+}
+
+.homeHeroHeader .heroRotatingText small {
+  color: #d8a83e;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.homeHeroHeader .heroRotatingText strong {
+  display: block;
+  color: #f7efe2;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: clamp(38px, 4.5vw, 74px);
+  line-height: 0.98;
+  text-shadow: 0 8px 22px rgba(0, 0, 0, 0.7);
+}
+
+.homeHeroHeader .heroRotatingText span {
+  display: block;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+body:has(.homeHeroHeader) main:not(.referenceHome):not(.adminMain) {
+  background:
+    radial-gradient(circle at top left, rgba(216, 168, 62, 0.12), transparent 28%),
+    linear-gradient(180deg, #0b0805, #15100a 58%, #0b0805);
+}
+
+body:has(.homeHeroHeader) .galleryMasonry,
+body:has(.homeHeroHeader) .aboutStoryGrid,
+body:has(.homeHeroHeader) .contactSplit,
+body:has(.homeHeroHeader) .scanMenuPage {
+  padding-top: clamp(36px, 5vw, 72px);
+}

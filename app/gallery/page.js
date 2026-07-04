@@ -10,13 +10,13 @@ export default async function GalleryPage() {
 
   return (
     <>
-      <Header brandData={content.brand} />
+      <Header
+        brandData={content.brand}
+        heroKicker="Gallery"
+        heroTitle="Inside the EMRAKEL house."
+        heroText="Warm lights, seating, murals, plants, and the house atmosphere in one clean gallery."
+      />
       <main>
-        <section className="pageHero">
-          <p className="eyebrow">Gallery</p>
-          <h1>Inside the EMRAKEL house.</h1>
-          <p className="pageLead">Warm lights, seating, murals, plants, and the house atmosphere in one clean gallery.</p>
-        </section>
         <GalleryClient images={galleryImages.concat(galleryImages.slice(0, 5))} />
       </main>
       <Footer brandData={content.brand} footerData={content.footer} />

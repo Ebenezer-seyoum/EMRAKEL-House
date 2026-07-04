@@ -10,16 +10,13 @@ export default async function ContactPage() {
 
   return (
     <>
-      <Header brandData={content.brand} />
+      <Header
+        brandData={content.brand}
+        heroKicker={contact.eyebrow}
+        heroTitle={contact.headline}
+        heroText={contact.description}
+      />
       <main>
-        <section className="pageHero mediaPageHero">
-          <div>
-            <p className="eyebrow">{contact.eyebrow}</p>
-            <h1>{contact.headline}</h1>
-            <p className="pageLead">{contact.description}</p>
-          </div>
-          <img src={contact.image} alt="" />
-        </section>
         <section className="section contactSplit">
           <div className="contactInfoPanel">
             <p className="eyebrow">Contact information</p>

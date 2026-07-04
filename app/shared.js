@@ -17,21 +17,27 @@ function displayBrandName(brandData) {
   return subtitle ? `${brandData.name} ${subtitle}` : brandData.name;
 }
 
-export function Header({ brandData = brand, variant = "" }) {
-  const isHomeHero = variant === "homeHero";
-  const headerClassName = isHomeHero ? "siteHeader homeHeroHeader" : "siteHeader";
+export function Header({
+  brandData = brand,
+  heroKicker = "",
+  heroTitle = "",
+  heroText = "",
+  rotateStories
+}) {
+  const headerClassName = "siteHeader homeHeroHeader";
   const [openPanel, setOpenPanel] = useState("");
   const [loginStatus, setLoginStatus] = useState("");
   const [storyIndex, setStoryIndex] = useState(0);
-  const houseStories = [
+  const houseStories = rotateStories || [
     "A warm house for burgers, pizza, cocktails, and relaxed evenings.",
     "Hand-painted walls, leafy details, and golden light set the room mood.",
     "Guests can scan the menu, choose quickly, and enjoy the house atmosphere.",
     "Built for today with space for future online booking and customer service."
   ];
+  const displayText = heroText || houseStories[storyIndex];
 
   useEffect(() => {
-    if (!isHomeHero) {
+    if (heroText || houseStories.length < 2) {
       return undefined;
     }
 
@@ -40,7 +46,7 @@ export function Header({ brandData = brand, variant = "" }) {
     }, 3600);
 
     return () => window.clearInterval(timer);
-  }, [isHomeHero, houseStories.length]);
+  }, [heroText, houseStories.length]);
 
   async function submitHeaderLogin(event) {
     event.preventDefault();
@@ -134,18 +140,12 @@ export function Header({ brandData = brand, variant = "" }) {
               </div>
             ) : null}
           </div>
-          {!isHomeHero ? (
-            <Link className="navCartButton" href="/menu" aria-label="Open menu cart">
-              <span className="cartGlyph" />
-              <small>Cart</small>
-            </Link>
-          ) : null}
         </div>
-        {isHomeHero ? (
-          <div className="heroRotatingText" aria-live="polite">
-            <span>{houseStories[storyIndex]}</span>
-          </div>
-        ) : null}
+        <div className="heroRotatingText" aria-live="polite">
+          {heroKicker ? <small>{heroKicker}</small> : null}
+          {heroTitle ? <strong>{heroTitle}</strong> : null}
+          <span>{displayText}</span>
+        </div>
       </header>
     </>
   );
