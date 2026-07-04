@@ -6,10 +6,10 @@ import { brand, brandImage } from "@/lib/data";
 
 const links = [
   ["Home", "/"],
-  ["Menu", "/menu"],
-  ["Gallery", "/gallery"],
-  ["About Us", "/about"],
-  ["Contact", "/contact"]
+  ["Menu", "/#menu"],
+  ["Gallery", "/#gallery"],
+  ["About Us", "/#about"],
+  ["Contact", "/#contact"]
 ];
 
 function displayBrandName(brandData) {

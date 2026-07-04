@@ -1,13 +1,18 @@
 import Link from "next/link";
-import { Header } from "./shared";
+import { Footer, Header } from "./shared";
 import { brandImage } from "@/lib/data";
 import { getPublicContent } from "@/lib/cms";
+import MenuOrderClient from "./menu/MenuOrderClient";
+import GalleryClient from "./gallery/GalleryClient";
+import ContactFormClient from "./contact/ContactFormClient";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const content = await getPublicContent();
   const heroImage = content.home.heroImage || brandImage;
+  const { about, brand, contact } = content;
+  const galleryImages = content.gallery.map((image) => image.image);
   const featureBadges = [
     ["Premium", "Burgers"],
     ["Stone-style", "Pizza"],
@@ -17,9 +22,9 @@ export default async function HomePage() {
 
   return (
     <>
-      <Header brandData={content.brand} variant="homeHero" />
+      <Header brandData={content.brand} heroKicker="Welcome to" heroTitle="EMRAKEL" />
       <main className="referenceHome">
-        <section className="refHero">
+        <section className="refHero" id="home">
           <div className="heroBrandImage" aria-hidden="true">
             <img src={heroImage} alt="" />
           </div>
@@ -61,34 +66,59 @@ export default async function HomePage() {
           </article>
         </section>
 
-        <footer className="refHomeFooter">
-          <div className="refFooterBrand">
-            <p>EMRAKEL Burger, Pizza &amp; Cocktail House</p>
-            <span>Designed &amp; Developed by Eyoben Technologies PLC</span>
+        <div id="menu" className="homeScrollSection">
+          <MenuOrderClient categories={content.categories} items={content.items} />
+        </div>
+
+        <div id="gallery" className="homeScrollSection">
+          <div className="homeSectionIntro">
+            <p className="eyebrow">Gallery</p>
+            <h2>Inside the EMRAKEL house.</h2>
+            <p>Warm lights, seating, murals, plants, and the house atmosphere in one clean gallery.</p>
           </div>
-          <nav>
-            <strong>Quick Links</strong>
-            <Link href="/">Home</Link>
-            <Link href="/menu">Menu</Link>
-            <Link href="/gallery">Gallery</Link>
-            <Link href="/about">About Us</Link>
-            <Link href="/contact">Contact</Link>
-            <Link href="/book-table">Book Table</Link>
-          </nav>
-          <div className="refFooterSocial">
-            <strong>Social Media</strong>
-            <span>f</span>
-            <span>ig</span>
-            <span>wa</span>
+          <GalleryClient images={galleryImages.concat(galleryImages.slice(0, 5))} />
+        </div>
+
+        <section id="about" className="section aboutStoryGrid homeScrollSection">
+          <div className="aboutStoryImage">
+            <img src={about.image} alt="" />
           </div>
-          <div className="refFooterContact">
-            <strong>Contact</strong>
-            <p>{content.brand.phone}</p>
-            <p>{content.brand.address}</p>
-            <p>Copyright 2026 EMRAKEL Burger, Pizza &amp; Cocktail House</p>
+          <div className="aboutStoryText">
+            <p className="eyebrow">{about.eyebrow}</p>
+            <h2>{about.headline}</h2>
+            <p className="contactText">{about.description}</p>
           </div>
-        </footer>
+          <div className="aboutStoryImage">
+            <img src={about.secondaryImage} alt="" />
+          </div>
+          <div className="aboutStoryText">
+            <p className="eyebrow">Food focus</p>
+            <h2>A simple house menu with room to grow.</h2>
+            <p className="contactText">
+              Burgers, pizza, sandwiches, shawarma, shakes, mojito, and cocktails are arranged clearly for guests while
+              the admin dashboard keeps future edits practical.
+            </p>
+          </div>
+        </section>
+
+        <section id="contact" className="section contactSplit homeScrollSection">
+          <div className="contactInfoPanel">
+            <p className="eyebrow">Contact information</p>
+            <h2>{brand.name}</h2>
+            <p className="contactText">{brand.address}</p>
+            <p className="contactText">{brand.hours}</p>
+            <p className="contactText">{brand.phone}</p>
+            <p className="contactText">{brand.email}</p>
+            <img src={contact.image} alt="" />
+          </div>
+          <div className="formPanel feedbackPanel">
+            <p className="eyebrow">Feedback form</p>
+            <h2>Send us a message.</h2>
+            <ContactFormClient />
+          </div>
+        </section>
       </main>
+      <Footer brandData={content.brand} footerData={content.footer} />
     </>
   );
 }
