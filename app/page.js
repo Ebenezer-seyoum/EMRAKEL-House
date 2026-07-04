@@ -1,6 +1,4 @@
-import Link from "next/link";
 import { Footer, Header } from "./shared";
-import { brandImage } from "@/lib/data";
 import { getPublicContent } from "@/lib/cms";
 import MenuOrderClient from "./menu/MenuOrderClient";
 import GalleryClient from "./gallery/GalleryClient";
@@ -10,50 +8,14 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const content = await getPublicContent();
-  const heroImage = content.home.heroImage || brandImage;
   const { about, brand, contact } = content;
   const galleryImages = content.gallery.map((image) => image.image);
-  const featureBadges = [
-    ["Premium", "Burgers"],
-    ["Stone-style", "Pizza"],
-    ["Crafted", "Cocktails"],
-    ["Live", "Jazz Nights"]
-  ];
 
   return (
     <>
       <Header brandData={content.brand} heroKicker="Welcome to" heroTitle="EMRAKEL" />
       <main className="referenceHome">
-        <section className="refHero" id="home">
-          <div className="heroBrandImage" aria-hidden="true">
-            <img src={heroImage} alt="" />
-          </div>
-          <div className="heroShade" />
-          <div className="refHeroContent">
-            <p className="refWelcome">Welcome to</p>
-            <h1>EMRAKEL</h1>
-            <p className="refSubtitle">Burger, Pizza &amp; Cocktail House</p>
-            <div className="refFeatureRow">
-              {featureBadges.map(([top, bottom]) => (
-                <div className="refFeature" key={top}>
-                  <span aria-hidden="true" />
-                  <strong>{top}</strong>
-                  <small>{bottom}</small>
-                </div>
-              ))}
-            </div>
-            <div className="refHeroActions">
-              <Link className="button buttonGold" href="/menu">
-                View Menu <span>&gt;</span>
-              </Link>
-              <Link className="button buttonGhost" href="/gallery">Gallery</Link>
-              <Link className="button buttonGhost" href="/about">About Us</Link>
-              <Link className="button buttonGhost" href="/contact">Contact</Link>
-            </div>
-          </div>
-        </section>
-
-        <section className="homeJazzOnly">
+        <section className="homeJazzOnly" id="home">
           <article className="refJazzCard">
             <img src={content.jazz?.image || "/uploads/house/jazz-night.png"} alt="" />
             <div>
