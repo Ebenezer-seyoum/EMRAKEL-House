@@ -14,14 +14,16 @@ function displayBrandName(brandData) {
   return subtitle ? `${brandData.name} ${subtitle}` : brandData.name;
 }
 
-export function Header({ brandData = brand }) {
+export function Header({ brandData = brand, variant = "" }) {
+  const headerClassName = variant === "homeHero" ? "siteHeader homeHeroHeader" : "siteHeader";
+
   return (
     <>
       <div className="topSupportBar">
         <span>Customer Support -</span>
         <a href="tel:+251991486512">+251991486512</a>
       </div>
-      <header className="siteHeader">
+      <header className={headerClassName}>
         <Link className="brandMark" href="/" aria-label="EMRAKEL home">
           <span className="logoShell">
             <img src={brandImage} alt="" />

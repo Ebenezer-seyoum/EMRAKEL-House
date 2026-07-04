@@ -27,7 +27,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Header brandData={content.brand} />
+      <Header brandData={content.brand} variant="homeHero" />
       <main className="referenceHome">
         <section className="refHero">
           <div className="heroBrandImage" aria-hidden="true">
