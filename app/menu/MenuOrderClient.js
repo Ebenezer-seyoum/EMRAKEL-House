@@ -25,16 +25,26 @@ export default function MenuOrderClient({ categories, items }) {
   const topCategories = categories.filter((category) => !category.parentId);
   const childCategories = (parentId) => categories.filter((category) => category.parentId === parentId);
   const categoryItems = (categoryId) => items.filter((item) => item.category === categoryId);
-  const boardSections = topCategories.slice(0, 6).map((category) => {
+  const boardSections = topCategories.map((category) => {
     const children = childCategories(category.id);
     const sections = children.length ? [category, ...children] : [category];
-    const boardItems = sections.flatMap((section) => categoryItems(section.id).slice(0, 5));
+    const boardItems = sections.flatMap((section) => categoryItems(section.id));
 
     return {
       ...category,
+      children,
       items: boardItems
     };
-  });
+  }).filter((section) => section.items.length);
+  const isDrinkSection = (section) =>
+    [section.id, section.name, section.description]
+      .join(" ")
+      .toLowerCase()
+      .match(/drink|shake|mojito|cocktail|juice|coffee|tea/);
+  const boardColumns = {
+    food: boardSections.filter((section) => !isDrinkSection(section)),
+    drinks: boardSections.filter((section) => isDrinkSection(section))
+  };
 
   useEffect(() => {
     const currentMenuUrl = `${window.location.origin}/menu`;
@@ -109,37 +119,49 @@ export default function MenuOrderClient({ categories, items }) {
   return (
     <>
       <section className="section menuBoardShowcase">
-        <div className="menuBoardPoster">
-          <img src="/uploads/house/menu-board-reference.jpg" alt="" />
-        </div>
         <div className="menuBoardDynamic">
-          <p className="eyebrow">EMRAKEL menu</p>
-          <h2>House menu</h2>
-          <p className="menuBoardIntro">
-            Admin-managed sections, subsections, images, prices, and availability. Update once in the dashboard and the
-            live digital menu changes automatically.
-          </p>
-          <div className="menuBoardPanels">
-            {boardSections.map((section, index) => (
-              <article className={index % 2 === 0 ? "menuBoardPanel dark" : "menuBoardPanel light"} key={section.id}>
-                <h3>{section.name}</h3>
-                {section.items.length ? (
-                  section.items.map((item) => (
-                    <p key={item.id}>
-                      <span>{item.name}</span>
-                      <i />
-                      <strong>{item.price} birr</strong>
-                    </p>
-                  ))
-                ) : (
-                  <p>
-                    <span>Coming soon</span>
-                    <i />
-                    <strong>--</strong>
-                  </p>
-                )}
-              </article>
-            ))}
+          <div className="menuBoardTitle">
+            <img src="/logo.png" alt="" />
+            <p>EMRAKEL</p>
+            <span>Burger, Pizza & Cocktail House</span>
+            <h2>Menu</h2>
+          </div>
+          <div className="menuBoardColumns">
+            <div className="menuBoardColumn foodColumn">
+              {boardColumns.food.map((section) => (
+                <article className="menuBoardSection" key={section.id}>
+                  {section.items[0]?.image ? <img src={section.items[0].image} alt="" /> : null}
+                  <div>
+                    <h3>{section.name}</h3>
+                    {section.items.slice(0, 8).map((item) => (
+                      <p key={item.id}>
+                        <span>{item.name}</span>
+                        <i />
+                        <strong>{item.price} birr</strong>
+                      </p>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+            <div className="menuBoardColumn drinkColumn">
+              <p className="drinkTagline">Refresh. Relax. Enjoy.</p>
+              {boardColumns.drinks.map((section) => (
+                <article className="menuBoardSection" key={section.id}>
+                  {section.items[0]?.image ? <img src={section.items[0].image} alt="" /> : null}
+                  <div>
+                    <h3>{section.name}</h3>
+                    {section.items.slice(0, 8).map((item) => (
+                      <p key={item.id}>
+                        <span>{item.name}</span>
+                        <i />
+                        <strong>{item.price} birr</strong>
+                      </p>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -148,6 +170,10 @@ export default function MenuOrderClient({ categories, items }) {
         {topCategories.map((category) => {
           const children = childCategories(category.id);
           const sections = children.length ? [category, ...children] : [category];
+          const hasItems = sections.some((section) => categoryItems(section.id).length);
+          if (!hasItems) {
+            return null;
+          }
 
           return (
           <div className="menuPosterSection" key={category.id}>
