@@ -66,6 +66,7 @@ export default function AdminDashboardClient() {
     }),
     [bookings, customers, feedback, items, orders]
   );
+  const mainCategories = categories.filter((category) => !category.parentId);
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("emrakelSession") || "null");
@@ -196,23 +197,64 @@ export default function AdminDashboardClient() {
     ]);
   }
 
+  function updateCategory(categoryId, updates) {
+    const nextId = updates.id || categoryId;
+    setCategories((current) =>
+      current.map((category) => {
+        if (category.id === categoryId) {
+          return { ...category, ...updates };
+        }
+        if (category.parentId === categoryId) {
+          return { ...category, parentId: nextId };
+        }
+        return category;
+      })
+    );
+    if (updates.id) {
+      setItems((current) => current.map((item) => (item.category === categoryId ? { ...item, category: updates.id } : item)));
+    }
+  }
+
   function deleteCategory(categoryId) {
-    setCategories((current) => current.filter((category) => category.id !== categoryId && category.parentId !== categoryId));
-    setItems((current) => current.filter((item) => item.category !== categoryId));
+    const removedIds = categories
+      .filter((category) => category.id === categoryId || category.parentId === categoryId)
+      .map((category) => category.id);
+    setCategories((current) => current.filter((category) => !removedIds.includes(category.id)));
+    setItems((current) => current.filter((item) => !removedIds.includes(item.category)));
+  }
+
+  function moveCategory(categoryId, direction) {
+    setCategories((current) => {
+      const index = current.findIndex((category) => category.id === categoryId);
+      const nextIndex = index + direction;
+      if (index < 0 || nextIndex < 0 || nextIndex >= current.length) {
+        return current;
+      }
+      const next = [...current];
+      const [category] = next.splice(index, 1);
+      next.splice(nextIndex, 0, category);
+      return next;
+    });
   }
 
   function addMenuItem() {
+    const firstSubsection = categories.find((category) => category.parentId);
+    const firstCategory = firstSubsection || categories[0];
     setItems((current) => [
       ...current,
       {
         id: `item-${Date.now()}`,
-        category: categories[0]?.id || "burgers",
+        category: firstCategory?.id || "burgers",
         name: "New Item",
         description: "Item description",
         price: 0,
         image: brandImage
       }
     ]);
+  }
+
+  function updateMenuItem(itemId, updates) {
+    setItems((current) => current.map((item) => (item.id === itemId ? { ...item, ...updates } : item)));
   }
 
   function deleteMenuItem(itemId) {
@@ -507,174 +549,164 @@ export default function AdminDashboardClient() {
 
       {activeTab === "menu" ? (
         <form className="adminStack" onSubmit={saveMenu}>
-          <div className="panel">
+          <div className="panel menuSectionManager">
             <div className="adminPanelHead">
-              <h2>Menu Sections</h2>
+              <div>
+                <p className="eyebrow">Menu structure</p>
+                <h2>Main sections and sub sections</h2>
+                <p className="contactText">
+                  Build the public menu like a real restaurant board. Add a main section, then add sub sections under it.
+                </p>
+              </div>
               <button className="button buttonLine compact" type="button" onClick={() => addCategory("")}>
-                Add Section
+                Add Main Section
               </button>
             </div>
-            {categories.map((category, index) => (
-              <div className="menuCategoryEditor" key={category.id}>
-                <input
-                  aria-label="Section key"
-                  value={category.id}
-                  onChange={(event) =>
-                    setCategories((current) =>
-                      current.map((item, itemIndex) =>
-                        itemIndex === index ? { ...item, id: event.target.value } : item
-                      )
-                    )
-                  }
-                />
-                <select
-                  aria-label="Parent section"
-                  value={category.parentId || ""}
-                  onChange={(event) =>
-                    setCategories((current) =>
-                      current.map((item, itemIndex) =>
-                        itemIndex === index ? { ...item, parentId: event.target.value } : item
-                      )
-                    )
-                  }
-                >
-                  <option value="">Main section</option>
-                  {categories
-                    .filter((item) => item.id !== category.id && !item.parentId)
-                    .map((item) => (
-                      <option key={item.id} value={item.id}>
-                        Under {item.name}
-                      </option>
-                    ))}
-                </select>
-                <input
-                  aria-label="Section name"
-                  value={category.name}
-                  onChange={(event) =>
-                    setCategories((current) =>
-                      current.map((item, itemIndex) =>
-                        itemIndex === index ? { ...item, name: event.target.value } : item
-                      )
-                    )
-                  }
-                />
-                <input
-                  aria-label="Section description"
-                  placeholder="Description"
-                  value={category.description || ""}
-                  onChange={(event) =>
-                    setCategories((current) =>
-                      current.map((item, itemIndex) =>
-                        itemIndex === index ? { ...item, description: event.target.value } : item
-                      )
-                    )
-                  }
-                />
-                <button className="button buttonLine compact" type="button" onClick={() => addCategory(category.id)}>
-                  Add Subsection
-                </button>
-                <button className="button buttonLine compact" type="button" onClick={() => deleteCategory(category.id)}>
-                  Delete
-                </button>
-              </div>
-            ))}
-          </div>
-          <div className="adminTableWrap">
-            <table className="adminTable">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Category</th>
-                  <th>Price</th>
-                  <th>Image URL</th>
-                  <th>Description</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((item, index) => (
-                  <tr key={item.id}>
-                    <td>
+            <div className="menuAdminSections">
+              {mainCategories.map((category) => (
+                <article className="menuAdminSectionCard" key={category.id}>
+                  <div className="menuAdminSectionHead">
+                    <div>
+                      <strong>{category.name || "Untitled section"}</strong>
+                      <span>{category.description || "Main menu section"}</span>
+                    </div>
+                    <div className="miniActions">
+                      <button className="button buttonLine compact" type="button" onClick={() => moveCategory(category.id, -1)}>
+                        Up
+                      </button>
+                      <button className="button buttonLine compact" type="button" onClick={() => moveCategory(category.id, 1)}>
+                        Down
+                      </button>
+                    </div>
+                  </div>
+                  <div className="menuCategoryEditor">
+                    <label>
+                      Section key
                       <input
-                        value={item.name}
-                        onChange={(event) =>
-                          setItems((current) =>
-                            current.map((row, rowIndex) =>
-                              rowIndex === index ? { ...row, name: event.target.value } : row
-                            )
-                          )
-                        }
+                        value={category.id}
+                        onChange={(event) => updateCategory(category.id, { id: event.target.value })}
                       />
-                    </td>
-                    <td>
-                      <select
-                        value={item.category}
-                        onChange={(event) =>
-                          setItems((current) =>
-                            current.map((row, rowIndex) =>
-                              rowIndex === index ? { ...row, category: event.target.value } : row
-                            )
-                          )
-                        }
-                      >
-                        {categories.map((category) => (
-                          <option key={category.id} value={category.id}>
-                            {category.name}
-                          </option>
-                        ))}
+                    </label>
+                    <label>
+                      Section name
+                      <input
+                        value={category.name}
+                        onChange={(event) => updateCategory(category.id, { name: event.target.value })}
+                      />
+                    </label>
+                    <label>
+                      Description
+                      <input
+                        value={category.description || ""}
+                        onChange={(event) => updateCategory(category.id, { description: event.target.value })}
+                      />
+                    </label>
+                  </div>
+                  <div className="subsectionEditor">
+                    <div className="adminPanelHead compactHead">
+                      <h3>Sub sections</h3>
+                      <button className="button buttonLine compact" type="button" onClick={() => addCategory(category.id)}>
+                        Add Sub Section
+                      </button>
+                    </div>
+                    {categories
+                      .filter((item) => item.parentId === category.id)
+                      .map((subsection) => (
+                        <div className="menuCategoryEditor subsectionRow" key={subsection.id}>
+                          <label>
+                            Key
+                            <input
+                              value={subsection.id}
+                              onChange={(event) => updateCategory(subsection.id, { id: event.target.value })}
+                            />
+                          </label>
+                          <label>
+                            Name
+                            <input
+                              value={subsection.name}
+                              onChange={(event) => updateCategory(subsection.id, { name: event.target.value })}
+                            />
+                          </label>
+                          <label>
+                            Description
+                            <input
+                              value={subsection.description || ""}
+                              onChange={(event) => updateCategory(subsection.id, { description: event.target.value })}
+                            />
+                          </label>
+                          <button className="button buttonLine compact" type="button" onClick={() => deleteCategory(subsection.id)}>
+                            Delete
+                          </button>
+                        </div>
+                      ))}
+                  </div>
+                  <button className="button buttonLine compact" type="button" onClick={() => deleteCategory(category.id)}>
+                    Delete Main Section
+                  </button>
+                </article>
+              ))}
+            </div>
+          </div>
+          <div className="panel">
+            <div className="adminPanelHead">
+              <div>
+                <p className="eyebrow">Menu items</p>
+                <h2>Items, prices, and images</h2>
+              </div>
+              <button className="button buttonLine compact" type="button" onClick={addMenuItem}>
+                Add Item
+              </button>
+            </div>
+            <div className="menuAdminItemGrid">
+              {items.map((item) => (
+                <article className="menuAdminItemCard" key={item.id}>
+                  <img src={item.image || brandImage} alt="" />
+                  <div className="menuAdminItemFields">
+                    <label>
+                      Item name
+                      <input value={item.name} onChange={(event) => updateMenuItem(item.id, { name: event.target.value })} />
+                    </label>
+                    <label>
+                      Section / Sub section
+                      <select value={item.category} onChange={(event) => updateMenuItem(item.id, { category: event.target.value })}>
+                        {categories.map((category) => {
+                          const parent = categories.find((item) => item.id === category.parentId);
+                          return (
+                            <option key={category.id} value={category.id}>
+                              {parent ? `${parent.name} / ${category.name}` : category.name}
+                            </option>
+                          );
+                        })}
                       </select>
-                    </td>
-                    <td>
+                    </label>
+                    <label>
+                      Price
                       <input
                         type="number"
                         value={item.price}
-                        onChange={(event) =>
-                          setItems((current) =>
-                            current.map((row, rowIndex) =>
-                              rowIndex === index ? { ...row, price: Number(event.target.value) } : row
-                            )
-                          )
-                        }
+                        onChange={(event) => updateMenuItem(item.id, { price: Number(event.target.value) })}
                       />
-                    </td>
-                    <td>
-                      <input
-                        value={item.image}
-                        onChange={(event) =>
-                          setItems((current) =>
-                            current.map((row, rowIndex) =>
-                              rowIndex === index ? { ...row, image: event.target.value } : row
-                            )
-                          )
-                        }
-                      />
-                    </td>
-                    <td>
+                    </label>
+                    <label>
+                      Image URL
+                      <input value={item.image} onChange={(event) => updateMenuItem(item.id, { image: event.target.value })} />
+                    </label>
+                    <label className="wideField">
+                      Description
                       <textarea
                         value={item.description}
-                        onChange={(event) =>
-                          setItems((current) =>
-                            current.map((row, rowIndex) =>
-                              rowIndex === index ? { ...row, description: event.target.value } : row
-                            )
-                          )
-                        }
+                        onChange={(event) => updateMenuItem(item.id, { description: event.target.value })}
                       />
-                    </td>
-                    <td>
-                      <button className="button buttonLine compact" type="button" onClick={() => deleteMenuItem(item.id)}>
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </label>
+                  </div>
+                  <button className="button buttonLine compact" type="button" onClick={() => deleteMenuItem(item.id)}>
+                    Delete Item
+                  </button>
+                </article>
+              ))}
+            </div>
           </div>
           <div className="actions">
-            <button className="button buttonLine" type="button" onClick={addMenuItem}>
-              Add Item
-            </button>
             <button className="button buttonGold" type="submit">
               Save Menu
             </button>

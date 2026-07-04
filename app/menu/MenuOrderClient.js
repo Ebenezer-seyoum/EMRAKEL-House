@@ -27,7 +27,7 @@ export default function MenuOrderClient({ categories, items }) {
   const categoryItems = (categoryId) => items.filter((item) => item.category === categoryId);
   const boardSections = topCategories.slice(0, 6).map((category) => {
     const children = childCategories(category.id);
-    const sections = children.length ? children : [category];
+    const sections = children.length ? [category, ...children] : [category];
     const boardItems = sections.flatMap((section) => categoryItems(section.id).slice(0, 5));
 
     return {
@@ -113,8 +113,12 @@ export default function MenuOrderClient({ categories, items }) {
           <img src="/uploads/house/menu-board-reference.jpg" alt="" />
         </div>
         <div className="menuBoardDynamic">
-          <p className="eyebrow">Grand opening menu</p>
-          <h2>House menu board</h2>
+          <p className="eyebrow">EMRAKEL menu</p>
+          <h2>House menu</h2>
+          <p className="menuBoardIntro">
+            Admin-managed sections, subsections, images, prices, and availability. Update once in the dashboard and the
+            live digital menu changes automatically.
+          </p>
           <div className="menuBoardPanels">
             {boardSections.map((section, index) => (
               <article className={index % 2 === 0 ? "menuBoardPanel dark" : "menuBoardPanel light"} key={section.id}>
@@ -143,7 +147,7 @@ export default function MenuOrderClient({ categories, items }) {
       <section className="section">
         {topCategories.map((category) => {
           const children = childCategories(category.id);
-          const sections = children.length ? children : [category];
+          const sections = children.length ? [category, ...children] : [category];
 
           return (
           <div className="menuPosterSection" key={category.id}>
@@ -153,11 +157,17 @@ export default function MenuOrderClient({ categories, items }) {
                 <h2>{category.name}</h2>
               </div>
             </div>
-            {sections.map((section) => (
+            {sections.map((section) => {
+              const sectionItems = categoryItems(section.id);
+              if (!sectionItems.length) {
+                return null;
+              }
+
+              return (
               <div className="menuSubsection" key={section.id}>
-                {children.length ? <h3>{section.name}</h3> : null}
+                {children.length ? <h3>{section.id === category.id ? "Featured" : section.name}</h3> : null}
                 <div className="menuListGrid">
-                  {categoryItems(section.id).map((item) => (
+                  {sectionItems.map((item) => (
                     <article className="menuListItem revealCard" key={item.id}>
                       <img src={item.image || "/uploads/house/menu-board-reference.jpg"} alt="" />
                       <div>
@@ -181,7 +191,7 @@ export default function MenuOrderClient({ categories, items }) {
                   ))}
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         )})}
       </section>

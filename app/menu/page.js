@@ -12,8 +12,8 @@ export default async function MenuPage() {
       <Header brandData={content.brand} />
       <main>
         <section className="pageHero">
-          <p className="eyebrow">Grand opening menu</p>
-          <h1>Choose burgers, pizza, shakes, mojito, and house favorites.</h1>
+          <p className="eyebrow">House menu</p>
+          <h1>Choose burgers, pizza, shakes, mojito, cocktails, and house favorites.</h1>
           <p className="pageLead">
             Sections, subsections, prices, descriptions, and item images are controlled from the admin dashboard.
           </p>
