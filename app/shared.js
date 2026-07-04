@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { brand, brandImage } from "@/lib/data";
 
 const links = [
@@ -17,6 +20,48 @@ function displayBrandName(brandData) {
 export function Header({ brandData = brand, variant = "" }) {
   const isHomeHero = variant === "homeHero";
   const headerClassName = isHomeHero ? "siteHeader homeHeroHeader" : "siteHeader";
+  const [openPanel, setOpenPanel] = useState("");
+  const [loginStatus, setLoginStatus] = useState("");
+  const [storyIndex, setStoryIndex] = useState(0);
+  const houseStories = [
+    "A warm house for burgers, pizza, cocktails, and relaxed evenings.",
+    "Hand-painted walls, leafy details, and golden light set the room mood.",
+    "Guests can scan the menu, choose quickly, and enjoy the house atmosphere.",
+    "Built for today with space for future online booking and customer service."
+  ];
+
+  useEffect(() => {
+    if (!isHomeHero) {
+      return undefined;
+    }
+
+    const timer = window.setInterval(() => {
+      setStoryIndex((current) => (current + 1) % houseStories.length);
+    }, 3600);
+
+    return () => window.clearInterval(timer);
+  }, [isHomeHero, houseStories.length]);
+
+  async function submitHeaderLogin(event) {
+    event.preventDefault();
+    setLoginStatus("Checking login...");
+
+    const formData = new FormData(event.currentTarget);
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(Object.fromEntries(formData.entries()))
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      setLoginStatus(data.error || "Login failed.");
+      return;
+    }
+
+    localStorage.setItem("emrakelSession", JSON.stringify(data.user));
+    window.location.href = data.user.role === "admin" ? "/admin" : "/customer";
+  }
 
   return (
     <>
@@ -42,12 +87,53 @@ export function Header({ brandData = brand, variant = "" }) {
           ))}
         </nav>
         <div className="navActions">
-          <Link className="button buttonLine compact bookHeaderButton" href="/book-table">
-            Book a Table
-          </Link>
-          <Link className="button buttonLine compact loginHeaderButton" href="/login">
-            Login
-          </Link>
+          <div className="headerDropdownWrap">
+            <button
+              className="button buttonLine compact bookHeaderButton"
+              onClick={() => setOpenPanel(openPanel === "book" ? "" : "book")}
+              type="button"
+            >
+              Book a Table
+            </button>
+            {openPanel === "book" ? (
+              <div className="headerDropdownPanel bookingDropdown">
+                <p className="dropdownEyebrow">Reserve by phone</p>
+                <strong>{brandData.phone}</strong>
+                <a className="button buttonGold compact" href={`tel:${brandData.phone.replace(/\s/g, "")}`}>
+                  Call Now
+                </a>
+                <p>Online table booking is prepared for the next upgrade. For now, call us and we will reserve your seat.</p>
+              </div>
+            ) : null}
+          </div>
+          <div className="headerDropdownWrap">
+            <button
+              className="button buttonLine compact loginHeaderButton"
+              onClick={() => setOpenPanel(openPanel === "login" ? "" : "login")}
+              type="button"
+            >
+              Login
+            </button>
+            {openPanel === "login" ? (
+              <div className="headerDropdownPanel loginDropdown">
+                <p className="dropdownEyebrow">Admin access</p>
+                <form onSubmit={submitHeaderLogin}>
+                  <label>
+                    Email
+                    <input name="email" required type="email" placeholder="admin@emrakel.com" />
+                  </label>
+                  <label>
+                    Password
+                    <input name="password" required type="password" placeholder="Password" />
+                  </label>
+                  <button className="button buttonGold compact" type="submit">
+                    Login
+                  </button>
+                </form>
+                {loginStatus ? <p>{loginStatus}</p> : null}
+              </div>
+            ) : null}
+          </div>
           {!isHomeHero ? (
             <Link className="navCartButton" href="/menu" aria-label="Open menu cart">
               <span className="cartGlyph" />
@@ -55,6 +141,11 @@ export function Header({ brandData = brand, variant = "" }) {
             </Link>
           ) : null}
         </div>
+        {isHomeHero ? (
+          <div className="heroRotatingText" aria-live="polite">
+            <span>{houseStories[storyIndex]}</span>
+          </div>
+        ) : null}
       </header>
     </>
   );

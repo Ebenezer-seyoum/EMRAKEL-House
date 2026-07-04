@@ -19,22 +19,27 @@ export default async function AboutPage() {
           </div>
           <img src={about.image} alt="" />
         </section>
-        <section className="section introGrid">
-          <div className="panel">
-            <h2>House style</h2>
+        <section className="section aboutStoryGrid">
+          <div className="aboutStoryText">
+            <p className="eyebrow">House style</p>
+            <h2>Designed for comfort, conversation, and evening energy.</h2>
             <p className="contactText">
-              A dark blue, charcoal, ivory, and brass palette follows the real interior mood: warm lights, leafy ceiling
-              details, black marble, and hand-painted walls.
+              EMRAKEL brings together warm lighting, painted walls, greenery, lounge seating, and a food-first menu so
+              guests can relax from the first scan of the menu to the last drink.
             </p>
           </div>
-          <div className="panel imagePanel">
+          <div className="aboutStoryImage">
             <img src={about.secondaryImage} alt="" />
           </div>
-          <div className="panel">
-            <h2>Food focus</h2>
+          <div className="aboutStoryImage">
+            <img src="/uploads/house/interior-08.jpg" alt="" />
+          </div>
+          <div className="aboutStoryText">
+            <p className="eyebrow">Food focus</p>
+            <h2>A simple house menu with room to grow.</h2>
             <p className="contactText">
-              Burgers, pizza, and cocktails each get clear menu categories, making the public site simple while keeping
-              the admin side flexible for daily updates.
+              Burgers, pizza, sandwiches, shawarma, shakes, mojito, and cocktails are arranged clearly for guests while
+              the admin dashboard keeps future edits practical.
             </p>
           </div>
         </section>

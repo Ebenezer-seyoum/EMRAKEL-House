@@ -35,6 +35,27 @@ function TextInput({ label, value, onChange, textarea = false, type = "text" }) 
   );
 }
 
+function ImageControl({ label, value, onChange, onUpload }) {
+  const preview = value || brandImage;
+
+  return (
+    <div className="imageControl">
+      <span>{label}</span>
+      <img src={preview} alt="" />
+      <div className="imageControlActions">
+        <button className="button buttonLine compact" type="button" onClick={() => onChange("")}>
+          Remove
+        </button>
+        <label className="button buttonDark compact">
+          Upload
+          <input accept="image/*" onChange={(event) => onUpload(event, onChange)} type="file" />
+        </label>
+      </div>
+      <input value={value || ""} onChange={(event) => onChange(event.target.value)} placeholder="/uploads/house/image.jpg" />
+    </div>
+  );
+}
+
 export default function AdminDashboardClient() {
   const [session, setSession] = useState(null);
   const [activeTab, setActiveTab] = useState("home");
@@ -116,6 +137,33 @@ export default function AdminDashboardClient() {
     setCustomers(customersData.customers || []);
     setFeedback(feedbackData.feedback || []);
     setStatus(emptyStatus);
+  }
+
+  async function uploadAdminImage(event, onChange) {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    setStatus({ type: "", message: "Uploading image..." });
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/uploads", {
+      method: "POST",
+      headers: { "x-emrakel-role": "admin" },
+      body: formData
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      setStatus({ type: "error", message: data.error || "Image upload failed." });
+      return;
+    }
+
+    onChange(data.url);
+    setStatus({ type: "success", message: "Image uploaded. Save this section to publish it." });
+    event.target.value = "";
   }
 
   async function saveSettings(event) {
@@ -409,10 +457,11 @@ export default function AdminDashboardClient() {
               value={home.description}
               onChange={(value) => setHome({ ...home, description: value })}
             />
-            <TextInput
-              label="Hero image URL"
+            <ImageControl
+              label="Hero image"
               value={home.heroImage}
               onChange={(value) => setHome({ ...home, heroImage: value })}
+              onUpload={uploadAdminImage}
             />
             <TextInput
               label="Primary button"
@@ -446,11 +495,17 @@ export default function AdminDashboardClient() {
           </div>
           <div className="panel">
             <h2>About Images</h2>
-            <TextInput label="Main image URL" value={about.image} onChange={(value) => setAbout({ ...about, image: value })} />
-            <TextInput
-              label="Secondary image URL"
+            <ImageControl
+              label="Main image"
+              value={about.image}
+              onChange={(value) => setAbout({ ...about, image: value })}
+              onUpload={uploadAdminImage}
+            />
+            <ImageControl
+              label="Secondary image"
               value={about.secondaryImage}
               onChange={(value) => setAbout({ ...about, secondaryImage: value })}
+              onUpload={uploadAdminImage}
             />
           </div>
           <button className="button buttonGold" type="submit">
@@ -478,7 +533,12 @@ export default function AdminDashboardClient() {
           </div>
           <div className="panel">
             <h2>Contact Image</h2>
-            <TextInput label="Image URL" value={contact.image} onChange={(value) => setContact({ ...contact, image: value })} />
+            <ImageControl
+              label="Contact image"
+              value={contact.image}
+              onChange={(value) => setContact({ ...contact, image: value })}
+              onUpload={uploadAdminImage}
+            />
           </div>
           <button className="button buttonGold" type="submit">
             Save Contact Page
@@ -539,7 +599,12 @@ export default function AdminDashboardClient() {
             <h2>Date and Image</h2>
             <TextInput label="Date" value={jazz.date} onChange={(value) => setJazz({ ...jazz, date: value })} />
             <TextInput label="Time" value={jazz.time} onChange={(value) => setJazz({ ...jazz, time: value })} />
-            <TextInput label="Image URL" value={jazz.image} onChange={(value) => setJazz({ ...jazz, image: value })} />
+            <ImageControl
+              label="Jazz image"
+              value={jazz.image}
+              onChange={(value) => setJazz({ ...jazz, image: value })}
+              onUpload={uploadAdminImage}
+            />
           </div>
           <button className="button buttonGold" type="submit">
             Save Jazz Section
@@ -687,10 +752,14 @@ export default function AdminDashboardClient() {
                         onChange={(event) => updateMenuItem(item.id, { price: Number(event.target.value) })}
                       />
                     </label>
-                    <label>
-                      Image URL
-                      <input value={item.image} onChange={(event) => updateMenuItem(item.id, { image: event.target.value })} />
-                    </label>
+                    <div className="wideField">
+                      <ImageControl
+                        label="Item image"
+                        value={item.image}
+                        onChange={(value) => updateMenuItem(item.id, { image: value })}
+                        onUpload={uploadAdminImage}
+                      />
+                    </div>
                     <label className="wideField">
                       Description
                       <textarea
@@ -719,7 +788,7 @@ export default function AdminDashboardClient() {
           <div className="cardGrid">
             {gallery.map((image, index) => (
               <div className="panel" key={image.id}>
-                <img className="adminPanelImage" src={image.image} alt="" />
+                <img className="adminPanelImage" src={image.image || brandImage} alt="" />
                 <TextInput
                   label="Title"
                   value={image.title}
@@ -729,14 +798,15 @@ export default function AdminDashboardClient() {
                     )
                   }
                 />
-                <TextInput
-                  label="Image URL"
+                <ImageControl
+                  label="Gallery image"
                   value={image.image}
                   onChange={(value) =>
                     setGallery((current) =>
                       current.map((item, itemIndex) => (itemIndex === index ? { ...item, image: value } : item))
                     )
                   }
+                  onUpload={uploadAdminImage}
                 />
                 <button className="button buttonLine compact" type="button" onClick={() => deleteGalleryImage(image.id)}>
                   Delete Image

@@ -1,5 +1,6 @@
 import { Footer, Header } from "../shared";
 import { getPublicContent } from "@/lib/cms";
+import GalleryClient from "./GalleryClient";
 
 export const dynamic = "force-dynamic";
 
@@ -14,15 +15,9 @@ export default async function GalleryPage() {
         <section className="pageHero">
           <p className="eyebrow">Gallery</p>
           <h1>Inside the EMRAKEL house.</h1>
-          <p className="pageLead">A moving gallery of murals, warm lights, seating, plants, and evening atmosphere.</p>
+          <p className="pageLead">Warm lights, seating, murals, plants, and the house atmosphere in one clean gallery.</p>
         </section>
-        <section className="section galleryGrid animatedGallery">
-          {galleryImages.concat(galleryImages.slice(0, 2)).map((image, index) => (
-            <figure key={`${image}-${index}`}>
-              <img src={image} alt="" />
-            </figure>
-          ))}
-        </section>
+        <GalleryClient images={galleryImages.concat(galleryImages.slice(0, 5))} />
       </main>
       <Footer brandData={content.brand} footerData={content.footer} />
     </>
