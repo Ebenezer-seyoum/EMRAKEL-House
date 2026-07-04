@@ -15,7 +15,8 @@ function displayBrandName(brandData) {
 }
 
 export function Header({ brandData = brand, variant = "" }) {
-  const headerClassName = variant === "homeHero" ? "siteHeader homeHeroHeader" : "siteHeader";
+  const isHomeHero = variant === "homeHero";
+  const headerClassName = isHomeHero ? "siteHeader homeHeroHeader" : "siteHeader";
 
   return (
     <>
@@ -47,10 +48,12 @@ export function Header({ brandData = brand, variant = "" }) {
           <Link className="button buttonLine compact loginHeaderButton" href="/login">
             Login
           </Link>
-          <Link className="navCartButton" href="/menu" aria-label="Open menu cart">
-            <span className="cartGlyph" />
-            <small>Cart</small>
-          </Link>
+          {!isHomeHero ? (
+            <Link className="navCartButton" href="/menu" aria-label="Open menu cart">
+              <span className="cartGlyph" />
+              <small>Cart</small>
+            </Link>
+          ) : null}
         </div>
       </header>
     </>

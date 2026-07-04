@@ -3696,3 +3696,39 @@ main:not(.adminMain),
     justify-self: stretch;
   }
 }
+
+/* Homepage customer-flow cleanup */
+.homeHeroHeader .navActions {
+  grid-template-columns: 190px 160px;
+  min-width: 366px;
+}
+
+.homeHeroHeader .bookHeaderButton,
+.homeHeroHeader .loginHeaderButton {
+  width: 100%;
+}
+
+@media (max-width: 1450px) {
+  .homeHeroHeader {
+    grid-template-columns: 245px minmax(480px, 1fr) minmax(314px, auto);
+  }
+
+  .homeHeroHeader .navActions {
+    grid-template-columns: 168px 132px;
+    min-width: 312px;
+  }
+}
+
+@media (max-width: 1120px) {
+  .homeHeroHeader .navActions {
+    grid-template-columns: 168px 132px;
+    min-width: 312px;
+  }
+}
+
+@media (max-width: 760px) {
+  .homeHeroHeader .navActions {
+    grid-template-columns: 1fr 1fr;
+    min-width: 0;
+  }
+}
