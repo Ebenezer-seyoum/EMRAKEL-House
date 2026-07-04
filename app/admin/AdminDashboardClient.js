@@ -265,7 +265,7 @@ export default function AdminDashboardClient() {
     <section className="adminShell">
       <aside className="adminSidebar">
         <div className="adminBrandBlock">
-          <img src="/logo.jpg" alt="" />
+          <img src="/logo.png" alt="" />
           <div>
             <strong>EMRAKEL</strong>
             <span>Admin console</span>

@@ -4,9 +4,9 @@ export const metadata = {
   title: "EMRAKEL | Burger, Pizza & Cocktail House",
   description: "Modern black-and-white burger house with table booking and online ordering.",
   icons: {
-    icon: "/logo.jpg",
-    shortcut: "/logo.jpg",
-    apple: "/logo.jpg"
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png"
   }
 };
 
