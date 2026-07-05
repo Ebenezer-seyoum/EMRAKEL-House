@@ -2,7 +2,7 @@ import "./globals.css";
 
 export const metadata = {
   title: "EMRAKEL | Burger, Pizza & Cocktail House",
-  description: "Modern black-and-white burger house with table booking and online ordering.",
+  description: "Order burgers, pizza, cocktails, and house favorites from EMRAKEL. Book a table, explore the menu, and enjoy a modern restaurant experience.",
   icons: {
     icon: "/logo.png",
     shortcut: "/logo.png",
