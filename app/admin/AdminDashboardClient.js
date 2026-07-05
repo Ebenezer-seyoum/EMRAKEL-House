@@ -149,15 +149,25 @@ export default function AdminDashboardClient() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch("/api/uploads", {
-      method: "POST",
-      headers: { "x-emrakel-role": "admin" },
-      body: formData
-    });
-    const data = await response.json();
+    let response;
+    let data;
+
+    try {
+      response = await fetch("/api/uploads", {
+        method: "POST",
+        headers: { "x-emrakel-role": "admin" },
+        body: formData
+      });
+      data = await response.json();
+    } catch (error) {
+      setStatus({ type: "error", message: error.message || "Image upload failed." });
+      event.target.value = "";
+      return;
+    }
 
     if (!response.ok) {
       setStatus({ type: "error", message: data.error || "Image upload failed." });
+      event.target.value = "";
       return;
     }
 
@@ -450,6 +460,16 @@ export default function AdminDashboardClient() {
           </div>
           <div className="panel">
             <h2>Homepage</h2>
+            <TextInput
+              label="Header kicker"
+              value={home.headerKicker}
+              onChange={(value) => setHome({ ...home, headerKicker: value })}
+            />
+            <TextInput
+              label="Header title"
+              value={home.headerTitle}
+              onChange={(value) => setHome({ ...home, headerTitle: value })}
+            />
             <TextInput label="Eyebrow" value={home.eyebrow} onChange={(value) => setHome({ ...home, eyebrow: value })} />
             <TextInput label="Headline" value={home.headline} onChange={(value) => setHome({ ...home, headline: value })} />
             <TextInput
@@ -474,6 +494,72 @@ export default function AdminDashboardClient() {
               value={home.secondaryAction}
               onChange={(value) => setHome({ ...home, secondaryAction: value })}
             />
+            <TextInput
+              label="Detail page back label"
+              value={home.backHomeLabel}
+              onChange={(value) => setHome({ ...home, backHomeLabel: value })}
+            />
+          </div>
+          <div className="panel">
+            <h2>Public Section Text</h2>
+            <TextInput
+              label="Menu page eyebrow"
+              value={home.menuPageEyebrow}
+              onChange={(value) => setHome({ ...home, menuPageEyebrow: value })}
+            />
+            <TextInput
+              label="Menu page title"
+              value={home.menuPageTitle}
+              onChange={(value) => setHome({ ...home, menuPageTitle: value })}
+            />
+            <TextInput
+              label="Menu page description"
+              textarea
+              value={home.menuPageDescription}
+              onChange={(value) => setHome({ ...home, menuPageDescription: value })}
+            />
+            <ImageControl
+              label="Menu page image"
+              value={home.menuPageImage}
+              onChange={(value) => setHome({ ...home, menuPageImage: value })}
+              onUpload={uploadAdminImage}
+            />
+            <TextInput
+              label="Menu view more label"
+              value={home.menuViewMoreLabel}
+              onChange={(value) => setHome({ ...home, menuViewMoreLabel: value })}
+            />
+            <TextInput
+              label="Gallery eyebrow"
+              value={home.galleryEyebrow}
+              onChange={(value) => setHome({ ...home, galleryEyebrow: value })}
+            />
+            <TextInput
+              label="Gallery headline"
+              value={home.galleryHeadline}
+              onChange={(value) => setHome({ ...home, galleryHeadline: value })}
+            />
+            <TextInput
+              label="Gallery description"
+              textarea
+              value={home.galleryDescription}
+              onChange={(value) => setHome({ ...home, galleryDescription: value })}
+            />
+            <TextInput
+              label="Gallery view more label"
+              value={home.galleryViewMoreLabel}
+              onChange={(value) => setHome({ ...home, galleryViewMoreLabel: value })}
+            />
+            <TextInput
+              label="About view more label"
+              value={home.aboutViewMoreLabel}
+              onChange={(value) => setHome({ ...home, aboutViewMoreLabel: value })}
+            />
+            <TextInput
+              label="Contact view more label"
+              value={home.contactViewMoreLabel}
+              onChange={(value) => setHome({ ...home, contactViewMoreLabel: value })}
+            />
           </div>
           <button className="button buttonGold" type="submit">
             Save Homepage
@@ -492,6 +578,38 @@ export default function AdminDashboardClient() {
               textarea
               value={about.description}
               onChange={(value) => setAbout({ ...about, description: value })}
+            />
+            <TextInput
+              label="Story eyebrow"
+              value={about.storyEyebrow}
+              onChange={(value) => setAbout({ ...about, storyEyebrow: value })}
+            />
+            <TextInput
+              label="Story headline"
+              value={about.storyHeadline}
+              onChange={(value) => setAbout({ ...about, storyHeadline: value })}
+            />
+            <TextInput
+              label="Story description"
+              textarea
+              value={about.storyDescription}
+              onChange={(value) => setAbout({ ...about, storyDescription: value })}
+            />
+            <TextInput
+              label="Second block eyebrow"
+              value={about.secondaryEyebrow}
+              onChange={(value) => setAbout({ ...about, secondaryEyebrow: value })}
+            />
+            <TextInput
+              label="Second block headline"
+              value={about.secondaryHeadline}
+              onChange={(value) => setAbout({ ...about, secondaryHeadline: value })}
+            />
+            <TextInput
+              label="Second block description"
+              textarea
+              value={about.secondaryDescription}
+              onChange={(value) => setAbout({ ...about, secondaryDescription: value })}
             />
           </div>
           <div className="panel">
@@ -530,6 +648,21 @@ export default function AdminDashboardClient() {
               textarea
               value={contact.description}
               onChange={(value) => setContact({ ...contact, description: value })}
+            />
+            <TextInput
+              label="Info eyebrow"
+              value={contact.infoEyebrow}
+              onChange={(value) => setContact({ ...contact, infoEyebrow: value })}
+            />
+            <TextInput
+              label="Form eyebrow"
+              value={contact.formEyebrow}
+              onChange={(value) => setContact({ ...contact, formEyebrow: value })}
+            />
+            <TextInput
+              label="Form headline"
+              value={contact.formHeadline}
+              onChange={(value) => setContact({ ...contact, formHeadline: value })}
             />
           </div>
           <div className="panel">
@@ -600,6 +733,11 @@ export default function AdminDashboardClient() {
             <h2>Date and Image</h2>
             <TextInput label="Date" value={jazz.date} onChange={(value) => setJazz({ ...jazz, date: value })} />
             <TextInput label="Time" value={jazz.time} onChange={(value) => setJazz({ ...jazz, time: value })} />
+            <TextInput
+              label="Action label"
+              value={jazz.actionLabel}
+              onChange={(value) => setJazz({ ...jazz, actionLabel: value })}
+            />
             <ImageControl
               label="Jazz image"
               value={jazz.image}

@@ -1377,6 +1377,7 @@ textarea {
   position: sticky;
   top: 0;
   height: 100vh;
+  min-height: 0;
   display: grid;
   grid-template-rows: auto 1fr auto;
   gap: 24px;
@@ -1419,6 +1420,20 @@ textarea {
   align-content: start;
   gap: 8px;
   color: inherit;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.26) transparent;
+}
+
+.adminSideNav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.adminSideNav::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
 }
 
 .adminSideNav button {
@@ -4997,6 +5012,213 @@ html {
   }
 
   .sectionDetailHero {
+    min-height: auto;
+  }
+}
+
+/* Reference-style printed menu board */
+.menuBoardShowcase {
+  padding: clamp(24px, 5vw, 58px);
+  background:
+    radial-gradient(circle at center top, rgba(216, 168, 62, 0.18), transparent 30%),
+    linear-gradient(180deg, #090604, #17100a);
+}
+
+.menuBoardDynamic {
+  width: min(1040px, 100%);
+  border: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.42);
+}
+
+.menuBoardTitle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.menuBoardColumns {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.menuBoardColumn {
+  position: relative;
+  min-height: clamp(820px, 120vw, 1220px);
+  border-radius: 2px;
+  padding: clamp(28px, 4vw, 54px) clamp(20px, 3vw, 36px);
+  overflow: hidden;
+}
+
+.menuBoardColumn::before,
+.menuBoardColumn::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+
+.menuBoardColumn::before {
+  inset: 12px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  opacity: 0.72;
+}
+
+.menuBoardColumn::after {
+  inset: 22px;
+  border: 1px solid currentColor;
+  border-radius: 14px;
+  opacity: 0.24;
+}
+
+.foodColumn {
+  color: #d8a83e;
+  border: 0;
+  background:
+    linear-gradient(180deg, rgba(7, 7, 7, 0.94), rgba(12, 8, 5, 0.98)),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 6px);
+}
+
+.foodColumn::before {
+  box-shadow: inset 0 0 0 1px rgba(216, 168, 62, 0.24);
+}
+
+.foodColumn .menuBoardSection:first-child::before {
+  content: "GRAND\AOPENING\A MENU";
+  display: block;
+  white-space: pre-line;
+  margin: 0 0 28px;
+  color: #f6f0e6;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: clamp(42px, 5vw, 68px);
+  font-weight: 900;
+  line-height: 0.84;
+  letter-spacing: 0.03em;
+  text-align: center;
+  text-shadow: 0 3px 0 rgba(216, 168, 62, 0.22);
+}
+
+.drinkColumn {
+  color: #b28a36;
+  border: 0;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(79, 111, 63, 0.1), transparent 22%),
+    linear-gradient(180deg, rgba(250, 239, 216, 0.98), rgba(239, 222, 190, 0.98));
+}
+
+.drinkTagline {
+  position: relative;
+  z-index: 1;
+  margin: 18px 0 54px;
+  color: #48633d;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 3.2vw, 44px);
+  font-style: italic;
+  font-weight: 500;
+  text-align: center;
+}
+
+.menuBoardSection {
+  position: relative;
+  z-index: 1;
+  grid-template-columns: minmax(110px, 0.55fr) minmax(0, 1fr);
+  gap: clamp(14px, 2vw, 24px);
+  margin-bottom: clamp(24px, 3.3vw, 42px);
+  padding: 0 0 clamp(24px, 3vw, 36px);
+  border-bottom: 1px solid rgba(216, 168, 62, 0.58);
+}
+
+.drinkColumn .menuBoardSection {
+  border-bottom-color: rgba(72, 99, 61, 0.24);
+}
+
+.menuBoardSection > img {
+  align-self: center;
+  width: min(170px, 100%);
+  aspect-ratio: 1 / 1;
+  border: 0;
+  border-radius: 0;
+  object-fit: cover;
+  filter: saturate(1.08) contrast(1.04);
+  box-shadow: none;
+  mix-blend-mode: normal;
+}
+
+.foodColumn .menuBoardSection > img {
+  border-radius: 50%;
+  filter: saturate(1.1) contrast(1.08);
+}
+
+.drinkColumn .menuBoardSection > img {
+  border-radius: 8px;
+  filter: saturate(1.02) contrast(1);
+}
+
+.menuBoardSection h3 {
+  display: inline-grid;
+  min-width: min(230px, 100%);
+  margin: 0 0 18px;
+  border: 0;
+  border-radius: 1px;
+  padding: 9px 22px 10px;
+  background:
+    linear-gradient(90deg, transparent 0 5%, #d8a83e 5% 95%, transparent 95%),
+    linear-gradient(180deg, #d8a83e, #b78325);
+  color: #140d07;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: clamp(22px, 2.4vw, 31px);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+  box-shadow: none;
+}
+
+.drinkColumn .menuBoardSection h3 {
+  min-width: min(250px, 100%);
+  background:
+    linear-gradient(90deg, transparent 0 4%, #48633d 4% 96%, transparent 96%),
+    linear-gradient(180deg, #48633d, #405936);
+  color: #f7efe2;
+}
+
+.menuBoardSection p {
+  grid-template-columns: minmax(0, auto) minmax(24px, 1fr) auto;
+  margin: 0 0 12px;
+  color: #f7efe2;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(15px, 1.45vw, 18px);
+}
+
+.drinkColumn .menuBoardSection p {
+  color: #20170d;
+}
+
+.menuBoardSection i {
+  border-bottom: 2px dotted currentColor;
+  opacity: 0.54;
+  transform: translateY(-5px);
+}
+
+.menuBoardSection strong {
+  color: inherit;
+  font-weight: 500;
+}
+
+.drinkColumn .menuBoardSection strong {
+  color: inherit;
+}
+
+@media (max-width: 860px) {
+  .menuBoardColumns {
+    grid-template-columns: 1fr;
+  }
+
+  .menuBoardColumn {
     min-height: auto;
   }
 }

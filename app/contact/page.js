@@ -14,10 +14,11 @@ export default async function ContactPage() {
       title={contact.headline}
       description={contact.description}
       image={contact.image}
+      backLabel={content.home.backHomeLabel}
     >
       <section className="section contactSplit">
         <div className="contactInfoPanel">
-          <p className="eyebrow">Contact information</p>
+          <p className="eyebrow">{contact.infoEyebrow}</p>
           <h2>{brand.name}</h2>
           <p className="contactText">{brand.address}</p>
           <p className="contactText">{brand.hours}</p>
@@ -26,8 +27,8 @@ export default async function ContactPage() {
           <img src={contact.image} alt="" />
         </div>
         <div className="formPanel feedbackPanel">
-          <p className="eyebrow">Feedback form</p>
-          <h2>Send us a message.</h2>
+          <p className="eyebrow">{contact.formEyebrow}</p>
+          <h2>{contact.formHeadline}</h2>
           <ContactFormClient />
         </div>
       </section>

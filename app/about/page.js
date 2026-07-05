@@ -8,29 +8,29 @@ export default async function AboutPage() {
   const { about } = content;
 
   return (
-    <SectionPageShell eyebrow={about.eyebrow} title={about.headline} description={about.description} image={about.image}>
+    <SectionPageShell
+      eyebrow={about.eyebrow}
+      title={about.headline}
+      description={about.description}
+      image={about.image}
+      backLabel={content.home.backHomeLabel}
+    >
       <section className="section aboutStoryGrid">
         <div className="aboutStoryImage">
           <img src={about.image} alt="" />
         </div>
         <div className="aboutStoryText">
-          <p className="eyebrow">House style</p>
-          <h2>Designed for comfort, conversation, and evening energy.</h2>
-          <p className="contactText">
-            EMRAKEL brings together warm lighting, painted walls, greenery, lounge seating, and a food-first menu so
-            guests can relax from the first scan of the menu to the last drink.
-          </p>
+          <p className="eyebrow">{about.storyEyebrow}</p>
+          <h2>{about.storyHeadline}</h2>
+          <p className="contactText">{about.storyDescription}</p>
         </div>
         <div className="aboutStoryImage">
           <img src={about.secondaryImage} alt="" />
         </div>
         <div className="aboutStoryText">
-          <p className="eyebrow">Food focus</p>
-          <h2>A simple house menu with room to grow.</h2>
-          <p className="contactText">
-            Burgers, pizza, sandwiches, shawarma, shakes, mojito, and cocktails are arranged clearly for guests while
-            the admin dashboard keeps future edits practical.
-          </p>
+          <p className="eyebrow">{about.secondaryEyebrow}</p>
+          <h2>{about.secondaryHeadline}</h2>
+          <p className="contactText">{about.secondaryDescription}</p>
         </div>
       </section>
     </SectionPageShell>

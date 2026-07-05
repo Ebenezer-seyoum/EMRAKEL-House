@@ -15,17 +15,22 @@ export default async function HomePage() {
 
   return (
     <>
-      <Header brandData={content.brand} heroKicker="Welcome to" heroTitle="EMRAKEL" />
+      <Header
+        brandData={content.brand}
+        heroKicker={content.home.headerKicker}
+        heroTitle={content.home.headerTitle}
+        heroText={content.home.description}
+      />
       <main className="referenceHome">
         <section className="homeJazzOnly" id="home">
           <article className="refJazzCard">
             <img src={content.jazz?.image || "/uploads/house/jazz-night.png"} alt="" />
             <div>
-              <p>{content.jazz?.eyebrow || "Live Performance"}</p>
-              <h2>Jazz Night</h2>
-              <span>{content.jazz?.date || "Every Saturday"}</span>
-              <span>{content.jazz?.time || "7:00 PM - 10:00 PM"}</span>
-              <Link href="/contact">Call to Reserve</Link>
+              <p>{content.jazz?.eyebrow}</p>
+              <h2>{content.jazz?.title}</h2>
+              <span>{content.jazz?.date}</span>
+              <span>{content.jazz?.time}</span>
+              <Link href="/contact">{content.jazz?.actionLabel}</Link>
             </div>
           </article>
         </section>
@@ -33,7 +38,7 @@ export default async function HomePage() {
         <div id="menu" className="homeScrollSection">
           <div className="homeSectionAction">
             <Link className="button buttonGold" href="/menu">
-              View More
+              {content.home.menuViewMoreLabel}
             </Link>
           </div>
           <MenuOrderClient categories={content.categories} items={content.items} previewLimitItems={3} />
@@ -41,11 +46,11 @@ export default async function HomePage() {
 
         <div id="gallery" className="homeScrollSection">
           <div className="homeSectionIntro">
-            <p className="eyebrow">Gallery</p>
-            <h2>Inside the EMRAKEL house.</h2>
-            <p>Warm lights, seating, murals, plants, and the house atmosphere in one clean gallery.</p>
+            <p className="eyebrow">{content.home.galleryEyebrow}</p>
+            <h2>{content.home.galleryHeadline}</h2>
+            <p>{content.home.galleryDescription}</p>
             <Link className="button buttonGold" href="/gallery">
-              View More
+              {content.home.galleryViewMoreLabel}
             </Link>
           </div>
           <GalleryClient images={latestGalleryImages} />
@@ -60,25 +65,22 @@ export default async function HomePage() {
             <h2>{about.headline}</h2>
             <p className="contactText">{about.description}</p>
             <Link className="button buttonGold" href="/about">
-              View More
+              {content.home.aboutViewMoreLabel}
             </Link>
           </div>
           <div className="aboutStoryImage">
             <img src={about.secondaryImage} alt="" />
           </div>
           <div className="aboutStoryText">
-            <p className="eyebrow">Food focus</p>
-            <h2>A simple house menu with room to grow.</h2>
-            <p className="contactText">
-              Burgers, pizza, sandwiches, shawarma, shakes, mojito, and cocktails are arranged clearly for guests while
-              the admin dashboard keeps future edits practical.
-            </p>
+            <p className="eyebrow">{about.secondaryEyebrow}</p>
+            <h2>{about.secondaryHeadline}</h2>
+            <p className="contactText">{about.secondaryDescription}</p>
           </div>
         </section>
 
         <section id="contact" className="section contactSplit homeScrollSection">
           <div className="contactInfoPanel">
-            <p className="eyebrow">Contact information</p>
+            <p className="eyebrow">{contact.infoEyebrow}</p>
             <h2>{brand.name}</h2>
             <p className="contactText">{brand.address}</p>
             <p className="contactText">{brand.hours}</p>
@@ -87,11 +89,11 @@ export default async function HomePage() {
             <img src={contact.image} alt="" />
           </div>
           <div className="formPanel feedbackPanel">
-            <p className="eyebrow">Feedback form</p>
-            <h2>Send us a message.</h2>
+            <p className="eyebrow">{contact.formEyebrow}</p>
+            <h2>{contact.formHeadline}</h2>
             <ContactFormClient />
             <Link className="button buttonGold sectionPanelAction" href="/contact">
-              View More
+              {content.home.contactViewMoreLabel}
             </Link>
           </div>
         </section>

@@ -1,12 +1,12 @@
 import Link from "next/link";
 
-export function SectionPageShell({ eyebrow, title, description, image, children }) {
+export function SectionPageShell({ eyebrow, title, description, image, backLabel = "Back to home", children }) {
   return (
     <main className="sectionDetailPage">
       <section className={image ? "sectionDetailHero sectionDetailHeroWithImage" : "sectionDetailHero"}>
         <div>
           <Link className="sectionBackLink" href="/">
-            Back to home
+            {backLabel}
           </Link>
           <p className="eyebrow">{eyebrow}</p>
           <h1>{title}</h1>

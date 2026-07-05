@@ -10,10 +10,11 @@ export default async function GalleryPage() {
 
   return (
     <SectionPageShell
-      eyebrow="Gallery"
-      title="Inside the EMRAKEL house."
-      description="Warm lights, seating, murals, plants, and the house atmosphere in one clean gallery."
+      eyebrow={content.home.galleryEyebrow}
+      title={content.home.galleryHeadline}
+      description={content.home.galleryDescription}
       image={galleryImages[0] || "/uploads/house/interior-08.jpg"}
+      backLabel={content.home.backHomeLabel}
     >
       <GalleryClient images={galleryImages.concat(galleryImages.slice(0, 5))} />
     </SectionPageShell>

@@ -9,10 +9,11 @@ export default async function MenuPage() {
 
   return (
     <SectionPageShell
-      eyebrow="House menu"
-      title="EMRAKEL Menu"
-      description="Scan, choose, and enjoy burgers, pizza, shakes, mojito, cocktails, and house favorites."
-      image="/uploads/house/interior-08.jpg"
+      eyebrow={content.home.menuPageEyebrow}
+      title={content.home.menuPageTitle}
+      description={content.home.menuPageDescription}
+      image={content.home.menuPageImage}
+      backLabel={content.home.backHomeLabel}
     >
       <MenuOrderClient categories={content.categories} items={content.items} />
     </SectionPageShell>
