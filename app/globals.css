@@ -4040,6 +4040,78 @@ main:not(.adminMain),
   margin-bottom: 0;
 }
 
+.menuSimpleHeader .menuAdminToolbar {
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+}
+
+.menuSimpleHeader {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+
+.menuSimpleStack {
+  display: grid;
+  gap: 18px;
+}
+
+.menuSimpleSection {
+  border: 1px solid rgba(216, 168, 62, 0.38);
+  border-radius: 8px;
+  padding: clamp(16px, 2vw, 22px);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 247, 0.98), rgba(246, 241, 232, 0.94));
+  box-shadow: 0 18px 42px rgba(9, 10, 12, 0.08);
+}
+
+.menuSimpleSectionHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.menuSimpleSectionHead h3 {
+  margin: 0;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 3.4vw, 44px);
+}
+
+.menuSimpleFields {
+  display: grid;
+  grid-template-columns: minmax(160px, 0.55fr) minmax(220px, 1fr);
+  gap: 12px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(21, 21, 21, 0.1);
+}
+
+.menuSimpleFields label,
+.menuSimpleItems label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.menuSimpleFields .wideField {
+  grid-column: 1 / -1;
+}
+
+.menuSimpleFields textarea {
+  min-height: 76px;
+}
+
+.menuSimpleChildren,
+.menuSimpleItems {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+}
+
 .menuSideSwitch {
   display: inline-flex;
   gap: 4px;
@@ -4331,7 +4403,9 @@ main:not(.adminMain),
   .menuAdminItemCard,
   .menuAdminItemFields,
   .menuAdminToolbar.itemToolbar,
+  .menuSimpleHeader .menuAdminToolbar,
   .menuWorkspaceControls,
+  .menuSimpleFields,
   .menuWorkspaceGrid,
   .menuSectionDetailGrid,
   .menuSubsectionFields,
@@ -4350,6 +4424,7 @@ main:not(.adminMain),
   }
 
   .menuSectionDetailHeader,
+  .menuSimpleSectionHead,
   .compactHead {
     align-items: stretch;
     flex-direction: column;

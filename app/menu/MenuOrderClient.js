@@ -60,7 +60,6 @@ export default function MenuOrderClient({ categories, items, previewLimitItems =
               )}
             </div>
             <div className="menuBoardColumn drinkColumn">
-              <p className="drinkTagline">Refresh. Relax. Enjoy.</p>
               {boardColumns.drinks.length ? boardColumns.drinks.map((section) => renderSection(section)) : (
                 <p className="menuBoardEmpty">Drink menu coming soon.</p>
               )}
