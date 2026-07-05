@@ -1,9 +1,10 @@
 "use client";
 
-export default function MenuOrderClient({ categories, items }) {
+export default function MenuOrderClient({ categories, items, previewLimitItems = 0 }) {
   const topCategories = categories.filter((category) => !category.parentId);
   const childCategories = (parentId) => categories.filter((category) => category.parentId === parentId);
-  const categoryItems = (categoryId) => items.filter((item) => item.category === categoryId);
+  const visibleItems = previewLimitItems ? items.slice(-previewLimitItems) : items;
+  const categoryItems = (categoryId) => visibleItems.filter((item) => item.category === categoryId);
   const boardSections = topCategories
     .flatMap((category) => {
       const children = childCategories(category.id);
@@ -23,6 +24,25 @@ export default function MenuOrderClient({ categories, items }) {
     food: boardSections.filter((section) => !isDrinkSection(section)),
     drinks: boardSections.filter((section) => isDrinkSection(section))
   };
+  const renderSection = (section, imageClassName = "") => {
+    const sectionImage = section.image || section.items[0]?.image;
+
+    return (
+      <article className="menuBoardSection" key={section.id}>
+        {sectionImage ? <img className={imageClassName} src={sectionImage} alt="" /> : null}
+        <div>
+          <h3>{section.name}</h3>
+          {section.items.slice(0, previewLimitItems ? 5 : 10).map((item) => (
+            <p key={item.id}>
+              <span>{item.name}</span>
+              <i />
+              <strong>{item.price} birr</strong>
+            </p>
+          ))}
+        </div>
+      </article>
+    );
+  };
 
   return (
       <section className="menuBoardShowcase scanMenuPage">
@@ -35,39 +55,15 @@ export default function MenuOrderClient({ categories, items }) {
           </div>
           <div className="menuBoardColumns">
             <div className="menuBoardColumn foodColumn">
-              {boardColumns.food.map((section) => (
-                <article className="menuBoardSection" key={section.id}>
-                  {section.items[0]?.image ? <img src={section.items[0].image} alt="" /> : null}
-                  <div>
-                    <h3>{section.name}</h3>
-                    {section.items.slice(0, 10).map((item) => (
-                      <p key={item.id}>
-                        <span>{item.name}</span>
-                        <i />
-                        <strong>{item.price} birr</strong>
-                      </p>
-                    ))}
-                  </div>
-                </article>
-              ))}
+              {boardColumns.food.length ? boardColumns.food.map((section) => renderSection(section)) : (
+                <p className="menuBoardEmpty">Food menu coming soon.</p>
+              )}
             </div>
             <div className="menuBoardColumn drinkColumn">
               <p className="drinkTagline">Refresh. Relax. Enjoy.</p>
-              {boardColumns.drinks.map((section) => (
-                <article className="menuBoardSection" key={section.id}>
-                  {section.items[0]?.image ? <img src={section.items[0].image} alt="" /> : null}
-                  <div>
-                    <h3>{section.name}</h3>
-                    {section.items.slice(0, 10).map((item) => (
-                      <p key={item.id}>
-                        <span>{item.name}</span>
-                        <i />
-                        <strong>{item.price} birr</strong>
-                      </p>
-                    ))}
-                  </div>
-                </article>
-              ))}
+              {boardColumns.drinks.length ? boardColumns.drinks.map((section) => renderSection(section)) : (
+                <p className="menuBoardEmpty">Drink menu coming soon.</p>
+              )}
             </div>
           </div>
         </div>

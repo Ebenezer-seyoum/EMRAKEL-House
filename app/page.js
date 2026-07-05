@@ -11,6 +11,7 @@ export default async function HomePage() {
   const content = await getPublicContent();
   const { about, brand, contact } = content;
   const galleryImages = content.gallery.map((image) => image.image);
+  const latestGalleryImages = galleryImages.slice(-3).reverse();
 
   return (
     <>
@@ -35,7 +36,7 @@ export default async function HomePage() {
               View More
             </Link>
           </div>
-          <MenuOrderClient categories={content.categories} items={content.items} />
+          <MenuOrderClient categories={content.categories} items={content.items} previewLimitItems={3} />
         </div>
 
         <div id="gallery" className="homeScrollSection">
@@ -47,7 +48,7 @@ export default async function HomePage() {
               View More
             </Link>
           </div>
-          <GalleryClient images={galleryImages.concat(galleryImages.slice(0, 5))} />
+          <GalleryClient images={latestGalleryImages} />
         </div>
 
         <section id="about" className="section aboutStoryGrid homeScrollSection">

@@ -15,20 +15,30 @@ export async function PUT(request) {
   const gallery = Array.isArray(body.gallery) ? body.gallery : [];
   const supabase = getSupabaseServer();
 
-  if (!supabase) {
+  async function saveLocalGallery(message = "Gallery saved locally.") {
     const state = await getLocalState();
     const next = await saveLocalState({ ...state, gallery });
-    return Response.json({ message: "Gallery saved locally.", gallery: next.gallery, source: "local" });
+    return Response.json({ message, gallery: next.gallery, source: "local" });
   }
 
-  await supabase.from("gallery_images").delete().neq("id", "00000000-0000-0000-0000-000000000000");
-  const rows = gallery.map((item, index) => ({
-    title: item.title || `Gallery ${index + 1}`,
-    image_url: item.image,
-    sort_order: index + 1,
-    is_active: true
-  }));
-  const { error } = rows.length ? await supabase.from("gallery_images").insert(rows) : { error: null };
+  if (!supabase) {
+    return saveLocalGallery();
+  }
+
+  let error;
+
+  try {
+    await supabase.from("gallery_images").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    const rows = gallery.map((item, index) => ({
+      title: item.title || `Gallery ${index + 1}`,
+      image_url: item.image,
+      sort_order: index + 1,
+      is_active: true
+    }));
+    ({ error } = rows.length ? await supabase.from("gallery_images").insert(rows) : { error: null });
+  } catch {
+    return saveLocalGallery("Gallery saved locally because Supabase is unavailable.");
+  }
 
   if (error) {
     return Response.json({ error: error.message }, { status: 500 });

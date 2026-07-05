@@ -10,6 +10,12 @@ const users = [
     name: "EMRAKEL Admin"
   },
   {
+    role: "admin",
+    email: "eyob@gmail.com",
+    password: "12345678",
+    name: "Eyob Admin"
+  },
+  {
     role: "customer",
     email: process.env.CUSTOMER_EMAIL || "customer@emrakel.house",
     password: process.env.CUSTOMER_PASSWORD || "customer123",
@@ -28,30 +34,40 @@ export async function POST(request) {
   const email = String(body.email).toLowerCase();
 
   if (supabase) {
-    const { data: user, error } = await supabase
-      .from("app_users")
-      .select("id,email,password_hash,name,phone,role")
-      .eq("email", email)
-      .single();
+    let authResult;
 
-    if (error && error.code !== "PGRST116") {
+    try {
+      authResult = await supabase
+        .from("app_users")
+        .select("id,email,password_hash,name,phone,role")
+        .eq("email", email)
+        .single();
+    } catch (error) {
+      authResult = { error };
+    }
+
+    const { data: user, error } = authResult;
+
+    if (error && error.code !== "PGRST116" && !String(error.message || error).includes("fetch failed")) {
       return Response.json({ error: error.message }, { status: 500 });
     }
 
-    if (!user || !verifyPassword(body.password, user.password_hash)) {
-      return Response.json({ error: "Invalid login details." }, { status: 401 });
-    }
-
-    return ok({
-      message: "Login successful.",
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        phone: user.phone,
-        role: user.role
+    if (user) {
+      if (!verifyPassword(body.password, user.password_hash)) {
+        return Response.json({ error: "Invalid login details." }, { status: 401 });
       }
-    });
+
+      return ok({
+        message: "Login successful.",
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          phone: user.phone,
+          role: user.role
+        }
+      });
+    }
   }
 
   const user = users.find(

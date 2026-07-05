@@ -3820,6 +3820,10 @@ main:not(.adminMain),
   align-items: end;
 }
 
+.menuCategoryEditor .wideField {
+  grid-column: 1 / -1;
+}
+
 .menuCategoryEditor label,
 .menuAdminItemFields label {
   display: grid;
@@ -4015,6 +4019,7 @@ main:not(.adminMain),
   width: 100%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
+  border: 1px solid rgba(216, 168, 62, 0.34);
   border-radius: 50%;
   filter: saturate(1.06) contrast(1.05);
   box-shadow: 0 18px 38px rgba(0, 0, 0, 0.28);
@@ -4023,6 +4028,19 @@ main:not(.adminMain),
 .drinkColumn .menuBoardSection > img {
   border-radius: 8px;
   box-shadow: 0 18px 38px rgba(72, 63, 42, 0.14);
+}
+
+.menuBoardEmpty {
+  margin: 0;
+  color: rgba(247, 239, 226, 0.72);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.drinkColumn .menuBoardEmpty {
+  color: rgba(31, 23, 13, 0.68);
 }
 
 .menuBoardSection h3 {

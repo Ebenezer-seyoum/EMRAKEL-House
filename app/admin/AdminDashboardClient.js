@@ -240,7 +240,8 @@ export default function AdminDashboardClient() {
         id,
         parentId,
         name: parentId ? "New Subsection" : "New Section",
-        description: ""
+        description: "",
+        image: brandImage
       }
     ]);
   }
@@ -666,6 +667,14 @@ export default function AdminDashboardClient() {
                         onChange={(event) => updateCategory(category.id, { description: event.target.value })}
                       />
                     </label>
+                    <div className="wideField">
+                      <ImageControl
+                        label="Section image"
+                        value={category.image}
+                        onChange={(value) => updateCategory(category.id, { image: value })}
+                        onUpload={uploadAdminImage}
+                      />
+                    </div>
                   </div>
                   <div className="subsectionEditor">
                     <div className="adminPanelHead compactHead">
@@ -699,6 +708,14 @@ export default function AdminDashboardClient() {
                               onChange={(event) => updateCategory(subsection.id, { description: event.target.value })}
                             />
                           </label>
+                          <div className="wideField">
+                            <ImageControl
+                              label="Section image"
+                              value={subsection.image}
+                              onChange={(value) => updateCategory(subsection.id, { image: value })}
+                              onUpload={uploadAdminImage}
+                            />
+                          </div>
                           <button className="button buttonLine compact" type="button" onClick={() => deleteCategory(subsection.id)}>
                             Delete
                           </button>

@@ -22,7 +22,7 @@ export async function PUT(request) {
   const body = await request.json();
   const supabase = getSupabaseServer();
 
-  if (!supabase) {
+  async function saveLocalSettings(message = "Settings saved locally.") {
     const state = await getLocalState();
     const next = await saveLocalState({
       ...state,
@@ -33,7 +33,11 @@ export async function PUT(request) {
       footer: { ...state.footer, ...(body.footer || {}) },
       jazz: { ...state.jazz, ...(body.jazz || {}) }
     });
-    return Response.json({ message: "Settings saved locally.", ...next, source: "local" });
+    return Response.json({ message, ...next, source: "local" });
+  }
+
+  if (!supabase) {
+    return saveLocalSettings();
   }
 
   const rows = [
@@ -45,7 +49,13 @@ export async function PUT(request) {
     { setting_key: "jazz", setting_value: body.jazz || {} }
   ];
 
-  const { error } = await supabase.from("site_settings").upsert(rows, { onConflict: "setting_key" });
+  let error;
+
+  try {
+    ({ error } = await supabase.from("site_settings").upsert(rows, { onConflict: "setting_key" }));
+  } catch {
+    return saveLocalSettings("Settings saved locally because Supabase is unavailable.");
+  }
 
   if (error) {
     return Response.json({ error: error.message }, { status: 500 });
