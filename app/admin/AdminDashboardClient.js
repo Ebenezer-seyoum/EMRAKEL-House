@@ -68,10 +68,11 @@ export default function AdminDashboardClient() {
   const [jazz, setJazz] = useState(null);
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState([]);
-  const [menuEditorTab, setMenuEditorTab] = useState("sections");
+  const [selectedMenuSide, setSelectedMenuSide] = useState("food");
+  const [selectedSectionId, setSelectedSectionId] = useState("");
+  const [expandedSubsections, setExpandedSubsections] = useState([]);
   const [sectionSearch, setSectionSearch] = useState("");
   const [itemSearch, setItemSearch] = useState("");
-  const [itemSectionFilter, setItemSectionFilter] = useState("all");
   const [gallery, setGallery] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -92,7 +93,9 @@ export default function AdminDashboardClient() {
     [bookings, customers, feedback, items, orders]
   );
   const mainCategories = categories.filter((category) => !category.parentId);
-  const filteredMainCategories = mainCategories.filter((category) => {
+  const selectedMainSection = mainCategories.find((category) => category.id === selectedSectionId) || null;
+  const displayedMainCategories = mainCategories.filter((category) => (category.menuSide || "food") === selectedMenuSide);
+  const filteredMainCategories = displayedMainCategories.filter((category) => {
     const query = sectionSearch.trim().toLowerCase();
 
     if (!query) {
@@ -107,16 +110,6 @@ export default function AdminDashboardClient() {
 
     return haystack.includes(query);
   });
-  const filteredItems = items.filter((item) => {
-    const query = itemSearch.trim().toLowerCase();
-    const category = categories.find((entry) => entry.id === item.category);
-    const matchesSearch = query
-      ? [item.id, item.name, item.description, category?.name, category?.id].join(" ").toLowerCase().includes(query)
-      : true;
-    const matchesSection = itemSectionFilter === "all" || item.category === itemSectionFilter;
-
-    return matchesSearch && matchesSection;
-  });
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("emrakelSession") || "null");
@@ -130,11 +123,26 @@ export default function AdminDashboardClient() {
     loadDashboard();
   }, []);
 
+  useEffect(() => {
+    const visibleSections = categories.filter(
+      (category) => !category.parentId && (category.menuSide || "food") === selectedMenuSide
+    );
+
+    if (!visibleSections.length) {
+      setSelectedSectionId("");
+      return;
+    }
+
+    if (!visibleSections.some((category) => category.id === selectedSectionId)) {
+      setSelectedSectionId(visibleSections[0].id);
+    }
+  }, [categories, selectedMenuSide, selectedSectionId]);
+
   async function loadDashboard() {
     setStatus({ type: "", message: "Loading dashboard..." });
     const [settingsRes, menuRes, galleryRes, bookingsRes, ordersRes, customersRes, feedbackRes] = await Promise.all([
       fetch("/api/settings"),
-      fetch("/api/menu"),
+      fetch("/api/menu", { headers: { "x-emrakel-role": "admin" } }),
       fetch("/api/gallery"),
       fetch("/api/bookings", { headers: { "x-emrakel-role": "admin" } }),
       fetch("/api/orders", { headers: { "x-emrakel-role": "admin" } }),
@@ -286,6 +294,12 @@ export default function AdminDashboardClient() {
         menuSide: resolvedSide
       }
     ]);
+    if (!parentId) {
+      setSelectedMenuSide(resolvedSide);
+      setSelectedSectionId(id);
+    } else {
+      setExpandedSubsections((current) => (current.includes(id) ? current : [...current, id]));
+    }
   }
 
   function updateCategory(categoryId, updates) {
@@ -329,21 +343,171 @@ export default function AdminDashboardClient() {
   }
 
   function addMenuItem() {
-    const firstSubsection = categories.find(
-      (category) => category.parentId && (itemSectionFilter === "all" || category.id === itemSectionFilter)
-    );
-    const filteredCategory = categories.find((category) => category.id === itemSectionFilter);
-    const firstCategory = firstSubsection || categories[0];
+    const targetCategory = selectedMainSection?.id || displayedMainCategories[0]?.id || categories[0]?.id || "burgers";
+
     setItems((current) => [
       ...current,
       {
         id: `item-${Date.now()}`,
-        category: filteredCategory?.id || firstCategory?.id || "burgers",
+        category: targetCategory,
         name: "New Item",
         description: "Item description",
-        price: 0
+        price: 0,
+        isActive: true
       }
     ]);
+    setExpandedSubsections((current) => (current.includes(targetCategory) ? current : [...current, targetCategory]));
+  }
+
+  function addMenuItemToCategory(categoryId) {
+    setItems((current) => [
+      ...current,
+      {
+        id: `item-${Date.now()}`,
+        category: categoryId,
+        name: "New Item",
+        description: "Item description",
+        price: 0,
+        isActive: true
+      }
+    ]);
+    setExpandedSubsections((current) => (current.includes(categoryId) ? current : [...current, categoryId]));
+  }
+
+  function toggleSubsection(categoryId) {
+    setExpandedSubsections((current) =>
+      current.includes(categoryId) ? current.filter((id) => id !== categoryId) : [...current, categoryId]
+    );
+  }
+
+  function getCategoryItems(categoryId) {
+    return items.filter((item) => item.category === categoryId);
+  }
+
+  function getVisibleCategoryItems(categoryId) {
+    const query = itemSearch.trim().toLowerCase();
+
+    return getCategoryItems(categoryId).filter((item) =>
+      query ? [item.id, item.name, item.description, item.price].join(" ").toLowerCase().includes(query) : true
+    );
+  }
+
+  function getNestedItemCount(categoryId) {
+    const childIds = categories.filter((category) => category.parentId === categoryId).map((category) => category.id);
+
+    return items.filter((item) => item.category === categoryId || childIds.includes(item.category)).length;
+  }
+
+  function renderMenuItemRows(categoryId) {
+    const visibleItems = getVisibleCategoryItems(categoryId);
+
+    return (
+      <div className="menuItemRows">
+        {visibleItems.length ? (
+          visibleItems.map((item) => (
+            <div className="menuItemRow" key={item.id}>
+              <label>
+                Item
+                <input value={item.name} onChange={(event) => updateMenuItem(item.id, { name: event.target.value })} />
+              </label>
+              <label>
+                Price
+                <input
+                  min="0"
+                  type="number"
+                  value={item.price}
+                  onChange={(event) => updateMenuItem(item.id, { price: Number(event.target.value) })}
+                />
+              </label>
+              <button
+                className={`activeToggle ${item.isActive !== false ? "active" : ""}`}
+                type="button"
+                onClick={() => updateMenuItem(item.id, { isActive: item.isActive === false })}
+              >
+                {item.isActive !== false ? "Active" : "Hidden"}
+              </button>
+              <button className="button buttonLine compact dangerText" type="button" onClick={() => deleteMenuItem(item.id)}>
+                Delete
+              </button>
+            </div>
+          ))
+        ) : (
+          <p className="emptySmall">No items match this section yet.</p>
+        )}
+        <button className="button buttonLine compact" type="button" onClick={() => addMenuItemToCategory(categoryId)}>
+          Add Item
+        </button>
+      </div>
+    );
+  }
+
+  function renderSubsectionCard(subsection, parentCategory) {
+    const expanded = expandedSubsections.includes(subsection.id);
+    const itemCount = getCategoryItems(subsection.id).length;
+
+    return (
+      <article className="menuSubsectionCard" key={subsection.id}>
+        <div className="menuSubsectionHead">
+          <button className="menuDropdownButton" type="button" onClick={() => toggleSubsection(subsection.id)}>
+            <span>{expanded ? "v" : ">"}</span>
+          </button>
+          <div>
+            <strong>{subsection.name || "Untitled sub section"}</strong>
+            <small>
+              {itemCount} items - {subsection.menuSide === "drinks" ? "Drinks" : "Food"}
+            </small>
+          </div>
+          <button
+            className={`activeToggle ${subsection.isActive !== false ? "active" : ""}`}
+            type="button"
+            onClick={() => updateCategory(subsection.id, { isActive: subsection.isActive === false })}
+          >
+            {subsection.isActive !== false ? "Active" : "Hidden"}
+          </button>
+        </div>
+        <div className="menuCategoryEditor menuSubsectionFields">
+          <label>
+            Key
+            <input value={subsection.id} onChange={(event) => updateCategory(subsection.id, { id: event.target.value })} />
+          </label>
+          <label>
+            Name
+            <input value={subsection.name} onChange={(event) => updateCategory(subsection.id, { name: event.target.value })} />
+          </label>
+          <label>
+            Menu side
+            <select
+              value={subsection.menuSide || parentCategory.menuSide || "food"}
+              onChange={(event) => updateCategory(subsection.id, { menuSide: event.target.value })}
+            >
+              <option value="food">Food / Burger side</option>
+              <option value="drinks">Drinks side</option>
+            </select>
+          </label>
+          <label>
+            Description
+            <input
+              value={subsection.description || ""}
+              onChange={(event) => updateCategory(subsection.id, { description: event.target.value })}
+            />
+          </label>
+          <div className="wideField">
+            <ImageControl
+              label="Sub section photo"
+              value={subsection.image}
+              onChange={(value) => updateCategory(subsection.id, { image: value })}
+              onUpload={uploadAdminImage}
+            />
+          </div>
+        </div>
+        <div className="menuSubsectionActions">
+          <button className="button buttonLine compact dangerText" type="button" onClick={() => deleteCategory(subsection.id)}>
+            Delete Sub Section
+          </button>
+        </div>
+        {expanded ? renderMenuItemRows(subsection.id) : null}
+      </article>
+    );
   }
 
   function updateMenuItem(itemId, updates) {
@@ -867,257 +1031,218 @@ export default function AdminDashboardClient() {
           <div className="panel menuWorkspaceHeader">
             <div className="adminPanelHead">
               <div>
-                <p className="eyebrow">Menu builder</p>
-                <h2>Sections and items</h2>
+                <p className="eyebrow">Menu workspace</p>
+                <h2>Food and drinks sections</h2>
                 <p className="contactText">
-                  Choose whether a section belongs on the food side or drinks side, then add menu items under it.
+                  Pick Food or Drinks, select a main section, then expand sub sections to edit items and prices.
                 </p>
               </div>
-              <div className="segmentedTabs" aria-label="Menu editor tabs">
+              <div className="menuSideSwitch" aria-label="Menu side">
                 <button
-                  className={menuEditorTab === "sections" ? "active" : ""}
-                  onClick={() => setMenuEditorTab("sections")}
+                  className={selectedMenuSide === "food" ? "active" : ""}
+                  onClick={() => setSelectedMenuSide("food")}
                   type="button"
                 >
-                  Sections
+                  Food
                 </button>
                 <button
-                  className={menuEditorTab === "items" ? "active" : ""}
-                  onClick={() => setMenuEditorTab("items")}
+                  className={selectedMenuSide === "drinks" ? "active" : ""}
+                  onClick={() => setSelectedMenuSide("drinks")}
                   type="button"
                 >
-                  Items
+                  Drinks
                 </button>
               </div>
             </div>
-          </div>
-
-          {menuEditorTab === "sections" ? (
-            <div className="panel menuSectionManager">
-              <div className="adminPanelHead">
-                <div>
-                  <p className="eyebrow">Menu structure</p>
-                  <h2>Main sections and sub sections</h2>
-                </div>
-                <div className="miniActions">
-                  <button className="button buttonLine compact" type="button" onClick={() => addCategory("", "food")}>
-                    Add Food Section
-                  </button>
-                  <button className="button buttonLine compact" type="button" onClick={() => addCategory("", "drinks")}>
-                    Add Drinks Section
-                  </button>
-                </div>
-              </div>
+            <div className="menuWorkspaceControls">
               <div className="menuAdminToolbar">
                 <label>
                   Search sections
                   <input
                     value={sectionSearch}
                     onChange={(event) => setSectionSearch(event.target.value)}
-                    placeholder="Search section or subsection"
+                    placeholder="Search section or sub section"
                   />
                 </label>
               </div>
-              <div className="menuAdminSections">
-                {filteredMainCategories.map((category) => (
-                  <article className="menuAdminSectionCard" key={category.id}>
-                    <div className="menuAdminSectionHead">
+              <button className="button buttonGold compact" type="button" onClick={() => addCategory("", selectedMenuSide)}>
+                Add {selectedMenuSide === "drinks" ? "Drinks" : "Food"} Section
+              </button>
+            </div>
+          </div>
+
+          <div className="menuWorkspaceGrid">
+            <aside className="panel menuSectionListPane">
+              <div className="menuPaneTitle">
+                <p className="eyebrow">{selectedMenuSide === "drinks" ? "Drinks side" : "Food side"}</p>
+                <h2>Main sections</h2>
+              </div>
+              <div className="menuSectionList">
+                {filteredMainCategories.length ? (
+                  filteredMainCategories.map((category) => {
+                    const subsectionCount = categories.filter((item) => item.parentId === category.id).length;
+                    const itemCount = getNestedItemCount(category.id);
+
+                    return (
+                      <button
+                        className={`menuSectionListCard ${selectedSectionId === category.id ? "active" : ""}`}
+                        key={category.id}
+                        onClick={() => setSelectedSectionId(category.id)}
+                        type="button"
+                      >
+                        <span className="sectionStackIcon">=</span>
+                        <span>
+                          <strong>{category.name || "Untitled section"}</strong>
+                          <small>
+                            {subsectionCount} sub sections / {itemCount} items
+                          </small>
+                          <em className={category.isActive !== false ? "statusPill active" : "statusPill"}>
+                            {category.isActive !== false ? "Active" : "Hidden"}
+                          </em>
+                        </span>
+                        <b>{selectedSectionId === category.id ? "v" : ">"}</b>
+                      </button>
+                    );
+                  })
+                ) : (
+                  <p className="emptySmall">No {selectedMenuSide} sections yet.</p>
+                )}
+              </div>
+            </aside>
+
+            <section className="panel menuSectionDetailPane">
+              {selectedMainSection ? (
+                <>
+                  <div className="menuSectionDetailHeader">
+                    <div>
+                      <p className="eyebrow">Selected section</p>
+                      <h2>{selectedMainSection.name || "Untitled section"}</h2>
+                    </div>
+                    <div className="miniActions">
+                      <button
+                        className={`activeToggle ${selectedMainSection.isActive !== false ? "active" : ""}`}
+                        type="button"
+                        onClick={() => updateCategory(selectedMainSection.id, { isActive: selectedMainSection.isActive === false })}
+                      >
+                        {selectedMainSection.isActive !== false ? "Active" : "Hidden"}
+                      </button>
+                      <button className="button buttonLine compact" type="button" onClick={() => moveCategory(selectedMainSection.id, -1)}>
+                        Up
+                      </button>
+                      <button className="button buttonLine compact" type="button" onClick={() => moveCategory(selectedMainSection.id, 1)}>
+                        Down
+                      </button>
+                      <button
+                        className="button buttonLine compact dangerText"
+                        type="button"
+                        onClick={() => deleteCategory(selectedMainSection.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                  <div className="menuSectionDetailGrid">
+                    <label>
+                      Section key
+                      <input
+                        value={selectedMainSection.id}
+                        onChange={(event) => updateCategory(selectedMainSection.id, { id: event.target.value })}
+                      />
+                    </label>
+                    <label>
+                      Section name
+                      <input
+                        value={selectedMainSection.name}
+                        onChange={(event) => updateCategory(selectedMainSection.id, { name: event.target.value })}
+                      />
+                    </label>
+                    <label>
+                      Menu side
+                      <select
+                        value={selectedMainSection.menuSide || "food"}
+                        onChange={(event) => {
+                          setSelectedMenuSide(event.target.value);
+                          updateCategory(selectedMainSection.id, { menuSide: event.target.value });
+                        }}
+                      >
+                        <option value="food">Food / Burger side</option>
+                        <option value="drinks">Drinks side</option>
+                      </select>
+                    </label>
+                    <label className="wideField">
+                      Description
+                      <textarea
+                        value={selectedMainSection.description || ""}
+                        onChange={(event) => updateCategory(selectedMainSection.id, { description: event.target.value })}
+                      />
+                    </label>
+                    <div className="wideField">
+                      <ImageControl
+                        label="Main section photo"
+                        value={selectedMainSection.image}
+                        onChange={(value) => updateCategory(selectedMainSection.id, { image: value })}
+                        onUpload={uploadAdminImage}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="menuSubsectionWorkspace">
+                    <div className="adminPanelHead compactHead">
                       <div>
-                        <strong>{category.name || "Untitled section"}</strong>
-                        <span>{category.menuSide === "drinks" ? "Drinks side" : "Food side"}</span>
+                        <p className="eyebrow">Sub sections</p>
+                        <h3>Dropdown items with prices</h3>
                       </div>
                       <div className="miniActions">
-                        <button className="button buttonLine compact" type="button" onClick={() => moveCategory(category.id, -1)}>
-                          Up
-                        </button>
-                        <button className="button buttonLine compact" type="button" onClick={() => moveCategory(category.id, 1)}>
-                          Down
-                        </button>
-                      </div>
-                    </div>
-                    <div className="menuCategoryEditor">
-                      <label>
-                        Section key
                         <input
-                          value={category.id}
-                          onChange={(event) => updateCategory(category.id, { id: event.target.value })}
+                          className="compactSearch"
+                          value={itemSearch}
+                          onChange={(event) => setItemSearch(event.target.value)}
+                          placeholder="Search items..."
                         />
-                      </label>
-                      <label>
-                        Section name
-                        <input
-                          value={category.name}
-                          onChange={(event) => updateCategory(category.id, { name: event.target.value })}
-                        />
-                      </label>
-                      <label>
-                        Menu side
-                        <select
-                          value={category.menuSide || "food"}
-                          onChange={(event) => updateCategory(category.id, { menuSide: event.target.value })}
-                        >
-                          <option value="food">Food / Burger side</option>
-                          <option value="drinks">Drinks side</option>
-                        </select>
-                      </label>
-                      <label>
-                        Description
-                        <input
-                          value={category.description || ""}
-                          onChange={(event) => updateCategory(category.id, { description: event.target.value })}
-                        />
-                      </label>
-                      <div className="wideField">
-                        <ImageControl
-                          label="Section image"
-                          value={category.image}
-                          onChange={(value) => updateCategory(category.id, { image: value })}
-                          onUpload={uploadAdminImage}
-                        />
-                      </div>
-                    </div>
-                    <div className="subsectionEditor">
-                      <div className="adminPanelHead compactHead">
-                        <h3>Sub sections</h3>
                         <button
                           className="button buttonLine compact"
                           type="button"
-                          onClick={() => addCategory(category.id, category.menuSide || "food")}
+                          onClick={() => addCategory(selectedMainSection.id, selectedMainSection.menuSide || "food")}
                         >
                           Add Sub Section
                         </button>
                       </div>
-                      {categories
-                        .filter((item) => item.parentId === category.id)
-                        .map((subsection) => (
-                          <div className="menuCategoryEditor subsectionRow" key={subsection.id}>
-                            <label>
-                              Key
-                              <input
-                                value={subsection.id}
-                                onChange={(event) => updateCategory(subsection.id, { id: event.target.value })}
-                              />
-                            </label>
-                            <label>
-                              Name
-                              <input
-                                value={subsection.name}
-                                onChange={(event) => updateCategory(subsection.id, { name: event.target.value })}
-                              />
-                            </label>
-                            <label>
-                              Menu side
-                              <select
-                                value={subsection.menuSide || category.menuSide || "food"}
-                                onChange={(event) => updateCategory(subsection.id, { menuSide: event.target.value })}
-                              >
-                                <option value="food">Food / Burger side</option>
-                                <option value="drinks">Drinks side</option>
-                              </select>
-                            </label>
-                            <label>
-                              Description
-                              <input
-                                value={subsection.description || ""}
-                                onChange={(event) => updateCategory(subsection.id, { description: event.target.value })}
-                              />
-                            </label>
-                            <div className="wideField">
-                              <ImageControl
-                                label="Section image"
-                                value={subsection.image}
-                                onChange={(value) => updateCategory(subsection.id, { image: value })}
-                                onUpload={uploadAdminImage}
-                              />
-                            </div>
-                            <button className="button buttonLine compact" type="button" onClick={() => deleteCategory(subsection.id)}>
-                              Delete
-                            </button>
+                    </div>
+                    {categories.filter((category) => category.parentId === selectedMainSection.id).length ? (
+                      categories
+                        .filter((category) => category.parentId === selectedMainSection.id)
+                        .map((subsection) => renderSubsectionCard(subsection, selectedMainSection))
+                    ) : (
+                      <article className="menuSubsectionCard">
+                        <div className="menuSubsectionHead">
+                          <button
+                            className="menuDropdownButton"
+                            type="button"
+                            onClick={() => toggleSubsection(selectedMainSection.id)}
+                          >
+                            <span>{expandedSubsections.includes(selectedMainSection.id) ? "v" : ">"}</span>
+                          </button>
+                          <div>
+                            <strong>{selectedMainSection.name || "Section"} items</strong>
+                            <small>{getCategoryItems(selectedMainSection.id).length} direct items</small>
                           </div>
-                        ))}
-                    </div>
-                    <button className="button buttonLine compact" type="button" onClick={() => deleteCategory(category.id)}>
-                      Delete Main Section
-                    </button>
-                  </article>
-                ))}
-              </div>
-            </div>
-          ) : null}
-
-          {menuEditorTab === "items" ? (
-            <div className="panel">
-              <div className="adminPanelHead">
-                <div>
-                  <p className="eyebrow">Menu items</p>
-                  <h2>Search, filter, and edit prices</h2>
+                          <button className="button buttonLine compact" type="button" onClick={addMenuItem}>
+                            Add Direct Item
+                          </button>
+                        </div>
+                        {expandedSubsections.includes(selectedMainSection.id) ? renderMenuItemRows(selectedMainSection.id) : null}
+                      </article>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="emptyAdminState">
+                  <p className="eyebrow">No section selected</p>
+                  <h2>Add a {selectedMenuSide === "drinks" ? "drinks" : "food"} section to begin.</h2>
                 </div>
-                <button className="button buttonLine compact" type="button" onClick={addMenuItem}>
-                  Add Item
-                </button>
-              </div>
-              <div className="menuAdminToolbar itemToolbar">
-                <label>
-                  Search items
-                  <input
-                    value={itemSearch}
-                    onChange={(event) => setItemSearch(event.target.value)}
-                    placeholder="Search item name or section"
-                  />
-                </label>
-                <label>
-                  Filter section
-                  <select value={itemSectionFilter} onChange={(event) => setItemSectionFilter(event.target.value)}>
-                    <option value="all">All sections</option>
-                    {categories.map((category) => {
-                      const parent = categories.find((entry) => entry.id === category.parentId);
-                      return (
-                        <option key={category.id} value={category.id}>
-                          {parent ? `${parent.name} / ${category.name}` : category.name}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </label>
-              </div>
-              <div className="menuAdminItemGrid">
-                {filteredItems.map((item) => (
-                  <article className="menuAdminItemCard" key={item.id}>
-                    <div className="menuAdminItemFields">
-                      <label>
-                        Item name
-                        <input value={item.name} onChange={(event) => updateMenuItem(item.id, { name: event.target.value })} />
-                      </label>
-                      <label>
-                        Section / Sub section
-                        <select value={item.category} onChange={(event) => updateMenuItem(item.id, { category: event.target.value })}>
-                          {categories.map((category) => {
-                            const parent = categories.find((entry) => entry.id === category.parentId);
-                            return (
-                              <option key={category.id} value={category.id}>
-                                {parent ? `${parent.name} / ${category.name}` : category.name}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </label>
-                      <label>
-                        Price
-                        <input
-                          type="number"
-                          value={item.price}
-                          onChange={(event) => updateMenuItem(item.id, { price: Number(event.target.value) })}
-                        />
-                      </label>
-                    </div>
-                    <button className="button buttonLine compact" type="button" onClick={() => deleteMenuItem(item.id)}>
-                      Delete Item
-                    </button>
-                  </article>
-                ))}
-              </div>
-            </div>
-          ) : null}
+              )}
+            </section>
+          </div>
 
           <div className="actions">
             <button className="button buttonGold" type="submit">

@@ -3991,18 +3991,337 @@ main:not(.adminMain),
   min-height: 78px;
 }
 
+.menuWorkspaceControls {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) auto;
+  gap: 14px;
+  align-items: end;
+  margin-top: 18px;
+}
+
+.menuWorkspaceControls .menuAdminToolbar {
+  margin-bottom: 0;
+}
+
+.menuSideSwitch {
+  display: inline-flex;
+  gap: 4px;
+  border: 1px solid rgba(21, 21, 21, 0.12);
+  border-radius: 999px;
+  padding: 4px;
+  background: rgba(255, 253, 247, 0.82);
+}
+
+.menuSideSwitch button {
+  min-height: 36px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 18px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.menuSideSwitch button.active {
+  background: #05805f;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(5, 128, 95, 0.2);
+}
+
+.menuWorkspaceGrid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.42fr) minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.menuSectionListPane,
+.menuSectionDetailPane {
+  min-height: 520px;
+}
+
+.menuPaneTitle h2,
+.menuSectionDetailHeader h2 {
+  margin: 0;
+}
+
+.menuSectionList {
+  display: grid;
+  gap: 12px;
+  max-height: 68vh;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+.menuSectionListCard {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) 42px;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+  border: 1px solid rgba(21, 21, 21, 0.08);
+  border-left: 5px solid transparent;
+  border-radius: 8px;
+  padding: 18px 16px;
+  background: rgba(255, 253, 247, 0.78);
+  color: var(--charcoal);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.menuSectionListCard:hover,
+.menuSectionListCard.active {
+  border-left-color: #f5aa1c;
+  background: #f4f1ff;
+  transform: translateY(-1px);
+}
+
+.menuSectionListCard strong {
+  display: block;
+  font-size: 18px;
+}
+
+.menuSectionListCard small {
+  display: block;
+  margin-top: 4px;
+  color: #617089;
+  font-weight: 800;
+}
+
+.menuSectionListCard b {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: #2e4059;
+  color: #fff;
+  font-size: 18px;
+}
+
+.sectionStackIcon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  background: #05805f;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.statusPill,
+.activeToggle {
+  display: inline-grid;
+  place-items: center;
+  min-height: 34px;
+  border: 1px solid rgba(21, 21, 21, 0.08);
+  border-radius: 999px;
+  padding: 0 14px;
+  background: #eef2f6;
+  color: #2e4059;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.statusPill {
+  margin-top: 10px;
+  width: fit-content;
+  font-size: 12px;
+}
+
+.statusPill.active,
+.activeToggle.active {
+  background: #c9f7df;
+  color: #00684d;
+}
+
+.activeToggle {
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.menuSectionDetailHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.menuSectionDetailGrid {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.68fr) minmax(180px, 1fr) minmax(180px, 0.86fr);
+  gap: 12px;
+  align-items: end;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(21, 21, 21, 0.1);
+}
+
+.menuSectionDetailGrid label,
+.menuSubsectionFields label,
+.menuItemRow label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.menuSectionDetailGrid .wideField {
+  grid-column: 1 / -1;
+}
+
+.menuSectionDetailGrid textarea {
+  min-height: 82px;
+}
+
+.menuSubsectionWorkspace {
+  display: grid;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.compactSearch {
+  min-height: 42px;
+  width: min(260px, 100%);
+  border: 1px solid rgba(21, 21, 21, 0.16);
+  border-radius: 999px;
+  padding: 0 16px;
+  background: rgba(255, 253, 247, 0.95);
+}
+
+.menuSubsectionCard {
+  border: 1px solid rgba(5, 128, 95, 0.16);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(248, 255, 250, 0.9);
+}
+
+.menuSubsectionHead {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 16px;
+  background: rgba(216, 252, 232, 0.55);
+}
+
+.menuSubsectionHead strong {
+  display: block;
+  font-size: 18px;
+}
+
+.menuSubsectionHead small {
+  display: block;
+  margin-top: 4px;
+  color: #617089;
+  font-weight: 800;
+}
+
+.menuDropdownButton {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(21, 21, 21, 0.1);
+  border-radius: 12px;
+  background: #2e4059;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.menuSubsectionFields {
+  grid-template-columns: minmax(120px, 0.64fr) minmax(160px, 0.86fr) minmax(160px, 0.8fr) minmax(200px, 1fr);
+  padding: 16px;
+}
+
+.menuSubsectionActions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 16px 16px;
+}
+
+.menuItemRows {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-top: 1px solid rgba(21, 21, 21, 0.08);
+  background: rgba(255, 253, 247, 0.9);
+}
+
+.menuItemRow {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(110px, 0.34fr) auto auto;
+  gap: 10px;
+  align-items: end;
+  padding: 12px;
+  border: 1px solid rgba(21, 21, 21, 0.08);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.emptySmall {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.emptyAdminState {
+  display: grid;
+  align-content: center;
+  min-height: 360px;
+  text-align: center;
+}
+
+.dangerText {
+  color: #b42318;
+  border-color: rgba(180, 35, 24, 0.18);
+}
+
 @media (max-width: 980px) {
   .menuCategoryEditor,
   .subsectionRow,
   .menuAdminItemCard,
   .menuAdminItemFields,
-  .menuAdminToolbar.itemToolbar {
+  .menuAdminToolbar.itemToolbar,
+  .menuWorkspaceControls,
+  .menuWorkspaceGrid,
+  .menuSectionDetailGrid,
+  .menuSubsectionFields,
+  .menuItemRow {
     grid-template-columns: 1fr;
   }
 
   .menuAdminItemCard img {
     width: 100%;
     height: 220px;
+  }
+
+  .menuSectionDetailHeader,
+  .menuSubsectionHead {
+    grid-template-columns: 1fr;
+  }
+
+  .menuSectionDetailHeader,
+  .compactHead {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .menuSideSwitch,
+  .menuWorkspaceControls .button,
+  .compactSearch {
+    width: 100%;
   }
 }
 
@@ -5599,4 +5918,41 @@ html {
   .foodPosterTitle em {
     font-size: 38px;
   }
+}
+
+/* Public dark-section readability fixes */
+.referenceHome .eyebrow,
+.sectionDetailPage .eyebrow,
+.homeSectionIntro .eyebrow,
+.aboutStoryGrid .eyebrow,
+.contactSplit .eyebrow,
+.galleryMasonry .eyebrow {
+  color: #d8a83e;
+}
+
+.referenceHome h1,
+.referenceHome h2,
+.referenceHome h3,
+.sectionDetailPage h1,
+.sectionDetailPage h2,
+.sectionDetailPage h3,
+.homeSectionIntro h2,
+.aboutStoryText h2,
+.contactInfoPanel h2,
+.feedbackPanel h2 {
+  color: #f7efe2;
+}
+
+.referenceHome p,
+.sectionDetailPage p,
+.aboutStoryText .contactText,
+.contactInfoPanel .contactText,
+.feedbackPanel .contactText {
+  color: rgba(247, 239, 226, 0.78);
+}
+
+.drinkColumn h3,
+.drinkColumn p,
+.drinkColumn strong {
+  color: inherit;
 }
