@@ -1,5 +1,5 @@
 import { getPublicContent } from "@/lib/cms";
-import { SectionPageShell } from "../section-page-shell";
+import Link from "next/link";
 import MenuOrderClient from "./MenuOrderClient";
 
 export const dynamic = "force-dynamic";
@@ -8,14 +8,13 @@ export default async function MenuPage() {
   const content = await getPublicContent();
 
   return (
-    <SectionPageShell
-      eyebrow={content.home.menuPageEyebrow}
-      title={content.home.menuPageTitle}
-      description={content.home.menuPageDescription}
-      image={content.home.menuPageImage}
-      backLabel={content.home.backHomeLabel}
-    >
+    <main className="sectionDetailPage">
+      <section className="sectionDetailBackOnly">
+        <Link className="sectionBackLink" href="/">
+          {content.home.backHomeLabel}
+        </Link>
+      </section>
       <MenuOrderClient categories={content.categories} items={content.items} />
-    </SectionPageShell>
+    </main>
   );
 }

@@ -4922,6 +4922,11 @@ html {
   border-bottom: 1px solid rgba(216, 168, 62, 0.34);
 }
 
+.sectionDetailBackOnly {
+  padding: clamp(24px, 4vw, 42px) clamp(18px, 5vw, 72px) 0;
+  background: #0b0805;
+}
+
 .sectionDetailHeroWithImage {
   grid-template-columns: minmax(0, 1fr) minmax(260px, 430px);
   gap: clamp(24px, 4vw, 56px);

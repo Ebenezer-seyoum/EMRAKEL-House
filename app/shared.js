@@ -26,7 +26,6 @@ export function Header({
 }) {
   const headerClassName = "siteHeader homeHeroHeader";
   const [openPanel, setOpenPanel] = useState("");
-  const [loginStatus, setLoginStatus] = useState("");
   const [storyIndex, setStoryIndex] = useState(0);
   const houseStories = rotateStories || [
     "A warm house for burgers, pizza, cocktails, and relaxed evenings.",
@@ -47,27 +46,6 @@ export function Header({
 
     return () => window.clearInterval(timer);
   }, [heroText, houseStories.length]);
-
-  async function submitHeaderLogin(event) {
-    event.preventDefault();
-    setLoginStatus("Checking login...");
-
-    const formData = new FormData(event.currentTarget);
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(Object.fromEntries(formData.entries()))
-    });
-    const data = await response.json();
-
-    if (!response.ok) {
-      setLoginStatus(data.error || "Login failed.");
-      return;
-    }
-
-    localStorage.setItem("emrakelSession", JSON.stringify(data.user));
-    window.location.href = data.user.role === "admin" ? "/admin" : "/customer";
-  }
 
   return (
     <>
@@ -109,34 +87,6 @@ export function Header({
                   Call Now
                 </a>
                 <p>Online table booking is prepared for the next upgrade. For now, call us and we will reserve your seat.</p>
-              </div>
-            ) : null}
-          </div>
-          <div className="headerDropdownWrap">
-            <button
-              className="button buttonLine compact loginHeaderButton"
-              onClick={() => setOpenPanel(openPanel === "login" ? "" : "login")}
-              type="button"
-            >
-              Login
-            </button>
-            {openPanel === "login" ? (
-              <div className="headerDropdownPanel loginDropdown">
-                <p className="dropdownEyebrow">Admin access</p>
-                <form onSubmit={submitHeaderLogin}>
-                  <label>
-                    Email
-                    <input name="email" required type="email" placeholder="admin@emrakel.com" />
-                  </label>
-                  <label>
-                    Password
-                    <input name="password" required type="password" placeholder="Password" />
-                  </label>
-                  <button className="button buttonGold compact" type="submit">
-                    Login
-                  </button>
-                </form>
-                {loginStatus ? <p>{loginStatus}</p> : null}
               </div>
             ) : null}
           </div>

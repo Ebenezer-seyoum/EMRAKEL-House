@@ -13,7 +13,6 @@ export default async function ContactPage() {
       eyebrow={contact.eyebrow}
       title={contact.headline}
       description={contact.description}
-      image={contact.image}
       backLabel={content.home.backHomeLabel}
     >
       <section className="section contactSplit">

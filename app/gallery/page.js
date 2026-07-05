@@ -16,7 +16,7 @@ export default async function GalleryPage() {
       image={galleryImages[0] || "/uploads/house/interior-08.jpg"}
       backLabel={content.home.backHomeLabel}
     >
-      <GalleryClient images={galleryImages.concat(galleryImages.slice(0, 5))} />
+      <GalleryClient images={galleryImages} />
     </SectionPageShell>
   );
 }
