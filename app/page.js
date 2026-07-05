@@ -30,6 +30,11 @@ export default async function HomePage() {
         </section>
 
         <div id="menu" className="homeScrollSection">
+          <div className="homeSectionAction">
+            <Link className="button buttonGold" href="/menu">
+              View More
+            </Link>
+          </div>
           <MenuOrderClient categories={content.categories} items={content.items} />
         </div>
 
@@ -38,6 +43,9 @@ export default async function HomePage() {
             <p className="eyebrow">Gallery</p>
             <h2>Inside the EMRAKEL house.</h2>
             <p>Warm lights, seating, murals, plants, and the house atmosphere in one clean gallery.</p>
+            <Link className="button buttonGold" href="/gallery">
+              View More
+            </Link>
           </div>
           <GalleryClient images={galleryImages.concat(galleryImages.slice(0, 5))} />
         </div>
@@ -50,6 +58,9 @@ export default async function HomePage() {
             <p className="eyebrow">{about.eyebrow}</p>
             <h2>{about.headline}</h2>
             <p className="contactText">{about.description}</p>
+            <Link className="button buttonGold" href="/about">
+              View More
+            </Link>
           </div>
           <div className="aboutStoryImage">
             <img src={about.secondaryImage} alt="" />
@@ -78,6 +89,9 @@ export default async function HomePage() {
             <p className="eyebrow">Feedback form</p>
             <h2>Send us a message.</h2>
             <ContactFormClient />
+            <Link className="button buttonGold sectionPanelAction" href="/contact">
+              View More
+            </Link>
           </div>
         </section>
       </main>

@@ -4851,3 +4851,134 @@ html {
   color: rgba(247, 239, 226, 0.76);
   line-height: 1.7;
 }
+
+.homeSectionIntro .button {
+  margin-top: 24px;
+}
+
+.homeSectionAction {
+  display: flex;
+  justify-content: center;
+  padding: clamp(34px, 5vw, 58px) clamp(18px, 5vw, 72px) 0;
+  background:
+    radial-gradient(circle at top left, rgba(216, 168, 62, 0.12), transparent 28%),
+    linear-gradient(180deg, #0b0805, #0b0805);
+}
+
+.aboutStoryText .button {
+  margin-top: 18px;
+}
+
+.sectionPanelAction {
+  margin-top: 18px;
+}
+
+.sectionDetailPage {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(216, 168, 62, 0.16), transparent 28%),
+    linear-gradient(180deg, #0b0805 0%, #15100a 56%, #0b0805 100%);
+  color: #f7efe2;
+}
+
+.sectionDetailHero {
+  display: grid;
+  align-items: center;
+  min-height: 330px;
+  padding: clamp(34px, 6vw, 84px) clamp(18px, 5vw, 72px);
+  border-bottom: 1px solid rgba(216, 168, 62, 0.34);
+}
+
+.sectionDetailHeroWithImage {
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 430px);
+  gap: clamp(24px, 4vw, 56px);
+}
+
+.sectionDetailHero h1 {
+  max-width: 860px;
+  margin: 10px 0 16px;
+  color: #f7efe2;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: clamp(38px, 5vw, 78px);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.sectionDetailHero .pageLead {
+  max-width: 740px;
+  margin: 0;
+  color: rgba(247, 239, 226, 0.78);
+  font-size: clamp(16px, 1.5vw, 19px);
+  line-height: 1.7;
+}
+
+.sectionDetailHero > img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 1px solid rgba(216, 168, 62, 0.46);
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 26px 58px rgba(0, 0, 0, 0.32);
+}
+
+.sectionBackLink {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  border: 1px solid rgba(216, 168, 62, 0.42);
+  border-radius: 999px;
+  padding: 0 16px;
+  color: #f7efe2;
+  font-size: 13px;
+  font-weight: 800;
+  transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.sectionBackLink:hover {
+  background: #d8a83e;
+  color: #0b0805;
+  transform: translateY(-1px);
+}
+
+.sectionDetailPage .scanMenuPage,
+.sectionDetailPage .galleryMasonry,
+.sectionDetailPage .aboutStoryGrid,
+.sectionDetailPage .contactSplit,
+.sectionDetailPage .formWrap {
+  padding-top: clamp(34px, 5vw, 64px);
+}
+
+.sectionDetailPage .formWrap {
+  background:
+    linear-gradient(180deg, #0b0805, #15100a);
+  color: #f7efe2;
+}
+
+.sectionDetailPage .panel,
+.sectionDetailPage .formPanel {
+  border-color: rgba(216, 168, 62, 0.26);
+  background: rgba(11, 8, 5, 0.86);
+  color: #f7efe2;
+}
+
+.sectionDetailPage .panel h2,
+.sectionDetailPage .formPanel h2 {
+  color: #f7efe2;
+}
+
+.sectionDetailPage .panel .contactText,
+.sectionDetailPage .formPanel .contactText {
+  color: rgba(247, 239, 226, 0.76);
+}
+
+@media (max-width: 760px) {
+  .sectionDetailHeroWithImage {
+    grid-template-columns: 1fr;
+  }
+
+  .sectionDetailHero {
+    min-height: auto;
+  }
+}
