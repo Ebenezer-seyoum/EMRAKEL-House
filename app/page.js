@@ -3,6 +3,7 @@ import { getPublicContent } from "@/lib/cms";
 import MenuOrderClient from "./menu/MenuOrderClient";
 import GalleryClient from "./gallery/GalleryClient";
 import ContactFormClient from "./contact/ContactFormClient";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
