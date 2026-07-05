@@ -1,4 +1,4 @@
-import { forbidden, getLocalState, getPublicContent, isAdminRequest, saveLocalState } from "@/lib/cms";
+import { forbidden, getLocalState, getPublicContent, inferMenuSide, isAdminRequest, saveLocalState } from "@/lib/cms";
 import { getSupabaseServer } from "@/lib/supabase";
 
 export async function GET() {
@@ -37,6 +37,7 @@ export async function PUT(request) {
     description: category.description || "",
     parent_slug: category.parentId || null,
     image_url: category.image || null,
+    menu_side: category.menuSide || inferMenuSide(category),
     sort_order: index + 1,
     is_active: true
   }));
@@ -59,7 +60,7 @@ export async function PUT(request) {
       name: item.name,
       description: item.description,
       price: Number(item.price || 0),
-      image_url: item.image,
+      image_url: null,
       sort_order: index + 1,
       is_available: true
     }));

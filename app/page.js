@@ -22,18 +22,20 @@ export default async function HomePage() {
         heroText={content.home.description}
       />
       <main className="referenceHome">
-        <section className="homeJazzOnly" id="home">
-          <article className="refJazzCard">
-            <img src={content.jazz?.image || "/uploads/house/jazz-night.png"} alt="" />
-            <div>
-              <p>{content.jazz?.eyebrow}</p>
-              <h2>{content.jazz?.title}</h2>
-              <span>{content.jazz?.date}</span>
-              <span>{content.jazz?.time}</span>
-              <Link href="/contact">{content.jazz?.actionLabel}</Link>
-            </div>
-          </article>
-        </section>
+        {content.jazz?.enabled !== false ? (
+          <section className="homeJazzOnly" id="home">
+            <article className="refJazzCard">
+              <img src={content.jazz?.image || "/uploads/house/jazz-night.png"} alt="" />
+              <div>
+                <p>{content.jazz?.eyebrow}</p>
+                <h2>{content.jazz?.title}</h2>
+                <span>{content.jazz?.date}</span>
+                <span>{content.jazz?.time}</span>
+                <Link href="/contact">{content.jazz?.actionLabel}</Link>
+              </div>
+            </article>
+          </section>
+        ) : null}
 
         <div id="menu" className="homeScrollSection">
           <div className="homeSectionAction">

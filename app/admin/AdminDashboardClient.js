@@ -68,6 +68,10 @@ export default function AdminDashboardClient() {
   const [jazz, setJazz] = useState(null);
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState([]);
+  const [menuEditorTab, setMenuEditorTab] = useState("sections");
+  const [sectionSearch, setSectionSearch] = useState("");
+  const [itemSearch, setItemSearch] = useState("");
+  const [itemSectionFilter, setItemSectionFilter] = useState("all");
   const [gallery, setGallery] = useState([]);
   const [bookings, setBookings] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -88,6 +92,31 @@ export default function AdminDashboardClient() {
     [bookings, customers, feedback, items, orders]
   );
   const mainCategories = categories.filter((category) => !category.parentId);
+  const filteredMainCategories = mainCategories.filter((category) => {
+    const query = sectionSearch.trim().toLowerCase();
+
+    if (!query) {
+      return true;
+    }
+
+    const children = categories.filter((item) => item.parentId === category.id);
+    const haystack = [category, ...children]
+      .map((item) => [item.id, item.name, item.description, item.menuSide].join(" "))
+      .join(" ")
+      .toLowerCase();
+
+    return haystack.includes(query);
+  });
+  const filteredItems = items.filter((item) => {
+    const query = itemSearch.trim().toLowerCase();
+    const category = categories.find((entry) => entry.id === item.category);
+    const matchesSearch = query
+      ? [item.id, item.name, item.description, category?.name, category?.id].join(" ").toLowerCase().includes(query)
+      : true;
+    const matchesSection = itemSectionFilter === "all" || item.category === itemSectionFilter;
+
+    return matchesSearch && matchesSection;
+  });
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("emrakelSession") || "null");
@@ -242,7 +271,9 @@ export default function AdminDashboardClient() {
     await loadDashboard();
   }
 
-  function addCategory(parentId = "") {
+  function addCategory(parentId = "", menuSide = "food") {
+    const parent = categories.find((category) => category.id === parentId);
+    const resolvedSide = parent?.menuSide || menuSide;
     const id = parentId ? `subsection-${Date.now()}` : `section-${Date.now()}`;
     setCategories((current) => [
       ...current,
@@ -251,7 +282,8 @@ export default function AdminDashboardClient() {
         parentId,
         name: parentId ? "New Subsection" : "New Section",
         description: "",
-        image: brandImage
+        image: brandImage,
+        menuSide: resolvedSide
       }
     ]);
   }
@@ -264,7 +296,7 @@ export default function AdminDashboardClient() {
           return { ...category, ...updates };
         }
         if (category.parentId === categoryId) {
-          return { ...category, parentId: nextId };
+          return { ...category, parentId: nextId, ...(updates.menuSide ? { menuSide: updates.menuSide } : {}) };
         }
         return category;
       })
@@ -297,13 +329,16 @@ export default function AdminDashboardClient() {
   }
 
   function addMenuItem() {
-    const firstSubsection = categories.find((category) => category.parentId);
+    const firstSubsection = categories.find(
+      (category) => category.parentId && (itemSectionFilter === "all" || category.id === itemSectionFilter)
+    );
+    const filteredCategory = categories.find((category) => category.id === itemSectionFilter);
     const firstCategory = firstSubsection || categories[0];
     setItems((current) => [
       ...current,
       {
         id: `item-${Date.now()}`,
-        category: firstCategory?.id || "burgers",
+        category: filteredCategory?.id || firstCategory?.id || "burgers",
         name: "New Item",
         description: "Item description",
         price: 0
@@ -332,6 +367,37 @@ export default function AdminDashboardClient() {
 
   function deleteGalleryImage(imageId) {
     setGallery((current) => current.filter((image) => image.id !== imageId));
+  }
+
+  function updateSocialLink(linkId, updates) {
+    setFooter((current) => ({
+      ...current,
+      socialLinks: (current.socialLinks || []).map((link) => (link.id === linkId ? { ...link, ...updates } : link))
+    }));
+  }
+
+  function addSocialLink() {
+    const id = `social-${Date.now()}`;
+    setFooter((current) => ({
+      ...current,
+      socialLinks: [
+        ...(current.socialLinks || []),
+        {
+          id,
+          name: "New Social Link",
+          url: "#",
+          image: "",
+          enabled: true
+        }
+      ]
+    }));
+  }
+
+  function deleteSocialLink(linkId) {
+    setFooter((current) => ({
+      ...current,
+      socialLinks: (current.socialLinks || []).filter((link) => link.id !== linkId)
+    }));
   }
 
   function logout() {
@@ -701,6 +767,52 @@ export default function AdminDashboardClient() {
             />
             <TextInput label="Hours" value={brand.hours} onChange={(value) => setBrand({ ...brand, hours: value })} />
           </div>
+          <div className="panel footerSocialEditorPanel">
+            <div className="adminPanelHead">
+              <div>
+                <p className="eyebrow">Footer social media</p>
+                <h2>Names, links, and logos</h2>
+              </div>
+              <button className="button buttonLine compact" type="button" onClick={addSocialLink}>
+                Add Social Link
+              </button>
+            </div>
+            <div className="footerSocialEditor">
+              {(footer.socialLinks || []).map((link) => (
+                <article className="footerSocialEditorCard" key={link.id}>
+                  <label className="checkRow">
+                    <input
+                      checked={Boolean(link.enabled)}
+                      onChange={(event) => updateSocialLink(link.id, { enabled: event.target.checked })}
+                      type="checkbox"
+                    />
+                    Show in footer
+                  </label>
+                  <div className="footerSocialEditorFields">
+                    <TextInput
+                      label="Name"
+                      value={link.name}
+                      onChange={(value) => updateSocialLink(link.id, { name: value })}
+                    />
+                    <TextInput
+                      label="Link"
+                      value={link.url}
+                      onChange={(value) => updateSocialLink(link.id, { url: value })}
+                    />
+                    <ImageControl
+                      label="Logo image"
+                      value={link.image}
+                      onChange={(value) => updateSocialLink(link.id, { image: value })}
+                      onUpload={uploadAdminImage}
+                    />
+                  </div>
+                  <button className="button buttonLine compact" type="button" onClick={() => deleteSocialLink(link.id)}>
+                    Delete Social Link
+                  </button>
+                </article>
+              ))}
+            </div>
+          </div>
           <button className="button buttonGold" type="submit">
             Save Footer
           </button>
@@ -720,7 +832,7 @@ export default function AdminDashboardClient() {
               Show section on home page
             </label>
             <TextInput label="Eyebrow" value={jazz.eyebrow} onChange={(value) => setJazz({ ...jazz, eyebrow: value })} />
-            <TextInput label="Title" value={jazz.title} onChange={(value) => setJazz({ ...jazz, title: value })} />
+            <TextInput label="Section name" value={jazz.title} onChange={(value) => setJazz({ ...jazz, title: value })} />
             <TextInput
               label="Description"
               textarea
@@ -752,167 +864,261 @@ export default function AdminDashboardClient() {
 
       {activeTab === "menu" ? (
         <form className="adminStack" onSubmit={saveMenu}>
-          <div className="panel menuSectionManager">
+          <div className="panel menuWorkspaceHeader">
             <div className="adminPanelHead">
               <div>
-                <p className="eyebrow">Menu structure</p>
-                <h2>Main sections and sub sections</h2>
+                <p className="eyebrow">Menu builder</p>
+                <h2>Sections and items</h2>
                 <p className="contactText">
-                  Build the public menu like a real restaurant board. Add a main section, then add sub sections under it.
+                  Choose whether a section belongs on the food side or drinks side, then add menu items under it.
                 </p>
               </div>
-              <button className="button buttonLine compact" type="button" onClick={() => addCategory("")}>
-                Add Main Section
-              </button>
-            </div>
-            <div className="menuAdminSections">
-              {mainCategories.map((category) => (
-                <article className="menuAdminSectionCard" key={category.id}>
-                  <div className="menuAdminSectionHead">
-                    <div>
-                      <strong>{category.name || "Untitled section"}</strong>
-                      <span>{category.description || "Main menu section"}</span>
-                    </div>
-                    <div className="miniActions">
-                      <button className="button buttonLine compact" type="button" onClick={() => moveCategory(category.id, -1)}>
-                        Up
-                      </button>
-                      <button className="button buttonLine compact" type="button" onClick={() => moveCategory(category.id, 1)}>
-                        Down
-                      </button>
-                    </div>
-                  </div>
-                  <div className="menuCategoryEditor">
-                    <label>
-                      Section key
-                      <input
-                        value={category.id}
-                        onChange={(event) => updateCategory(category.id, { id: event.target.value })}
-                      />
-                    </label>
-                    <label>
-                      Section name
-                      <input
-                        value={category.name}
-                        onChange={(event) => updateCategory(category.id, { name: event.target.value })}
-                      />
-                    </label>
-                    <label>
-                      Description
-                      <input
-                        value={category.description || ""}
-                        onChange={(event) => updateCategory(category.id, { description: event.target.value })}
-                      />
-                    </label>
-                    <div className="wideField">
-                      <ImageControl
-                        label="Section image"
-                        value={category.image}
-                        onChange={(value) => updateCategory(category.id, { image: value })}
-                        onUpload={uploadAdminImage}
-                      />
-                    </div>
-                  </div>
-                  <div className="subsectionEditor">
-                    <div className="adminPanelHead compactHead">
-                      <h3>Sub sections</h3>
-                      <button className="button buttonLine compact" type="button" onClick={() => addCategory(category.id)}>
-                        Add Sub Section
-                      </button>
-                    </div>
-                    {categories
-                      .filter((item) => item.parentId === category.id)
-                      .map((subsection) => (
-                        <div className="menuCategoryEditor subsectionRow" key={subsection.id}>
-                          <label>
-                            Key
-                            <input
-                              value={subsection.id}
-                              onChange={(event) => updateCategory(subsection.id, { id: event.target.value })}
-                            />
-                          </label>
-                          <label>
-                            Name
-                            <input
-                              value={subsection.name}
-                              onChange={(event) => updateCategory(subsection.id, { name: event.target.value })}
-                            />
-                          </label>
-                          <label>
-                            Description
-                            <input
-                              value={subsection.description || ""}
-                              onChange={(event) => updateCategory(subsection.id, { description: event.target.value })}
-                            />
-                          </label>
-                          <div className="wideField">
-                            <ImageControl
-                              label="Section image"
-                              value={subsection.image}
-                              onChange={(value) => updateCategory(subsection.id, { image: value })}
-                              onUpload={uploadAdminImage}
-                            />
-                          </div>
-                          <button className="button buttonLine compact" type="button" onClick={() => deleteCategory(subsection.id)}>
-                            Delete
-                          </button>
-                        </div>
-                      ))}
-                  </div>
-                  <button className="button buttonLine compact" type="button" onClick={() => deleteCategory(category.id)}>
-                    Delete Main Section
-                  </button>
-                </article>
-              ))}
-            </div>
-          </div>
-          <div className="panel">
-            <div className="adminPanelHead">
-              <div>
-                <p className="eyebrow">Menu items</p>
-                <h2>Items, prices, and images</h2>
+              <div className="segmentedTabs" aria-label="Menu editor tabs">
+                <button
+                  className={menuEditorTab === "sections" ? "active" : ""}
+                  onClick={() => setMenuEditorTab("sections")}
+                  type="button"
+                >
+                  Sections
+                </button>
+                <button
+                  className={menuEditorTab === "items" ? "active" : ""}
+                  onClick={() => setMenuEditorTab("items")}
+                  type="button"
+                >
+                  Items
+                </button>
               </div>
-              <button className="button buttonLine compact" type="button" onClick={addMenuItem}>
-                Add Item
-              </button>
-            </div>
-            <div className="menuAdminItemGrid">
-              {items.map((item) => (
-                <article className="menuAdminItemCard" key={item.id}>
-                  <div className="menuAdminItemFields">
-                    <label>
-                      Item name
-                      <input value={item.name} onChange={(event) => updateMenuItem(item.id, { name: event.target.value })} />
-                    </label>
-                    <label>
-                      Section / Sub section
-                      <select value={item.category} onChange={(event) => updateMenuItem(item.id, { category: event.target.value })}>
-                        {categories.map((category) => {
-                          const parent = categories.find((item) => item.id === category.parentId);
-                          return (
-                            <option key={category.id} value={category.id}>
-                              {parent ? `${parent.name} / ${category.name}` : category.name}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </label>
-                    <label>
-                      Price
-                      <input
-                        type="number"
-                        value={item.price}
-                        onChange={(event) => updateMenuItem(item.id, { price: Number(event.target.value) })}
-                      />
-                    </label>
-                  </div>
-                  <button className="button buttonLine compact" type="button" onClick={() => deleteMenuItem(item.id)}>
-                    Delete Item
-                  </button>
-                </article>
-              ))}
             </div>
           </div>
+
+          {menuEditorTab === "sections" ? (
+            <div className="panel menuSectionManager">
+              <div className="adminPanelHead">
+                <div>
+                  <p className="eyebrow">Menu structure</p>
+                  <h2>Main sections and sub sections</h2>
+                </div>
+                <div className="miniActions">
+                  <button className="button buttonLine compact" type="button" onClick={() => addCategory("", "food")}>
+                    Add Food Section
+                  </button>
+                  <button className="button buttonLine compact" type="button" onClick={() => addCategory("", "drinks")}>
+                    Add Drinks Section
+                  </button>
+                </div>
+              </div>
+              <div className="menuAdminToolbar">
+                <label>
+                  Search sections
+                  <input
+                    value={sectionSearch}
+                    onChange={(event) => setSectionSearch(event.target.value)}
+                    placeholder="Search section or subsection"
+                  />
+                </label>
+              </div>
+              <div className="menuAdminSections">
+                {filteredMainCategories.map((category) => (
+                  <article className="menuAdminSectionCard" key={category.id}>
+                    <div className="menuAdminSectionHead">
+                      <div>
+                        <strong>{category.name || "Untitled section"}</strong>
+                        <span>{category.menuSide === "drinks" ? "Drinks side" : "Food side"}</span>
+                      </div>
+                      <div className="miniActions">
+                        <button className="button buttonLine compact" type="button" onClick={() => moveCategory(category.id, -1)}>
+                          Up
+                        </button>
+                        <button className="button buttonLine compact" type="button" onClick={() => moveCategory(category.id, 1)}>
+                          Down
+                        </button>
+                      </div>
+                    </div>
+                    <div className="menuCategoryEditor">
+                      <label>
+                        Section key
+                        <input
+                          value={category.id}
+                          onChange={(event) => updateCategory(category.id, { id: event.target.value })}
+                        />
+                      </label>
+                      <label>
+                        Section name
+                        <input
+                          value={category.name}
+                          onChange={(event) => updateCategory(category.id, { name: event.target.value })}
+                        />
+                      </label>
+                      <label>
+                        Menu side
+                        <select
+                          value={category.menuSide || "food"}
+                          onChange={(event) => updateCategory(category.id, { menuSide: event.target.value })}
+                        >
+                          <option value="food">Food / Burger side</option>
+                          <option value="drinks">Drinks side</option>
+                        </select>
+                      </label>
+                      <label>
+                        Description
+                        <input
+                          value={category.description || ""}
+                          onChange={(event) => updateCategory(category.id, { description: event.target.value })}
+                        />
+                      </label>
+                      <div className="wideField">
+                        <ImageControl
+                          label="Section image"
+                          value={category.image}
+                          onChange={(value) => updateCategory(category.id, { image: value })}
+                          onUpload={uploadAdminImage}
+                        />
+                      </div>
+                    </div>
+                    <div className="subsectionEditor">
+                      <div className="adminPanelHead compactHead">
+                        <h3>Sub sections</h3>
+                        <button
+                          className="button buttonLine compact"
+                          type="button"
+                          onClick={() => addCategory(category.id, category.menuSide || "food")}
+                        >
+                          Add Sub Section
+                        </button>
+                      </div>
+                      {categories
+                        .filter((item) => item.parentId === category.id)
+                        .map((subsection) => (
+                          <div className="menuCategoryEditor subsectionRow" key={subsection.id}>
+                            <label>
+                              Key
+                              <input
+                                value={subsection.id}
+                                onChange={(event) => updateCategory(subsection.id, { id: event.target.value })}
+                              />
+                            </label>
+                            <label>
+                              Name
+                              <input
+                                value={subsection.name}
+                                onChange={(event) => updateCategory(subsection.id, { name: event.target.value })}
+                              />
+                            </label>
+                            <label>
+                              Menu side
+                              <select
+                                value={subsection.menuSide || category.menuSide || "food"}
+                                onChange={(event) => updateCategory(subsection.id, { menuSide: event.target.value })}
+                              >
+                                <option value="food">Food / Burger side</option>
+                                <option value="drinks">Drinks side</option>
+                              </select>
+                            </label>
+                            <label>
+                              Description
+                              <input
+                                value={subsection.description || ""}
+                                onChange={(event) => updateCategory(subsection.id, { description: event.target.value })}
+                              />
+                            </label>
+                            <div className="wideField">
+                              <ImageControl
+                                label="Section image"
+                                value={subsection.image}
+                                onChange={(value) => updateCategory(subsection.id, { image: value })}
+                                onUpload={uploadAdminImage}
+                              />
+                            </div>
+                            <button className="button buttonLine compact" type="button" onClick={() => deleteCategory(subsection.id)}>
+                              Delete
+                            </button>
+                          </div>
+                        ))}
+                    </div>
+                    <button className="button buttonLine compact" type="button" onClick={() => deleteCategory(category.id)}>
+                      Delete Main Section
+                    </button>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {menuEditorTab === "items" ? (
+            <div className="panel">
+              <div className="adminPanelHead">
+                <div>
+                  <p className="eyebrow">Menu items</p>
+                  <h2>Search, filter, and edit prices</h2>
+                </div>
+                <button className="button buttonLine compact" type="button" onClick={addMenuItem}>
+                  Add Item
+                </button>
+              </div>
+              <div className="menuAdminToolbar itemToolbar">
+                <label>
+                  Search items
+                  <input
+                    value={itemSearch}
+                    onChange={(event) => setItemSearch(event.target.value)}
+                    placeholder="Search item name or section"
+                  />
+                </label>
+                <label>
+                  Filter section
+                  <select value={itemSectionFilter} onChange={(event) => setItemSectionFilter(event.target.value)}>
+                    <option value="all">All sections</option>
+                    {categories.map((category) => {
+                      const parent = categories.find((entry) => entry.id === category.parentId);
+                      return (
+                        <option key={category.id} value={category.id}>
+                          {parent ? `${parent.name} / ${category.name}` : category.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </label>
+              </div>
+              <div className="menuAdminItemGrid">
+                {filteredItems.map((item) => (
+                  <article className="menuAdminItemCard" key={item.id}>
+                    <div className="menuAdminItemFields">
+                      <label>
+                        Item name
+                        <input value={item.name} onChange={(event) => updateMenuItem(item.id, { name: event.target.value })} />
+                      </label>
+                      <label>
+                        Section / Sub section
+                        <select value={item.category} onChange={(event) => updateMenuItem(item.id, { category: event.target.value })}>
+                          {categories.map((category) => {
+                            const parent = categories.find((entry) => entry.id === category.parentId);
+                            return (
+                              <option key={category.id} value={category.id}>
+                                {parent ? `${parent.name} / ${category.name}` : category.name}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </label>
+                      <label>
+                        Price
+                        <input
+                          type="number"
+                          value={item.price}
+                          onChange={(event) => updateMenuItem(item.id, { price: Number(event.target.value) })}
+                        />
+                      </label>
+                    </div>
+                    <button className="button buttonLine compact" type="button" onClick={() => deleteMenuItem(item.id)}>
+                      Delete Item
+                    </button>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
           <div className="actions">
             <button className="button buttonGold" type="submit">
               Save Menu

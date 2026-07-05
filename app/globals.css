@@ -1611,6 +1611,31 @@ textarea {
   box-shadow: 0 16px 32px rgba(9, 10, 12, 0.05);
 }
 
+.footerSocialEditorPanel {
+  grid-column: 1 / -1;
+}
+
+.footerSocialEditor {
+  display: grid;
+  gap: 14px;
+}
+
+.footerSocialEditorCard {
+  display: grid;
+  gap: 14px;
+  border: 1px solid rgba(21, 21, 21, 0.12);
+  border-radius: 8px;
+  padding: 16px;
+  background: rgba(255, 253, 247, 0.82);
+}
+
+.footerSocialEditorFields {
+  display: grid;
+  grid-template-columns: minmax(160px, 0.7fr) minmax(220px, 1fr) minmax(220px, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
 .adminPanelHead {
   display: flex;
   align-items: center;
@@ -1773,6 +1798,10 @@ textarea {
   .orderSection,
   .adminForm,
   .metricGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .footerSocialEditorFields {
     grid-template-columns: 1fr;
   }
 
@@ -2808,6 +2837,7 @@ main:not(.adminMain),
   width: auto;
   height: auto;
   display: flex;
+  align-items: center;
   justify-content: flex-start;
   gap: 10px;
   border: 0;
@@ -2832,6 +2862,15 @@ main:not(.adminMain),
   color: #d8a83e;
   font-size: 10px;
   text-transform: uppercase;
+}
+
+.footerSocial img {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(216, 168, 62, 0.7);
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .copyright {
@@ -3791,6 +3830,58 @@ main:not(.adminMain),
   gap: 18px;
 }
 
+.menuWorkspaceHeader {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+
+.segmentedTabs {
+  display: inline-flex;
+  gap: 4px;
+  border: 1px solid rgba(21, 21, 21, 0.12);
+  border-radius: 999px;
+  padding: 4px;
+  background: rgba(255, 253, 247, 0.72);
+}
+
+.segmentedTabs button {
+  min-height: 34px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 16px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.segmentedTabs button.active {
+  background: var(--charcoal);
+  color: #fff;
+}
+
+.menuAdminToolbar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.menuAdminToolbar.itemToolbar {
+  grid-template-columns: minmax(220px, 1fr) minmax(220px, 0.7fr);
+}
+
+.menuAdminToolbar label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .menuAdminSectionCard,
 .menuAdminItemCard {
   border: 1px solid rgba(21, 21, 21, 0.12);
@@ -3830,7 +3921,7 @@ main:not(.adminMain),
 
 .menuCategoryEditor {
   display: grid;
-  grid-template-columns: minmax(150px, 0.8fr) minmax(180px, 1fr) minmax(220px, 1.4fr);
+  grid-template-columns: minmax(130px, 0.72fr) minmax(170px, 0.9fr) minmax(170px, 0.82fr) minmax(220px, 1.2fr);
   gap: 12px;
   align-items: end;
 }
@@ -3857,7 +3948,7 @@ main:not(.adminMain),
 }
 
 .subsectionRow {
-  grid-template-columns: minmax(120px, 0.7fr) minmax(160px, 1fr) minmax(200px, 1.3fr) auto;
+  grid-template-columns: minmax(110px, 0.62fr) minmax(150px, 0.9fr) minmax(150px, 0.82fr) minmax(190px, 1.1fr) auto;
   margin-bottom: 10px;
 }
 
@@ -3904,7 +3995,8 @@ main:not(.adminMain),
   .menuCategoryEditor,
   .subsectionRow,
   .menuAdminItemCard,
-  .menuAdminItemFields {
+  .menuAdminItemFields,
+  .menuAdminToolbar.itemToolbar {
     grid-template-columns: 1fr;
   }
 

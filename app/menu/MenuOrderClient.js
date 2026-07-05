@@ -15,14 +15,9 @@ export default function MenuOrderClient({ categories, items, previewLimitItems =
       items: categoryItems(section.id)
     }))
     .filter((section) => section.items.length);
-  const isDrinkSection = (section) =>
-    [section.id, section.name, section.description]
-      .join(" ")
-      .toLowerCase()
-      .match(/drink|shake|mojito|cocktail|juice|coffee|tea/);
   const boardColumns = {
-    food: boardSections.filter((section) => !isDrinkSection(section)),
-    drinks: boardSections.filter((section) => isDrinkSection(section))
+    food: boardSections.filter((section) => section.menuSide !== "drinks"),
+    drinks: boardSections.filter((section) => section.menuSide === "drinks")
   };
   const renderSection = (section) => {
     const sectionImage = section.image;

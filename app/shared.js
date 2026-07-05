@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { brand, brandImage } from "@/lib/data";
+import { brand, brandImage, footerSettings } from "@/lib/data";
 
 const links = [
   ["Home", "/"],
@@ -103,6 +103,7 @@ export function Header({
 
 export function Footer({ brandData = brand, footerData }) {
   const fullBrandName = displayBrandName(brandData);
+  const socialLinks = (footerData?.socialLinks || footerSettings.socialLinks).filter((link) => link.enabled !== false);
   const copyrightText =
     footerData?.copyright === "Copyright 2026 EMRAKEL. All rights reserved."
       ? `Copyright 2026 ${fullBrandName}. All rights reserved.`
@@ -140,9 +141,12 @@ export function Footer({ brandData = brand, footerData }) {
       <div>
         <h3>Social</h3>
         <div className="footerSocial">
-          <a href="#" aria-label="Facebook"><span>f</span> Facebook</a>
-          <a href="#" aria-label="Instagram"><span>ig</span> Instagram</a>
-          <a href="#" aria-label="WhatsApp"><span>wa</span> WhatsApp</a>
+          {socialLinks.map((link) => (
+            <a href={link.url || "#"} key={link.id || link.name} aria-label={link.name} target="_blank" rel="noreferrer">
+              {link.image ? <img src={link.image} alt="" /> : <span>{String(link.name || "S").slice(0, 2)}</span>}
+              {link.name}
+            </a>
+          ))}
         </div>
       </div>
       <div className="copyright">
