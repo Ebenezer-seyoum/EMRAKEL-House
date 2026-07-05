@@ -1084,24 +1084,47 @@ export default function AdminDashboardClient() {
                     const itemCount = getNestedItemCount(category.id);
 
                     return (
-                      <button
-                        className={`menuSectionListCard ${selectedSectionId === category.id ? "active" : ""}`}
+                      <div
+                        className={`menuSectionListRow ${selectedSectionId === category.id ? "active" : ""}`}
                         key={category.id}
-                        onClick={() => setSelectedSectionId(category.id)}
-                        type="button"
                       >
-                        <span className="sectionStackIcon">=</span>
-                        <span>
+                        <div className="menuSectionInfo" onClick={() => setSelectedSectionId(category.id)} role="button" tabIndex={0}>
                           <strong>{category.name || "Untitled section"}</strong>
                           <small>
-                            {subsectionCount} sub sections / {itemCount} items
+                            {subsectionCount} sub / {itemCount} items
                           </small>
-                          <em className={category.isActive !== false ? "statusPill active" : "statusPill"}>
+                        </div>
+
+                        <div className="menuSectionActions">
+                          <button
+                            className="button buttonLine compact"
+                            type="button"
+                            onClick={() => setSelectedSectionId(category.id)}
+                            aria-label={`View ${category.name || "section"}`}
+                          >
+                            View
+                          </button>
+
+                          <button
+                            className={`activeToggle compact ${category.isActive !== false ? "active" : ""}`}
+                            type="button"
+                            onClick={() => updateCategory(category.id, { isActive: category.isActive === false })}
+                            aria-pressed={category.isActive !== false}
+                            aria-label={`${category.isActive !== false ? "Hide" : "Show"} ${category.name || "section"}`}
+                          >
                             {category.isActive !== false ? "Active" : "Hidden"}
-                          </em>
-                        </span>
-                        <b>{selectedSectionId === category.id ? "v" : ">"}</b>
-                      </button>
+                          </button>
+
+                          <button
+                            className="button buttonLine compact dangerText"
+                            type="button"
+                            onClick={() => deleteCategory(category.id)}
+                            aria-label={`Delete ${category.name || "section"}`}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
                     );
                   })
                 ) : (

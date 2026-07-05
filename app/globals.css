@@ -397,6 +397,43 @@ nav a:hover,
   text-transform: uppercase;
 }
 
+/* Compact menu section list styles for admin */
+.menuSectionListRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(21,21,21,0.06);
+  background: rgba(255,255,255,0.02);
+  margin-bottom: 8px;
+}
+.menuSectionListRow.active {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  border-color: rgba(196,154,69,0.08);
+}
+.menuSectionInfo {
+  flex: 1 1 auto;
+  cursor: pointer;
+}
+.menuSectionInfo strong {
+  display: block;
+}
+.menuSectionInfo small {
+  color: var(--muted);
+  font-size: 12px;
+}
+.menuSectionActions {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+.menuSectionActions .activeToggle {
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
 .refFeature strong {
   color: #f7efe2;
   font-size: 12px;
