@@ -24,12 +24,12 @@ export default function MenuOrderClient({ categories, items, previewLimitItems =
     food: boardSections.filter((section) => !isDrinkSection(section)),
     drinks: boardSections.filter((section) => isDrinkSection(section))
   };
-  const renderSection = (section, imageClassName = "") => {
-    const sectionImage = section.image || section.items[0]?.image;
+  const renderSection = (section) => {
+    const sectionImage = section.image;
 
     return (
       <article className="menuBoardSection" key={section.id}>
-        {sectionImage ? <img className={imageClassName} src={sectionImage} alt="" /> : null}
+        {sectionImage ? <img className="menuBoardSectionImage" src={sectionImage} alt="" /> : null}
         <div>
           <h3>{section.name}</h3>
           {section.items.slice(0, previewLimitItems ? 5 : 10).map((item) => (
@@ -55,6 +55,11 @@ export default function MenuOrderClient({ categories, items, previewLimitItems =
           </div>
           <div className="menuBoardColumns">
             <div className="menuBoardColumn foodColumn">
+              <div className="foodPosterTitle">
+                <span>Good Food, Great Moments</span>
+                <strong>EMRAKEL</strong>
+                <em>MENU</em>
+              </div>
               {boardColumns.food.length ? boardColumns.food.map((section) => renderSection(section)) : (
                 <p className="menuBoardEmpty">Food menu coming soon.</p>
               )}

@@ -306,8 +306,7 @@ export default function AdminDashboardClient() {
         category: firstCategory?.id || "burgers",
         name: "New Item",
         description: "Item description",
-        price: 0,
-        image: brandImage
+        price: 0
       }
     ]);
   }
@@ -880,7 +879,6 @@ export default function AdminDashboardClient() {
             <div className="menuAdminItemGrid">
               {items.map((item) => (
                 <article className="menuAdminItemCard" key={item.id}>
-                  <img src={item.image || brandImage} alt="" />
                   <div className="menuAdminItemFields">
                     <label>
                       Item name
@@ -905,21 +903,6 @@ export default function AdminDashboardClient() {
                         type="number"
                         value={item.price}
                         onChange={(event) => updateMenuItem(item.id, { price: Number(event.target.value) })}
-                      />
-                    </label>
-                    <div className="wideField">
-                      <ImageControl
-                        label="Item image"
-                        value={item.image}
-                        onChange={(value) => updateMenuItem(item.id, { image: value })}
-                        onUpload={uploadAdminImage}
-                      />
-                    </div>
-                    <label className="wideField">
-                      Description
-                      <textarea
-                        value={item.description}
-                        onChange={(event) => updateMenuItem(item.id, { description: event.target.value })}
                       />
                     </label>
                   </div>
