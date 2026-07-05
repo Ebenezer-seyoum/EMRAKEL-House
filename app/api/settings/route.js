@@ -10,6 +10,7 @@ export async function GET() {
     contact: content.contact,
     footer: content.footer,
     jazz: content.jazz,
+    seo: content.seo,
     source: content.source
   });
 }
@@ -31,7 +32,8 @@ export async function PUT(request) {
       about: { ...state.about, ...(body.about || {}) },
       contact: { ...state.contact, ...(body.contact || {}) },
       footer: { ...state.footer, ...(body.footer || {}) },
-      jazz: { ...state.jazz, ...(body.jazz || {}) }
+      jazz: { ...state.jazz, ...(body.jazz || {}) },
+      seo: { ...state.seo, ...(body.seo || {}) }
     });
     return Response.json({ message, ...next, source: "local" });
   }
@@ -46,7 +48,8 @@ export async function PUT(request) {
     { setting_key: "about", setting_value: body.about || {} },
     { setting_key: "contact", setting_value: body.contact || {} },
     { setting_key: "footer", setting_value: body.footer || {} },
-    { setting_key: "jazz", setting_value: body.jazz || {} }
+    { setting_key: "jazz", setting_value: body.jazz || {} },
+    { setting_key: "seo", setting_value: body.seo || {} }
   ];
 
   let error;

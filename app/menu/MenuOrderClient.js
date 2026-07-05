@@ -3,8 +3,7 @@
 export default function MenuOrderClient({ categories, items, previewLimitItems = 0 }) {
   const topCategories = categories.filter((category) => !category.parentId);
   const childCategories = (parentId) => categories.filter((category) => category.parentId === parentId);
-  const visibleItems = previewLimitItems ? items.slice(-previewLimitItems) : items;
-  const categoryItems = (categoryId) => visibleItems.filter((item) => item.category === categoryId);
+  const categoryItems = (categoryId) => items.filter((item) => item.category === categoryId);
   const boardSections = topCategories
     .flatMap((category) => {
       const children = childCategories(category.id);
@@ -13,8 +12,7 @@ export default function MenuOrderClient({ categories, items, previewLimitItems =
     .map((section) => ({
       ...section,
       items: categoryItems(section.id)
-    }))
-    .filter((section) => section.items.length);
+    }));
   const boardColumns = {
     food: boardSections.filter((section) => section.menuSide !== "drinks"),
     drinks: boardSections.filter((section) => section.menuSide === "drinks")
@@ -27,13 +25,17 @@ export default function MenuOrderClient({ categories, items, previewLimitItems =
         {sectionImage ? <img className="menuBoardSectionImage" src={sectionImage} alt="" /> : null}
         <div>
           <h3>{section.name}</h3>
-          {section.items.slice(0, previewLimitItems ? 5 : 10).map((item) => (
-            <p key={item.id}>
-              <span>{item.name}</span>
-              <i />
-              <strong>{item.price} birr</strong>
-            </p>
-          ))}
+          {section.items.length ? (
+            section.items.slice(0, previewLimitItems || 10).map((item) => (
+              <p key={item.id}>
+                <span>{item.name}</span>
+                <i />
+                <strong>{item.price} birr</strong>
+              </p>
+            ))
+          ) : (
+            <p className="menuBoardSectionEmpty">Items coming soon.</p>
+          )}
         </div>
       </article>
     );

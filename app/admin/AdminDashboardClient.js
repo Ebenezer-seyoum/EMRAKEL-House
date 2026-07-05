@@ -66,9 +66,11 @@ export default function AdminDashboardClient() {
   const [contact, setContact] = useState(null);
   const [footer, setFooter] = useState(null);
   const [jazz, setJazz] = useState(null);
+  const [seo, setSeo] = useState(null);
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState([]);
   const [selectedMenuSide, setSelectedMenuSide] = useState("food");
+  const [editingSections, setEditingSections] = useState([]);
   const [expandedSubsections, setExpandedSubsections] = useState([]);
   const [sectionSearch, setSectionSearch] = useState("");
   const [itemSearch, setItemSearch] = useState("");
@@ -152,6 +154,7 @@ export default function AdminDashboardClient() {
     setContact(settingsData.contact);
     setFooter(settingsData.footer);
     setJazz(settingsData.jazz);
+    setSeo(settingsData.seo);
     setCategories(menuData.categories || []);
     setItems(menuData.items || []);
     setGallery(galleryData.gallery || []);
@@ -204,14 +207,14 @@ export default function AdminDashboardClient() {
     const response = await fetch("/api/settings", {
       method: "PUT",
       headers: adminHeaders(),
-      body: JSON.stringify({ brand, home, about, contact, footer, jazz })
+      body: JSON.stringify({ brand, home, about, contact, footer, jazz, seo })
     });
     const data = await response.json();
     setStatus({ type: response.ok ? "success" : "error", message: data.message || data.error });
   }
 
   async function saveMenu(event) {
-    event.preventDefault();
+    event?.preventDefault();
     const response = await fetch("/api/menu", {
       method: "PUT",
       headers: adminHeaders(),
@@ -219,6 +222,7 @@ export default function AdminDashboardClient() {
     });
     const data = await response.json();
     setStatus({ type: response.ok ? "success" : "error", message: data.message || data.error });
+    return response.ok;
   }
 
   async function saveGallery(event) {
@@ -285,10 +289,32 @@ export default function AdminDashboardClient() {
     } else {
       setExpandedSubsections((current) => (current.includes(id) ? current : [...current, id]));
     }
+    setEditingSections((current) => (current.includes(id) ? current : [...current, id]));
   }
 
   function addSimpleSection() {
     addCategory(menuSideRoot?.id || "", selectedMenuSide);
+  }
+
+  function openSectionEditor(sectionId) {
+    setEditingSections((current) => (current.includes(sectionId) ? current : [...current, sectionId]));
+  }
+
+  function closeSectionEditor(sectionId) {
+    setEditingSections((current) => current.filter((id) => id !== sectionId));
+  }
+
+  async function cancelSectionLine(sectionId) {
+    await loadDashboard();
+    closeSectionEditor(sectionId);
+  }
+
+  async function saveSectionLine(sectionId) {
+    const saved = await saveMenu();
+
+    if (saved) {
+      closeSectionEditor(sectionId);
+    }
   }
 
   function updateCategory(categoryId, updates) {
@@ -465,13 +491,24 @@ export default function AdminDashboardClient() {
   function renderSimpleMenuSection(section) {
     const children = categories.filter((category) => category.parentId === section.id);
     const visibleChildren = children.filter((category) => (category.menuSide || selectedMenuSide) === selectedMenuSide);
+    const directItems = getCategoryItems(section.id);
+    const childItems = visibleChildren.flatMap((child) => getCategoryItems(child.id));
+    const itemCount = directItems.length + childItems.length;
+    const isEditing = editingSections.includes(section.id);
 
     return (
       <article className="menuSimpleSection" key={section.id}>
         <div className="menuSimpleSectionHead">
-          <div>
-            <p className="eyebrow">{selectedMenuSide === "drinks" ? "Drink Section" : "Food Section"}</p>
-            <h3>{section.name || "Untitled section"}</h3>
+          <div className="menuSimpleTitleBlock">
+            {section.image ? <img className="menuSimpleThumb" src={section.image} alt="" /> : null}
+            <div>
+              <p className="eyebrow">{selectedMenuSide === "drinks" ? "Drink Section" : "Food Section"}</p>
+              <h3>{section.name || "Untitled section"}</h3>
+              <p className="menuSimpleMeta">
+                {visibleChildren.length} sub sections / {itemCount} items
+              </p>
+              {section.description ? <p className="menuSimpleDescription">{section.description}</p> : null}
+            </div>
           </div>
           <div className="miniActions">
             <button
@@ -481,59 +518,77 @@ export default function AdminDashboardClient() {
             >
               {section.isActive !== false ? "Active" : "Hidden"}
             </button>
+            {isEditing ? (
+              <>
+                <button className="button buttonGold compact" type="button" onClick={() => saveSectionLine(section.id)}>
+                  Save
+                </button>
+                <button className="button buttonLine compact" type="button" onClick={() => cancelSectionLine(section.id)}>
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <button className="button buttonLine compact" type="button" onClick={() => openSectionEditor(section.id)}>
+                Edit
+              </button>
+            )}
             <button className="button buttonLine compact dangerText" type="button" onClick={() => deleteCategory(section.id)}>
               Delete Section
             </button>
           </div>
         </div>
 
-        <div className="menuSimpleFields">
-          <label>
-            Section key
-            <input value={section.id} onChange={(event) => updateCategory(section.id, { id: event.target.value })} />
-          </label>
-          <label>
-            Section name
-            <input value={section.name} onChange={(event) => updateCategory(section.id, { name: event.target.value })} />
-          </label>
-          <label className="wideField">
-            Description
-            <textarea value={section.description || ""} onChange={(event) => updateCategory(section.id, { description: event.target.value })} />
-          </label>
-          <div className="wideField">
-            <ImageControl
-              label="Section photo"
-              value={section.image}
-              onChange={(value) => updateCategory(section.id, { image: value })}
-              onUpload={uploadAdminImage}
-            />
-          </div>
-        </div>
+        {isEditing ? (
+          <>
+            <div className="menuSimpleFields">
+              <label>
+                Section key
+                <input value={section.id} onChange={(event) => updateCategory(section.id, { id: event.target.value })} />
+              </label>
+              <label>
+                Section name
+                <input value={section.name} onChange={(event) => updateCategory(section.id, { name: event.target.value })} />
+              </label>
+              <label className="wideField">
+                Description
+                <textarea value={section.description || ""} onChange={(event) => updateCategory(section.id, { description: event.target.value })} />
+              </label>
+              <div className="wideField">
+                <ImageControl
+                  label="Section photo"
+                  value={section.image}
+                  onChange={(value) => updateCategory(section.id, { image: value })}
+                  onUpload={uploadAdminImage}
+                />
+              </div>
+            </div>
 
-        {visibleChildren.length ? (
-          <div className="menuSimpleChildren">
-            <div className="compactHead">
-              <div>
-                <p className="eyebrow">Sub sections</p>
-                <h3>Dropdown items</h3>
+            {visibleChildren.length ? (
+              <div className="menuSimpleChildren">
+                <div className="compactHead">
+                  <div>
+                    <p className="eyebrow">Sub sections</p>
+                    <h3>Dropdown items</h3>
+                  </div>
+                  <button className="button buttonLine compact" type="button" onClick={() => addCategory(section.id, section.menuSide || selectedMenuSide)}>
+                    Add Sub Section
+                  </button>
+                </div>
+                {visibleChildren.map((child) => renderSubsectionCard(child, section))}
               </div>
-              <button className="button buttonLine compact" type="button" onClick={() => addCategory(section.id, section.menuSide || selectedMenuSide)}>
-                Add Sub Section
-              </button>
-            </div>
-            {visibleChildren.map((child) => renderSubsectionCard(child, section))}
-          </div>
-        ) : (
-          <div className="menuSimpleItems">
-            <div className="compactHead">
-              <div>
-                <p className="eyebrow">Items</p>
-                <h3>Add and edit prices</h3>
+            ) : (
+              <div className="menuSimpleItems">
+                <div className="compactHead">
+                  <div>
+                    <p className="eyebrow">Items</p>
+                    <h3>Add and edit prices</h3>
+                  </div>
+                </div>
+                {renderMenuItemRows(section.id)}
               </div>
-            </div>
-            {renderMenuItemRows(section.id)}
-          </div>
-        )}
+            )}
+          </>
+        ) : null}
       </article>
     );
   }
@@ -592,6 +647,37 @@ export default function AdminDashboardClient() {
     }));
   }
 
+  function addSeoSitelink() {
+    const id = `sitelink-${Date.now()}`;
+    setSeo((current) => ({
+      ...current,
+      sitelinks: [
+        ...(current.sitelinks || []),
+        {
+          id,
+          label: "New Link",
+          url: "/",
+          description: "Short Google search description for this link.",
+          enabled: true
+        }
+      ]
+    }));
+  }
+
+  function updateSeoSitelink(linkId, updates) {
+    setSeo((current) => ({
+      ...current,
+      sitelinks: (current.sitelinks || []).map((link) => (link.id === linkId ? { ...link, ...updates } : link))
+    }));
+  }
+
+  function deleteSeoSitelink(linkId) {
+    setSeo((current) => ({
+      ...current,
+      sitelinks: (current.sitelinks || []).filter((link) => link.id !== linkId)
+    }));
+  }
+
   function logout() {
     localStorage.removeItem("emrakelSession");
     window.location.href = "/login";
@@ -608,7 +694,7 @@ export default function AdminDashboardClient() {
     );
   }
 
-  if (!brand || !home || !about || !contact || !footer || !jazz) {
+  if (!brand || !home || !about || !contact || !footer || !jazz || !seo) {
     return (
       <section className="adminAuthState">
         <div className="panel">
@@ -714,6 +800,54 @@ export default function AdminDashboardClient() {
               onChange={(value) => setBrand({ ...brand, address: value })}
             />
             <TextInput label="Hours" value={brand.hours} onChange={(value) => setBrand({ ...brand, hours: value })} />
+          </div>
+          <div className="panel googleSearchEditorPanel">
+            <div className="adminPanelHead">
+              <div>
+                <p className="eyebrow">Google search</p>
+                <h2>Search display and sitelinks</h2>
+              </div>
+              <button className="button buttonLine compact" type="button" onClick={addSeoSitelink}>
+                Add Sitelink
+              </button>
+            </div>
+            <TextInput label="Google title" value={seo.title} onChange={(value) => setSeo({ ...seo, title: value })} />
+            <TextInput
+              label="Google description"
+              textarea
+              value={seo.description}
+              onChange={(value) => setSeo({ ...seo, description: value })}
+            />
+            <TextInput label="Site URL" value={seo.siteUrl} onChange={(value) => setSeo({ ...seo, siteUrl: value })} />
+            <ImageControl label="Google logo / preview image" value={seo.image} onChange={(value) => setSeo({ ...seo, image: value })} onUpload={uploadAdminImage} />
+            <TextInput label="Keywords" value={seo.keywords} onChange={(value) => setSeo({ ...seo, keywords: value })} />
+            <div className="seoSitelinkList">
+              {(seo.sitelinks || []).map((link) => (
+                <article className="seoSitelinkCard" key={link.id}>
+                  <label className="checkRow">
+                    <input
+                      checked={link.enabled !== false}
+                      onChange={(event) => updateSeoSitelink(link.id, { enabled: event.target.checked })}
+                      type="checkbox"
+                    />
+                    Show as Google sitelink
+                  </label>
+                  <div className="seoSitelinkFields">
+                    <TextInput label="Label" value={link.label} onChange={(value) => updateSeoSitelink(link.id, { label: value })} />
+                    <TextInput label="URL" value={link.url} onChange={(value) => updateSeoSitelink(link.id, { url: value })} />
+                    <TextInput
+                      label="Description"
+                      textarea
+                      value={link.description}
+                      onChange={(value) => updateSeoSitelink(link.id, { description: value })}
+                    />
+                  </div>
+                  <button className="button buttonLine compact dangerText" type="button" onClick={() => deleteSeoSitelink(link.id)}>
+                    Delete Sitelink
+                  </button>
+                </article>
+              ))}
+            </div>
           </div>
           <div className="panel">
             <h2>Homepage</h2>
