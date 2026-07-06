@@ -24,16 +24,20 @@ function absoluteUrl(pathOrUrl, siteUrl) {
   }
 }
 
+function commaList(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 export async function generateMetadata() {
   const content = await getPublicContent();
   const seo = content.seo || {};
   const siteUrl = normalizeSiteUrl(seo.siteUrl);
-  const title = seo.title || "EMRAKEL | Burger, Pizza & Cocktail House";
-  const description =
-    seo.description ||
-    "Order burgers, pizza, cocktails, and house favorites from EMRAKEL. Book a table, explore the menu, and enjoy a modern restaurant experience.";
+  const title = seo.title || content.brand?.name || "EMRAKEL";
+  const description = seo.description || content.home?.description || "";
   const image = absoluteUrl(seo.image || "/logo.png", siteUrl);
-
   return {
     metadataBase: new URL(siteUrl),
     title,
@@ -47,7 +51,7 @@ export async function generateMetadata() {
       description,
       url: siteUrl,
       siteName: content.brand?.name || "EMRAKEL",
-      images: [{ url: image }],
+      images: [{ url: image, alt: title }],
       type: "website"
     },
     twitter: {
@@ -57,9 +61,9 @@ export async function generateMetadata() {
       images: [image]
     },
     icons: {
-      icon: seo.image || "/logo.png",
-      shortcut: seo.image || "/logo.png",
-      apple: seo.image || "/logo.png"
+      icon: seo.logo || seo.image || "/logo.png",
+      shortcut: seo.logo || seo.image || "/logo.png",
+      apple: seo.logo || seo.image || "/logo.png"
     }
   };
 }
@@ -69,34 +73,66 @@ export default async function RootLayout({ children }) {
   const seo = content.seo || {};
   const siteUrl = normalizeSiteUrl(seo.siteUrl);
   const enabledSitelinks = (seo.sitelinks || []).filter((link) => link.enabled !== false);
+  const title = seo.title || content.brand?.name || "EMRAKEL";
+  const description = seo.schemaDescription || seo.description || content.home?.description || "";
+  const logo = absoluteUrl(seo.logo || seo.image || content.brand?.logoImage || "/logo.png", siteUrl);
+  const image = absoluteUrl(seo.image || seo.logo || content.brand?.logoImage || "/logo.png", siteUrl);
+  const cuisine = commaList(seo.cuisine);
+  const sameAs = commaList(seo.sameAs);
+  const siteNavigation = enabledSitelinks.map((link, index) => ({
+    "@type": "SiteNavigationElement",
+    position: index + 1,
+    name: link.label,
+    description: link.description,
+    url: absoluteUrl(link.url, siteUrl)
+  }));
+  const websiteData = {
+    "@type": "WebSite",
+    "@id": `${siteUrl}/#website`,
+    name: title,
+    url: siteUrl
+  };
+
+  if (seo.searchActionEnabled === true) {
+    websiteData.potentialAction = {
+      "@type": "SearchAction",
+      target: `${siteUrl}/search?q={search_term_string}`,
+      "query-input": "required name=search_term_string"
+    };
+  }
+
   const structuredData = [
     {
       "@context": "https://schema.org",
-      "@type": "Restaurant",
-      name: content.brand?.name || "EMRAKEL",
-      description: seo.description || content.home?.description,
-      url: siteUrl,
-      image: absoluteUrl(seo.image || "/logo.png", siteUrl),
-      telephone: content.brand?.phone,
-      email: content.brand?.email,
-      address: content.brand?.address,
-      servesCuisine: ["Burgers", "Pizza", "Cocktails"],
-      openingHours: content.brand?.hours
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      name: seo.title || content.brand?.name || "EMRAKEL",
-      url: siteUrl
-    },
-    ...enabledSitelinks.map((link, index) => ({
-      "@context": "https://schema.org",
-      "@type": "SiteNavigationElement",
-      position: index + 1,
-      name: link.label,
-      description: link.description,
-      url: absoluteUrl(link.url, siteUrl)
-    }))
+      "@graph": [
+        {
+          "@type": seo.schemaType || "Restaurant",
+          "@id": `${siteUrl}/#restaurant`,
+          name: seo.schemaName || content.brand?.name || "EMRAKEL",
+          description,
+          url: siteUrl,
+          logo,
+          image,
+          telephone: content.brand?.phone,
+          email: content.brand?.email,
+          address: content.brand?.address,
+          servesCuisine: cuisine.length ? cuisine : undefined,
+          priceRange: seo.priceRange || undefined,
+          openingHours: content.brand?.hours,
+          sameAs: sameAs.length ? sameAs : undefined
+        },
+        {
+          "@type": "Organization",
+          "@id": `${siteUrl}/#organization`,
+          name: seo.schemaName || content.brand?.name || "EMRAKEL",
+          url: siteUrl,
+          logo,
+          sameAs: sameAs.length ? sameAs : undefined
+        },
+        websiteData,
+        ...siteNavigation
+      ]
+    }
   ];
 
   return (

@@ -952,7 +952,40 @@ export default function AdminDashboardClient() {
             />
             <TextInput label="Site URL" value={seo.siteUrl} onChange={(value) => setSeo({ ...seo, siteUrl: value })} />
             <ImageControl label="Google logo / preview image" value={seo.image} onChange={(value) => setSeo({ ...seo, image: value })} onUpload={uploadAdminImage} />
+            <ImageControl label="Business schema logo" value={seo.logo} onChange={(value) => setSeo({ ...seo, logo: value })} onUpload={uploadAdminImage} />
             <TextInput label="Keywords" value={seo.keywords} onChange={(value) => setSeo({ ...seo, keywords: value })} />
+            <TextInput
+              label="Business schema name"
+              value={seo.schemaName}
+              onChange={(value) => setSeo({ ...seo, schemaName: value })}
+            />
+            <TextInput
+              label="Schema type"
+              value={seo.schemaType}
+              onChange={(value) => setSeo({ ...seo, schemaType: value })}
+            />
+            <TextInput
+              label="Business schema description"
+              textarea
+              value={seo.schemaDescription}
+              onChange={(value) => setSeo({ ...seo, schemaDescription: value })}
+            />
+            <TextInput label="Cuisine list" value={seo.cuisine} onChange={(value) => setSeo({ ...seo, cuisine: value })} />
+            <TextInput label="Price range" value={seo.priceRange} onChange={(value) => setSeo({ ...seo, priceRange: value })} />
+            <TextInput
+              label="Social/profile URLs"
+              textarea
+              value={seo.sameAs}
+              onChange={(value) => setSeo({ ...seo, sameAs: value })}
+            />
+            <label className="checkRow">
+              <input
+                checked={Boolean(seo.searchActionEnabled)}
+                onChange={(event) => setSeo({ ...seo, searchActionEnabled: event.target.checked })}
+                type="checkbox"
+              />
+              Add Google sitelink search box schema
+            </label>
             <div className="seoSitelinkList">
               {(seo.sitelinks || []).map((link) => (
                 <article className="seoSitelinkCard" key={link.id}>
