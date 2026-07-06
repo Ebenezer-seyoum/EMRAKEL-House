@@ -1,8 +1,17 @@
 import { getPublicContent } from "@/lib/cms";
+import { metadataForPath } from "@/lib/seo";
 import { SectionPageShell } from "../section-page-shell";
 import ContactFormClient from "./ContactFormClient";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  const content = await getPublicContent();
+  return metadataForPath(content, "/contact", {
+    title: content.contact.headline,
+    description: content.contact.description
+  });
+}
 
 export default async function ContactPage() {
   const content = await getPublicContent();

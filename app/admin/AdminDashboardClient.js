@@ -57,6 +57,35 @@ function ImageControl({ label, value, onChange, onUpload }) {
   );
 }
 
+function normalizeAdminUrl(value) {
+  return String(value || "")
+    .trim()
+    .replace(/^https?:\/\/https?:\/\//i, "https://")
+    .replace(/^https?:\/\/http/i, "https://");
+}
+
+function displayUrl(siteUrl, path = "/") {
+  const cleanSite = normalizeAdminUrl(siteUrl || "https://emrakelhouse.com").replace(/\/$/, "");
+  const cleanPath = String(path || "/");
+  if (/^https?:\/\//i.test(cleanPath)) {
+    return cleanPath;
+  }
+  return `${cleanSite}${cleanPath.startsWith("/") ? cleanPath : `/${cleanPath}`}`;
+}
+
+function SeoPreview({ siteUrl, title, description, path = "/" }) {
+  return (
+    <div className="seoPreviewBox">
+      <div className="seoPreviewIcon">E</div>
+      <div>
+        <span>{displayUrl(siteUrl, path)}</span>
+        <strong>{title || "Google title"}</strong>
+        <p>{description || "Google description preview will appear here."}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminDashboardClient() {
   const [session, setSession] = useState(null);
   const [activeTab, setActiveTab] = useState("home");
@@ -118,6 +147,12 @@ export default function AdminDashboardClient() {
 
     return query ? haystack.includes(query) : true;
   });
+  const seoSiteUrl = normalizeAdminUrl(seo?.siteUrl || "https://emrakelhouse.com") || "https://emrakelhouse.com";
+  const seoMenuUrl = seo?.menuUrl || displayUrl(seoSiteUrl, "/menu");
+  const seoSearchConsoleUrls =
+    seo?.searchConsoleUrls ||
+    ["/", "/menu", "/about", "/gallery", "/contact"].map((path) => displayUrl(seoSiteUrl, path)).join("\n");
+  const enabledSeoLinks = (seo?.sitelinks || []).filter((link) => link.enabled !== false && link.noindex !== true);
 
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("emrakelSession") || "null");
@@ -229,6 +264,55 @@ export default function AdminDashboardClient() {
     });
     const data = await response.json();
     setStatus({ type: response.ok ? "success" : "error", message: data.message || data.error });
+  }
+
+  function validateSeoSettings() {
+    const url = normalizeAdminUrl(seo.siteUrl);
+
+    if (!/^https:\/\//i.test(url)) {
+      return "Website URL must start with https://";
+    }
+
+    if (/httpemrakelhouse|http:\/\/http/i.test(url)) {
+      return "Please fix the website URL. Use https://emrakelhouse.com";
+    }
+
+    if (!seo.title?.trim()) {
+      return "Google title is required.";
+    }
+
+    if (!seo.description?.trim()) {
+      return "Google description is required.";
+    }
+
+    return "";
+  }
+
+  async function saveSeoSettings(event) {
+    event.preventDefault();
+    const validationError = validateSeoSettings();
+
+    if (validationError) {
+      setStatus({ type: "error", message: validationError });
+      return;
+    }
+
+    const nextSeo = {
+      ...seo,
+      siteUrl: seoSiteUrl,
+      menuUrl: seo.menuUrl || displayUrl(seoSiteUrl, "/menu"),
+      sitemapUrl: seo.sitemapUrl || displayUrl(seoSiteUrl, "/sitemap.xml"),
+      robotsUrl: seo.robotsUrl || displayUrl(seoSiteUrl, "/robots.txt"),
+      searchConsoleUrls: seoSearchConsoleUrls
+    };
+    const response = await fetch("/api/settings", {
+      method: "PUT",
+      headers: adminHeaders(),
+      body: JSON.stringify({ brand, home, about, contact, footer, jazz, seo: nextSeo, menuBoard, bookingPage, loginPage, customerPage })
+    });
+    const data = await response.json();
+    setSeo(nextSeo);
+    setStatus({ type: response.ok ? "success" : "error", message: response.ok ? "Google SEO saved successfully." : data.error });
   }
 
   async function saveMenu(event) {
@@ -858,36 +942,124 @@ export default function AdminDashboardClient() {
         </div>
 
       {activeTab === "seo" ? (
-        <form className="adminForm" onSubmit={saveSettings}>
+        <form className="adminStack" onSubmit={saveSeoSettings}>
           <div className="panel googleSearchEditorPanel">
             <div className="adminPanelHead">
               <div>
-                <p className="eyebrow">Google search</p>
-                <h2>Search display and sitelinks</h2>
-                <p className="adminHelpText">This controls Google title, description, logo, business schema, and sub links separately from the home page.</p>
+                <p className="eyebrow">Main Google result</p>
+                <h2>What customers see first</h2>
+                <p className="adminHelpText">Edit the blue Google title, website URL, and short description. Google may rewrite it, but these fields guide Search.</p>
+              </div>
+            </div>
+            <div className="seoEditorSplit">
+              <div className="adminSeoGrid">
+                <TextInput label="Google title" value={seo.title} onChange={(value) => setSeo({ ...seo, title: value })} />
+                <TextInput label="Website URL" value={seo.siteUrl} onChange={(value) => setSeo({ ...seo, siteUrl: value })} />
+                <TextInput label="Browser tab name" value={seo.tabTitle} onChange={(value) => setSeo({ ...seo, tabTitle: value })} />
+                <TextInput label="Google description" textarea value={seo.description} onChange={(value) => setSeo({ ...seo, description: value })} />
+                <TextInput label="Menu link for Google/QR" value={seo.menuUrl} onChange={(value) => setSeo({ ...seo, menuUrl: value })} />
+                <TextInput label="Keywords" value={seo.keywords} onChange={(value) => setSeo({ ...seo, keywords: value })} />
+              </div>
+              <div className="seoPreviewPanel">
+                <p className="eyebrow">Live preview</p>
+                <SeoPreview siteUrl={seoSiteUrl} title={seo.title} description={seo.description} />
+                <p className="adminHelpText">Keep the URL as https://emrakelhouse.com. Avoid old brand phrases if you do not want Google to show them.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="panel">
+            <div className="adminPanelHead">
+              <div>
+                <p className="eyebrow">Business profile details</p>
+                <h2>Restaurant information for Google</h2>
+                <p className="adminHelpText">These fields feed structured data so Google connects the website with the restaurant profile.</p>
+              </div>
+            </div>
+            <div className="adminSeoGrid">
+              <TextInput label="Business name" value={seo.schemaName} onChange={(value) => setSeo({ ...seo, schemaName: value })} />
+              <TextInput label="Business type" value={seo.schemaType} onChange={(value) => setSeo({ ...seo, schemaType: value })} />
+              <TextInput label="Cuisine / services" value={seo.cuisine} onChange={(value) => setSeo({ ...seo, cuisine: value })} />
+              <TextInput label="Price range" value={seo.priceRange} onChange={(value) => setSeo({ ...seo, priceRange: value })} />
+              <TextInput label="Business description" textarea value={seo.schemaDescription} onChange={(value) => setSeo({ ...seo, schemaDescription: value })} />
+              <TextInput label="Social/profile URLs, one or comma separated" textarea value={seo.sameAs} onChange={(value) => setSeo({ ...seo, sameAs: value })} />
+            </div>
+          </div>
+
+          <div className="panel googleSearchEditorPanel">
+            <div className="adminPanelHead">
+              <div>
+                <p className="eyebrow">Google sitelinks / sublinks</p>
+                <h2>Pages Google can choose from</h2>
+                <p className="adminHelpText">These are not separate new pages. They point to existing pages or menu filters like /menu?type=burgers. Google decides what to display.</p>
               </div>
               <button className="button buttonLine compact" type="button" onClick={addSeoSitelink}>
                 Add Sitelink
               </button>
             </div>
-            <div className="adminSeoGrid">
-              <TextInput label="Browser tab name" value={seo.tabTitle} onChange={(value) => setSeo({ ...seo, tabTitle: value })} />
-              <TextInput label="Google title" value={seo.title} onChange={(value) => setSeo({ ...seo, title: value })} />
-              <TextInput label="Site URL" value={seo.siteUrl} onChange={(value) => setSeo({ ...seo, siteUrl: value })} />
-              <TextInput label="Google description" textarea value={seo.description} onChange={(value) => setSeo({ ...seo, description: value })} />
-              <TextInput label="Keywords" value={seo.keywords} onChange={(value) => setSeo({ ...seo, keywords: value })} />
-              <ImageControl label="Browser tab favicon" value={seo.favicon} onChange={(value) => setSeo({ ...seo, favicon: value })} onUpload={uploadAdminImage} />
-              <ImageControl label="Apple / mobile tab icon" value={seo.appleIcon} onChange={(value) => setSeo({ ...seo, appleIcon: value })} onUpload={uploadAdminImage} />
-              <ImageControl label="Google logo / preview image" value={seo.image} onChange={(value) => setSeo({ ...seo, image: value })} onUpload={uploadAdminImage} />
-              <ImageControl label="Business schema logo" value={seo.logo} onChange={(value) => setSeo({ ...seo, logo: value })} onUpload={uploadAdminImage} />
+            <div className="seoSitelinkList adminCompactRows">
+              {(seo.sitelinks || []).map((link) => (
+                <article className="seoSitelinkCard adminEditableRow" key={link.id}>
+                  <div className="seoSitelinkTop">
+                    <label className="checkRow">
+                      <input
+                        checked={link.enabled !== false}
+                        onChange={(event) => updateSeoSitelink(link.id, { enabled: event.target.checked })}
+                        type="checkbox"
+                      />
+                      Suggest to Google
+                    </label>
+                    <label className="checkRow">
+                      <input
+                        checked={link.noindex === true}
+                        onChange={(event) => updateSeoSitelink(link.id, { noindex: event.target.checked })}
+                        type="checkbox"
+                      />
+                      Hide from Google
+                    </label>
+                  </div>
+                  <div className="seoSitelinkFields">
+                    <TextInput label="Sublink label" value={link.label} onChange={(value) => updateSeoSitelink(link.id, { label: value })} />
+                    <TextInput label="URL path" value={link.url} onChange={(value) => updateSeoSitelink(link.id, { url: value })} />
+                    <TextInput label="Google title" value={link.title} onChange={(value) => updateSeoSitelink(link.id, { title: value })} />
+                    <TextInput label="Google description" textarea value={link.description} onChange={(value) => updateSeoSitelink(link.id, { description: value })} />
+                  </div>
+                  <SeoPreview siteUrl={seoSiteUrl} path={link.url} title={link.title || link.label} description={link.description} />
+                  <button className="button buttonLine compact dangerText" type="button" onClick={() => deleteSeoSitelink(link.id)}>
+                    Delete Sitelink
+                  </button>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="panel">
+            <div className="adminPanelHead">
+              <div>
+                <p className="eyebrow">Search Console helper</p>
+                <h2>Copy these URLs after saving</h2>
+                <p className="adminHelpText">Use these in Google Search Console URL Inspection to request indexing after changes deploy.</p>
+              </div>
             </div>
             <div className="adminSeoGrid">
-              <TextInput label="Business schema name" value={seo.schemaName} onChange={(value) => setSeo({ ...seo, schemaName: value })} />
-              <TextInput label="Schema type" value={seo.schemaType} onChange={(value) => setSeo({ ...seo, schemaType: value })} />
-              <TextInput label="Business schema description" textarea value={seo.schemaDescription} onChange={(value) => setSeo({ ...seo, schemaDescription: value })} />
-              <TextInput label="Cuisine list" value={seo.cuisine} onChange={(value) => setSeo({ ...seo, cuisine: value })} />
-              <TextInput label="Price range" value={seo.priceRange} onChange={(value) => setSeo({ ...seo, priceRange: value })} />
-              <TextInput label="Social/profile URLs" textarea value={seo.sameAs} onChange={(value) => setSeo({ ...seo, sameAs: value })} />
+              <TextInput label="Sitemap URL" value={seo.sitemapUrl || displayUrl(seoSiteUrl, "/sitemap.xml")} onChange={(value) => setSeo({ ...seo, sitemapUrl: value })} />
+              <TextInput label="Robots URL" value={seo.robotsUrl || displayUrl(seoSiteUrl, "/robots.txt")} onChange={(value) => setSeo({ ...seo, robotsUrl: value })} />
+              <TextInput label="Pages to request indexing" textarea value={seoSearchConsoleUrls} onChange={(value) => setSeo({ ...seo, searchConsoleUrls: value })} />
+            </div>
+          </div>
+
+          <div className="panel">
+            <div className="adminPanelHead">
+              <div>
+                <p className="eyebrow">Images and advanced options</p>
+                <h2>Logo, icons, and schema switches</h2>
+              </div>
+            </div>
+            <div className="adminSeoGrid">
+              <ImageControl label="Browser tab favicon" value={seo.favicon} onChange={(value) => setSeo({ ...seo, favicon: value })} onUpload={uploadAdminImage} />
+              <ImageControl label="Apple / mobile tab icon" value={seo.appleIcon} onChange={(value) => setSeo({ ...seo, appleIcon: value })} onUpload={uploadAdminImage} />
+              <ImageControl label="Google preview image" value={seo.image} onChange={(value) => setSeo({ ...seo, image: value })} onUpload={uploadAdminImage} />
+              <ImageControl label="Business logo" value={seo.logo} onChange={(value) => setSeo({ ...seo, logo: value })} onUpload={uploadAdminImage} />
             </div>
             <label className="checkRow">
               <input
@@ -897,33 +1069,14 @@ export default function AdminDashboardClient() {
               />
               Add Google sitelink search box schema
             </label>
-            <p className="adminHelpText">Google may choose whether to display these sitelinks. Use page URLs like /menu, /gallery, /about, and /contact instead of home-page section anchors.</p>
-            <div className="seoSitelinkList adminCompactRows">
-              {(seo.sitelinks || []).map((link) => (
-                <article className="seoSitelinkCard adminEditableRow" key={link.id}>
-                  <label className="checkRow">
-                    <input
-                      checked={link.enabled !== false}
-                      onChange={(event) => updateSeoSitelink(link.id, { enabled: event.target.checked })}
-                      type="checkbox"
-                    />
-                    Show as Google sitelink
-                  </label>
-                  <div className="seoSitelinkFields">
-                    <TextInput label="Label" value={link.label} onChange={(value) => updateSeoSitelink(link.id, { label: value })} />
-                    <TextInput label="URL" value={link.url} onChange={(value) => updateSeoSitelink(link.id, { url: value })} />
-                    <TextInput label="Description" textarea value={link.description} onChange={(value) => updateSeoSitelink(link.id, { description: value })} />
-                  </div>
-                  <button className="button buttonLine compact dangerText" type="button" onClick={() => deleteSeoSitelink(link.id)}>
-                    Delete Sitelink
-                  </button>
-                </article>
-              ))}
-            </div>
           </div>
-          <button className="button buttonGold" type="submit">
-            Save Google SEO
-          </button>
+
+          <div className="seoStickySave">
+            <span>{enabledSeoLinks.length} Google sublinks enabled</span>
+            <button className="button buttonGold" type="submit">
+              Save Google SEO
+            </button>
+          </div>
         </form>
       ) : null}
 

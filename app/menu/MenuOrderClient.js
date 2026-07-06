@@ -1,8 +1,11 @@
 "use client";
 
 import { menuBoardSettings } from "@/lib/data";
+import { useSearchParams } from "next/navigation";
 
 export default function MenuOrderClient({ categories, defaultSectionImage = "", items, previewLimitItems = 0, menuBoard = menuBoardSettings }) {
+  const searchParams = useSearchParams();
+  const selectedType = (searchParams.get("type") || "").toLowerCase();
   const topCategories = categories.filter((category) => !category.parentId);
   const childCategories = (parentId) => categories.filter((category) => category.parentId === parentId);
   const categoryItems = (categoryId) => items.filter((item) => item.category === categoryId);
@@ -19,6 +22,17 @@ export default function MenuOrderClient({ categories, defaultSectionImage = "", 
     food: boardSections.filter((section) => section.menuSide !== "drinks"),
     drinks: boardSections.filter((section) => section.menuSide === "drinks")
   };
+  const selectedSection = boardSections.find((section) => section.id.toLowerCase() === selectedType);
+  const visibleColumns = selectedSection
+    ? {
+        food: selectedSection.menuSide === "drinks" ? [] : [selectedSection],
+        drinks: selectedSection.menuSide === "drinks" ? [selectedSection] : []
+      }
+    : selectedType === "drinks"
+      ? { food: [], drinks: boardColumns.drinks }
+      : selectedType === "food"
+        ? { food: boardColumns.food, drinks: [] }
+        : boardColumns;
   const renderSection = (section) => {
     const sectionImage = section.image || defaultSectionImage;
 
@@ -59,12 +73,12 @@ export default function MenuOrderClient({ categories, defaultSectionImage = "", 
                 <strong>{menuBoard.foodBrand || "EMRAKEL"}</strong>
                 <em>{menuBoard.foodTitle || "MENU"}</em>
               </div>
-              {boardColumns.food.length ? boardColumns.food.map((section) => renderSection(section)) : (
+              {visibleColumns.food.length ? visibleColumns.food.map((section) => renderSection(section)) : (
                 <p className="menuBoardEmpty">{menuBoard.emptyFoodText || "Food menu coming soon."}</p>
               )}
             </div>
             <div className="menuBoardColumn drinkColumn">
-              {boardColumns.drinks.length ? boardColumns.drinks.map((section) => renderSection(section)) : (
+              {visibleColumns.drinks.length ? visibleColumns.drinks.map((section) => renderSection(section)) : (
                 <p className="menuBoardEmpty">{menuBoard.emptyDrinkText || "Drink menu coming soon."}</p>
               )}
             </div>

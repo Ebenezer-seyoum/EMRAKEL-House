@@ -1,7 +1,16 @@
 import { getPublicContent } from "@/lib/cms";
+import { metadataForPath } from "@/lib/seo";
 import { SectionPageShell } from "../section-page-shell";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  const content = await getPublicContent();
+  return metadataForPath(content, "/about", {
+    title: content.about.headline,
+    description: content.about.description
+  });
+}
 
 export default async function AboutPage() {
   const content = await getPublicContent();

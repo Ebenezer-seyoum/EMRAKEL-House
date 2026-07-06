@@ -1,35 +1,6 @@
 import "./globals.css";
 import { getPublicContent } from "@/lib/cms";
-
-function normalizeSiteUrl(value) {
-  const rawValue = value || "https://www.httpemrakelhouse.com";
-  const withProtocol = /^https?:\/\//i.test(rawValue) ? rawValue : `https://${rawValue}`;
-
-  try {
-    return new URL(withProtocol).toString().replace(/\/$/, "");
-  } catch {
-    return "https://www.httpemrakelhouse.com";
-  }
-}
-
-function absoluteUrl(pathOrUrl, siteUrl) {
-  if (!pathOrUrl) {
-    return siteUrl;
-  }
-
-  try {
-    return new URL(pathOrUrl, siteUrl).toString();
-  } catch {
-    return siteUrl;
-  }
-}
-
-function commaList(value) {
-  return String(value || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
+import { absoluteUrl, commaList, enabledSeoLinks, normalizeSiteUrl } from "@/lib/seo";
 
 export async function generateMetadata() {
   const content = await getPublicContent();
@@ -74,7 +45,7 @@ export default async function RootLayout({ children }) {
   const content = await getPublicContent();
   const seo = content.seo || {};
   const siteUrl = normalizeSiteUrl(seo.siteUrl);
-  const enabledSitelinks = (seo.sitelinks || []).filter((link) => link.enabled !== false);
+  const enabledSitelinks = enabledSeoLinks(seo);
   const title = seo.title || content.brand?.name || "EMRAKEL";
   const description = seo.schemaDescription || seo.description || content.home?.description || "";
   const logo = absoluteUrl(seo.logo || seo.image || content.brand?.logoImage || "/logo.png", siteUrl);
@@ -118,6 +89,7 @@ export default async function RootLayout({ children }) {
           telephone: content.brand?.phone,
           email: content.brand?.email,
           address: content.brand?.address,
+          hasMenu: absoluteUrl(seo.menuUrl || "/menu", siteUrl),
           servesCuisine: cuisine.length ? cuisine : undefined,
           priceRange: seo.priceRange || undefined,
           openingHours: content.brand?.hours,
