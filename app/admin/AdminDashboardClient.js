@@ -6,6 +6,7 @@ import { brandImage } from "@/lib/data";
 const emptyStatus = { type: "", message: "" };
 const navItems = [
   ["home", "Home"],
+  ["seo", "Google SEO"],
   ["menu", "Menu"],
   ["gallery", "Gallery"],
   ["about", "About Us"],
@@ -856,6 +857,73 @@ export default function AdminDashboardClient() {
           {status.message && !status.type ? <p className="adminStatus">{status.message}</p> : null}
         </div>
 
+      {activeTab === "seo" ? (
+        <form className="adminForm" onSubmit={saveSettings}>
+          <div className="panel googleSearchEditorPanel">
+            <div className="adminPanelHead">
+              <div>
+                <p className="eyebrow">Google search</p>
+                <h2>Search display and sitelinks</h2>
+                <p className="adminHelpText">This controls Google title, description, logo, business schema, and sub links separately from the home page.</p>
+              </div>
+              <button className="button buttonLine compact" type="button" onClick={addSeoSitelink}>
+                Add Sitelink
+              </button>
+            </div>
+            <div className="adminSeoGrid">
+              <TextInput label="Google title" value={seo.title} onChange={(value) => setSeo({ ...seo, title: value })} />
+              <TextInput label="Site URL" value={seo.siteUrl} onChange={(value) => setSeo({ ...seo, siteUrl: value })} />
+              <TextInput label="Google description" textarea value={seo.description} onChange={(value) => setSeo({ ...seo, description: value })} />
+              <TextInput label="Keywords" value={seo.keywords} onChange={(value) => setSeo({ ...seo, keywords: value })} />
+              <ImageControl label="Google logo / preview image" value={seo.image} onChange={(value) => setSeo({ ...seo, image: value })} onUpload={uploadAdminImage} />
+              <ImageControl label="Business schema logo" value={seo.logo} onChange={(value) => setSeo({ ...seo, logo: value })} onUpload={uploadAdminImage} />
+            </div>
+            <div className="adminSeoGrid">
+              <TextInput label="Business schema name" value={seo.schemaName} onChange={(value) => setSeo({ ...seo, schemaName: value })} />
+              <TextInput label="Schema type" value={seo.schemaType} onChange={(value) => setSeo({ ...seo, schemaType: value })} />
+              <TextInput label="Business schema description" textarea value={seo.schemaDescription} onChange={(value) => setSeo({ ...seo, schemaDescription: value })} />
+              <TextInput label="Cuisine list" value={seo.cuisine} onChange={(value) => setSeo({ ...seo, cuisine: value })} />
+              <TextInput label="Price range" value={seo.priceRange} onChange={(value) => setSeo({ ...seo, priceRange: value })} />
+              <TextInput label="Social/profile URLs" textarea value={seo.sameAs} onChange={(value) => setSeo({ ...seo, sameAs: value })} />
+            </div>
+            <label className="checkRow">
+              <input
+                checked={Boolean(seo.searchActionEnabled)}
+                onChange={(event) => setSeo({ ...seo, searchActionEnabled: event.target.checked })}
+                type="checkbox"
+              />
+              Add Google sitelink search box schema
+            </label>
+            <p className="adminHelpText">Google may choose whether to display these sitelinks. Use page URLs like /menu, /gallery, /about, and /contact instead of home-page section anchors.</p>
+            <div className="seoSitelinkList adminCompactRows">
+              {(seo.sitelinks || []).map((link) => (
+                <article className="seoSitelinkCard adminEditableRow" key={link.id}>
+                  <label className="checkRow">
+                    <input
+                      checked={link.enabled !== false}
+                      onChange={(event) => updateSeoSitelink(link.id, { enabled: event.target.checked })}
+                      type="checkbox"
+                    />
+                    Show as Google sitelink
+                  </label>
+                  <div className="seoSitelinkFields">
+                    <TextInput label="Label" value={link.label} onChange={(value) => updateSeoSitelink(link.id, { label: value })} />
+                    <TextInput label="URL" value={link.url} onChange={(value) => updateSeoSitelink(link.id, { url: value })} />
+                    <TextInput label="Description" textarea value={link.description} onChange={(value) => updateSeoSitelink(link.id, { description: value })} />
+                  </div>
+                  <button className="button buttonLine compact dangerText" type="button" onClick={() => deleteSeoSitelink(link.id)}>
+                    Delete Sitelink
+                  </button>
+                </article>
+              ))}
+            </div>
+          </div>
+          <button className="button buttonGold" type="submit">
+            Save Google SEO
+          </button>
+        </form>
+      ) : null}
+
       {activeTab === "home" ? (
         <form className="adminForm" onSubmit={saveSettings}>
           <div className="panel">
@@ -928,87 +996,6 @@ export default function AdminDashboardClient() {
                   </div>
                   <button className="button buttonLine compact" type="button" onClick={() => deleteHeaderNavLink(link.id)}>
                     Delete Link
-                  </button>
-                </article>
-              ))}
-            </div>
-          </div>
-          <div className="panel googleSearchEditorPanel">
-            <div className="adminPanelHead">
-              <div>
-                <p className="eyebrow">Google search</p>
-                <h2>Search display and sitelinks</h2>
-              </div>
-              <button className="button buttonLine compact" type="button" onClick={addSeoSitelink}>
-                Add Sitelink
-              </button>
-            </div>
-            <TextInput label="Google title" value={seo.title} onChange={(value) => setSeo({ ...seo, title: value })} />
-            <TextInput
-              label="Google description"
-              textarea
-              value={seo.description}
-              onChange={(value) => setSeo({ ...seo, description: value })}
-            />
-            <TextInput label="Site URL" value={seo.siteUrl} onChange={(value) => setSeo({ ...seo, siteUrl: value })} />
-            <ImageControl label="Google logo / preview image" value={seo.image} onChange={(value) => setSeo({ ...seo, image: value })} onUpload={uploadAdminImage} />
-            <ImageControl label="Business schema logo" value={seo.logo} onChange={(value) => setSeo({ ...seo, logo: value })} onUpload={uploadAdminImage} />
-            <TextInput label="Keywords" value={seo.keywords} onChange={(value) => setSeo({ ...seo, keywords: value })} />
-            <TextInput
-              label="Business schema name"
-              value={seo.schemaName}
-              onChange={(value) => setSeo({ ...seo, schemaName: value })}
-            />
-            <TextInput
-              label="Schema type"
-              value={seo.schemaType}
-              onChange={(value) => setSeo({ ...seo, schemaType: value })}
-            />
-            <TextInput
-              label="Business schema description"
-              textarea
-              value={seo.schemaDescription}
-              onChange={(value) => setSeo({ ...seo, schemaDescription: value })}
-            />
-            <TextInput label="Cuisine list" value={seo.cuisine} onChange={(value) => setSeo({ ...seo, cuisine: value })} />
-            <TextInput label="Price range" value={seo.priceRange} onChange={(value) => setSeo({ ...seo, priceRange: value })} />
-            <TextInput
-              label="Social/profile URLs"
-              textarea
-              value={seo.sameAs}
-              onChange={(value) => setSeo({ ...seo, sameAs: value })}
-            />
-            <label className="checkRow">
-              <input
-                checked={Boolean(seo.searchActionEnabled)}
-                onChange={(event) => setSeo({ ...seo, searchActionEnabled: event.target.checked })}
-                type="checkbox"
-              />
-              Add Google sitelink search box schema
-            </label>
-            <div className="seoSitelinkList">
-              {(seo.sitelinks || []).map((link) => (
-                <article className="seoSitelinkCard" key={link.id}>
-                  <label className="checkRow">
-                    <input
-                      checked={link.enabled !== false}
-                      onChange={(event) => updateSeoSitelink(link.id, { enabled: event.target.checked })}
-                      type="checkbox"
-                    />
-                    Show as Google sitelink
-                  </label>
-                  <div className="seoSitelinkFields">
-                    <TextInput label="Label" value={link.label} onChange={(value) => updateSeoSitelink(link.id, { label: value })} />
-                    <TextInput label="URL" value={link.url} onChange={(value) => updateSeoSitelink(link.id, { url: value })} />
-                    <TextInput
-                      label="Description"
-                      textarea
-                      value={link.description}
-                      onChange={(value) => updateSeoSitelink(link.id, { description: value })}
-                    />
-                  </div>
-                  <button className="button buttonLine compact dangerText" type="button" onClick={() => deleteSeoSitelink(link.id)}>
-                    Delete Sitelink
                   </button>
                 </article>
               ))}
@@ -1338,6 +1325,15 @@ export default function AdminDashboardClient() {
               onChange={(value) => setFooter({ ...footer, copyright: value })}
             />
             <TextInput label="Credit note" value={footer.note} onChange={(value) => setFooter({ ...footer, note: value })} />
+            <TextInput label="Credit link URL" value={footer.noteUrl} onChange={(value) => setFooter({ ...footer, noteUrl: value })} />
+            <label className="checkRow">
+              <input
+                checked={footer.noteLinkEnabled !== false}
+                onChange={(event) => setFooter({ ...footer, noteLinkEnabled: event.target.checked })}
+                type="checkbox"
+              />
+              Make credit note clickable
+            </label>
           </div>
           <div className="panel">
             <h2>Brand Contact</h2>
@@ -1360,9 +1356,9 @@ export default function AdminDashboardClient() {
                 Add Quick Link
               </button>
             </div>
-            <div className="footerSocialEditor">
+            <div className="adminCompactRows">
               {(footer.quickLinks || []).map((link) => (
-                <article className="footerSocialEditorCard" key={link.id}>
+                <article className="adminEditableRow" key={link.id}>
                   <label className="checkRow">
                     <input
                       checked={link.enabled !== false}
@@ -1375,7 +1371,7 @@ export default function AdminDashboardClient() {
                     <TextInput label="Label" value={link.label} onChange={(value) => updateFooterQuickLink(link.id, { label: value })} />
                     <TextInput label="URL" value={link.url} onChange={(value) => updateFooterQuickLink(link.id, { url: value })} />
                   </div>
-                  <button className="button buttonLine compact" type="button" onClick={() => deleteFooterQuickLink(link.id)}>
+                  <button className="button buttonLine compact dangerText" type="button" onClick={() => deleteFooterQuickLink(link.id)}>
                     Delete Quick Link
                   </button>
                 </article>
@@ -1392,9 +1388,9 @@ export default function AdminDashboardClient() {
                 Add Social Link
               </button>
             </div>
-            <div className="footerSocialEditor">
+            <div className="adminCompactRows">
               {(footer.socialLinks || []).map((link) => (
-                <article className="footerSocialEditorCard" key={link.id}>
+                <article className="adminEditableRow" key={link.id}>
                   <label className="checkRow">
                     <input
                       checked={Boolean(link.enabled)}

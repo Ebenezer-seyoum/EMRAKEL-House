@@ -1674,6 +1674,21 @@ textarea {
   box-shadow: 0 16px 32px rgba(9, 10, 12, 0.05);
 }
 
+.adminMain .panel h2 {
+  font-size: clamp(22px, 2vw, 30px);
+}
+
+.adminMain .panel .eyebrow {
+  margin-bottom: 8px;
+}
+
+.adminHelpText {
+  margin: -4px 0 4px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
 .footerSocialEditorPanel {
   grid-column: 1 / -1;
 }
@@ -1699,10 +1714,51 @@ textarea {
   align-items: start;
 }
 
+.adminCompactRows {
+  display: grid;
+  gap: 10px;
+}
+
+.adminEditableRow {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.28fr) minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+  border: 1px solid rgba(21, 21, 21, 0.1);
+  border-radius: 8px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.adminEditableRow .checkRow {
+  align-self: center;
+  margin: 0;
+  color: var(--charcoal);
+}
+
+.adminEditableRow .footerSocialEditorFields,
+.adminEditableRow .seoSitelinkFields {
+  grid-template-columns: minmax(160px, 0.7fr) minmax(180px, 1fr) minmax(240px, 1.2fr);
+  gap: 10px;
+}
+
+.adminEditableRow .button {
+  min-width: 132px;
+  border-color: rgba(120, 0, 0, 0.24);
+  color: #780000;
+  background: rgba(255, 255, 255, 0.86);
+}
+
 .googleSearchEditorPanel {
   grid-column: 1 / -1;
   display: grid;
   gap: 14px;
+}
+
+.adminSeoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .seoSitelinkList {
@@ -1892,7 +1948,17 @@ textarea {
   }
 
   .footerSocialEditorFields,
-  .seoSitelinkFields {
+  .seoSitelinkFields,
+  .adminSeoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminEditableRow {
+    grid-template-columns: 1fr;
+  }
+
+  .adminEditableRow .footerSocialEditorFields,
+  .adminEditableRow .seoSitelinkFields {
     grid-template-columns: 1fr;
   }
 

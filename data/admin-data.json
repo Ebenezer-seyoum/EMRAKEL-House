@@ -75,6 +75,8 @@
     "socialHeading": "Social",
     "bookTableLabel": "Book Table",
     "note": "Designed & Developed by Eyoben Technologies PLC",
+    "noteUrl": "",
+    "noteLinkEnabled": true,
     "copyright": "Copyright 2026 EMRAKEL. All rights reserved.",
     "quickLinks": [
       { "id": "home", "label": "Home", "url": "/", "enabled": true },

@@ -112,6 +112,9 @@ export function Footer({ brandData = brand, footerData }) {
     footerData?.copyright === "Copyright 2026 EMRAKEL. All rights reserved."
       ? `Copyright 2026 ${fullBrandName}. All rights reserved.`
       : footerData?.copyright || `Copyright 2026 ${fullBrandName}. All rights reserved.`;
+  const creditText = footerData?.note || footerSettings.note;
+  const creditUrl = footerData?.noteUrl || "";
+  const showCreditLink = footerData?.noteLinkEnabled !== false && creditUrl;
 
   return (
     <footer className="footer">
@@ -155,7 +158,15 @@ export function Footer({ brandData = brand, footerData }) {
       </div>
       <div className="copyright">
         <p>{copyrightText}</p>
-        <p>{footerData?.note || "Designed & Developed by Eyoben Technologies PLC"}</p>
+        <p>
+          {showCreditLink ? (
+            <a href={creditUrl} target="_blank" rel="noreferrer">
+              {creditText}
+            </a>
+          ) : (
+            creditText
+          )}
+        </p>
       </div>
     </footer>
   );
