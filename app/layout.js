@@ -57,9 +57,9 @@ export async function generateMetadata() {
       images: [image]
     },
     icons: {
-      icon: "/logo.png",
-      shortcut: "/logo.png",
-      apple: "/logo.png"
+      icon: seo.image || "/logo.png",
+      shortcut: seo.image || "/logo.png",
+      apple: seo.image || "/logo.png"
     }
   };
 }

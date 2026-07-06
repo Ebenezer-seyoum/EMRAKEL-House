@@ -1,6 +1,8 @@
 "use client";
 
-export default function MenuOrderClient({ categories, items, previewLimitItems = 0 }) {
+import { menuBoardSettings } from "@/lib/data";
+
+export default function MenuOrderClient({ categories, items, previewLimitItems = 0, menuBoard = menuBoardSettings }) {
   const topCategories = categories.filter((category) => !category.parentId);
   const childCategories = (parentId) => categories.filter((category) => category.parentId === parentId);
   const categoryItems = (categoryId) => items.filter((item) => item.category === categoryId);
@@ -30,11 +32,11 @@ export default function MenuOrderClient({ categories, items, previewLimitItems =
               <p key={item.id}>
                 <span>{item.name}</span>
                 <i />
-                <strong>{item.price} birr</strong>
+                <strong>{item.price} {menuBoard.priceSuffix || "birr"}</strong>
               </p>
             ))
           ) : (
-            <p className="menuBoardSectionEmpty">Items coming soon.</p>
+            <p className="menuBoardSectionEmpty">{menuBoard.emptySectionText || "Items coming soon."}</p>
           )}
         </div>
       </article>
@@ -45,25 +47,25 @@ export default function MenuOrderClient({ categories, items, previewLimitItems =
       <section className="menuBoardShowcase scanMenuPage">
         <div className="menuBoardDynamic">
           <div className="menuBoardTitle">
-            <img src="/logo.png" alt="" />
-            <p>EMRAKEL</p>
-            <span>Burger, Pizza & Cocktail House</span>
-            <h2>Menu</h2>
+            <img src={menuBoard.logoImage || "/logo.png"} alt="" />
+            <p>{menuBoard.brandLabel || "EMRAKEL"}</p>
+            <span>{menuBoard.subtitle || "Burger, Pizza & Cocktail House"}</span>
+            <h2>{menuBoard.title || "Menu"}</h2>
           </div>
           <div className="menuBoardColumns">
             <div className="menuBoardColumn foodColumn">
               <div className="foodPosterTitle">
-                <span>Good Food, Great Moments</span>
-                <strong>EMRAKEL</strong>
-                <em>MENU</em>
+                <span>{menuBoard.foodTagline || "Good Food, Great Moments"}</span>
+                <strong>{menuBoard.foodBrand || "EMRAKEL"}</strong>
+                <em>{menuBoard.foodTitle || "MENU"}</em>
               </div>
               {boardColumns.food.length ? boardColumns.food.map((section) => renderSection(section)) : (
-                <p className="menuBoardEmpty">Food menu coming soon.</p>
+                <p className="menuBoardEmpty">{menuBoard.emptyFoodText || "Food menu coming soon."}</p>
               )}
             </div>
             <div className="menuBoardColumn drinkColumn">
               {boardColumns.drinks.length ? boardColumns.drinks.map((section) => renderSection(section)) : (
-                <p className="menuBoardEmpty">Drink menu coming soon.</p>
+                <p className="menuBoardEmpty">{menuBoard.emptyDrinkText || "Drink menu coming soon."}</p>
               )}
             </div>
           </div>

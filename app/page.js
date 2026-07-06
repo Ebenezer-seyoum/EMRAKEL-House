@@ -43,7 +43,7 @@ export default async function HomePage() {
               {content.home.menuViewMoreLabel}
             </Link>
           </div>
-          <MenuOrderClient categories={content.categories} items={content.items} previewLimitItems={3} />
+          <MenuOrderClient categories={content.categories} items={content.items} menuBoard={content.menuBoard} previewLimitItems={3} />
         </div>
 
         <div id="gallery" className="homeScrollSection">

@@ -1,106 +1,219 @@
 {
   "brand": {
     "name": "EMRAKEL",
-    "subtitle": "Burger House",
+    "subtitle": "Burger, Pizza & Cocktail House",
+    "logoImage": "/logo.png",
     "phone": "+251 900 000 000",
     "email": "hello@emrakel.house",
     "address": "Addis Ababa, Ethiopia",
-    "hours": "Mon - Sun, 10:00 AM - 11:30 PM"
+    "hours": "Mon - Sun, 10:00 AM - 11:30 PM",
+    "supportLabel": "Customer Support",
+    "headerBookingLabel": "Book a Table",
+    "bookingDropdownEyebrow": "Reserve by phone",
+    "bookingDropdownAction": "Call Now",
+    "bookingDropdownText": "Online table booking is prepared for the next upgrade. For now, call us and we will reserve your seat.",
+    "navLinks": [
+      { "id": "home", "label": "Home", "url": "/", "enabled": true },
+      { "id": "menu", "label": "Menu", "url": "/#menu", "enabled": true },
+      { "id": "gallery", "label": "Gallery", "url": "/#gallery", "enabled": true },
+      { "id": "about", "label": "About Us", "url": "/#about", "enabled": true },
+      { "id": "contact", "label": "Contact", "url": "/#contact", "enabled": true }
+    ]
   },
   "home": {
+    "headerKicker": "Welcome to",
+    "headerTitle": "EMRAKEL",
     "eyebrow": "Black and white burger house",
-    "headline": "EMRAKEL Burger House",
+    "headline": "EMRAKEL Burger, Pizza & Cocktail House",
     "description": "A modern burger house with a sharp black-and-white identity, premium comfort food, and a clean visual system ready for future admin-managed menu photos.",
     "primaryAction": "Book a Table",
     "secondaryAction": "View Menu",
-    "heroImage": "/logo.jpg"
+    "backHomeLabel": "Back to home",
+    "menuViewMoreLabel": "View More",
+    "menuPageEyebrow": "House menu",
+    "menuPageTitle": "EMRAKEL Menu",
+    "menuPageDescription": "Scan, choose, and enjoy burgers, pizza, shakes, mojito, cocktails, and house favorites.",
+    "menuPageImage": "/uploads/house/interior-08.jpg",
+    "galleryEyebrow": "Gallery",
+    "galleryHeadline": "Inside the EMRAKEL house.",
+    "galleryDescription": "Warm lights, seating, murals, plants, and the house atmosphere in one clean gallery.",
+    "galleryViewMoreLabel": "View More",
+    "aboutViewMoreLabel": "View More",
+    "contactViewMoreLabel": "View More",
+    "heroImage": "/uploads/house/interior-08.jpg",
+    "featureImage": "/uploads/house/interior-05.jpg",
+    "galleryImage": "/uploads/house/interior-11.jpg"
+  },
+  "about": {
+    "eyebrow": "About EMRAKEL",
+    "headline": "A warm burger house shaped by murals, lights, plants, and evening energy.",
+    "description": "EMRAKEL blends burger, pizza, cocktail, and lounge culture inside a distinctive house interior with hand-painted walls, warm chandeliers, dark marble counters, and green ceiling details.",
+    "storyEyebrow": "House style",
+    "storyHeadline": "Designed for comfort, conversation, and evening energy.",
+    "storyDescription": "EMRAKEL brings together warm lighting, painted walls, greenery, lounge seating, and a food-first menu so guests can relax from the first scan of the menu to the last drink.",
+    "secondaryEyebrow": "Food focus",
+    "secondaryHeadline": "A simple house menu with room to grow.",
+    "secondaryDescription": "Burgers, pizza, sandwiches, shawarma, shakes, mojito, and cocktails are arranged clearly for guests while the admin dashboard keeps future edits practical.",
+    "image": "/uploads/house/interior-05.jpg",
+    "secondaryImage": "/uploads/house/interior-11.jpg"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "headline": "Visit, call, or send a message.",
+    "description": "Send feedback, ask about bookings, or contact the EMRAKEL team directly.",
+    "infoEyebrow": "Contact information",
+    "formEyebrow": "Feedback form",
+    "formHeadline": "Send us a message.",
+    "image": "/uploads/house/interior-08.jpg"
+  },
+  "footer": {
+    "logoImage": "/logo.png",
+    "description": "Premium burgers, stone-style pizza, crafted cocktails, and warm house hospitality.",
+    "visitHeading": "Visit",
+    "contactHeading": "Contact",
+    "quickLinksHeading": "Quick Links",
+    "socialHeading": "Social",
+    "bookTableLabel": "Book Table",
+    "note": "Designed & Developed by Eyoben Technologies PLC",
+    "copyright": "Copyright 2026 EMRAKEL. All rights reserved.",
+    "quickLinks": [
+      { "id": "home", "label": "Home", "url": "/", "enabled": true },
+      { "id": "menu", "label": "Menu", "url": "/#menu", "enabled": true },
+      { "id": "gallery", "label": "Gallery", "url": "/#gallery", "enabled": true },
+      { "id": "about", "label": "About Us", "url": "/#about", "enabled": true },
+      { "id": "contact", "label": "Contact", "url": "/#contact", "enabled": true }
+    ],
+    "socialLinks": [
+      { "id": "instagram", "name": "Instagram", "url": "#", "image": "", "enabled": true },
+      { "id": "facebook", "name": "Facebook", "url": "#", "image": "", "enabled": true },
+      { "id": "tiktok", "name": "TikTok", "url": "#", "image": "", "enabled": true },
+      { "id": "telegram", "name": "Telegram", "url": "#", "image": "", "enabled": true },
+      { "id": "whatsapp", "name": "WhatsApp", "url": "#", "image": "", "enabled": true }
+    ]
+  },
+  "jazz": {
+    "enabled": true,
+    "eyebrow": "Jazz night",
+    "title": "Live evening sessions at EMRAKEL",
+    "description": "Warm lights, house drinks, and a relaxed evening atmosphere for guests.",
+    "date": "Every Friday",
+    "time": "7:30 PM - 10:30 PM",
+    "actionLabel": "Call to Reserve",
+    "image": "/uploads/house/interior-06.jpg"
+  },
+  "seo": {
+    "title": "EMRAKEL | Burger, Pizza & Cocktail House",
+    "description": "A warm burger house shaped by murals, lights, plants, and evening energy. EMRAKEL blends burger, pizza, cocktail, and lounge culture inside a distinctive house.",
+    "siteUrl": "https://www.httpemrakelhouse.com",
+    "image": "/logo.png",
+    "keywords": "EMRAKEL, burger house, pizza, cocktails, Addis Ababa restaurant",
+    "sitelinks": [
+      { "id": "home", "label": "Home", "url": "/", "description": "Visit the EMRAKEL homepage.", "enabled": true },
+      { "id": "menu", "label": "Menu", "url": "/menu", "description": "View burgers, pizza, drinks, and cocktails.", "enabled": true },
+      { "id": "gallery", "label": "Gallery", "url": "/gallery", "description": "See the EMRAKEL house interior and atmosphere.", "enabled": true },
+      { "id": "about", "label": "About Us", "url": "/about", "description": "Learn about EMRAKEL Burger, Pizza & Cocktail House.", "enabled": true },
+      { "id": "contact", "label": "Contact", "url": "/contact", "description": "Call, visit, or send a message to EMRAKEL.", "enabled": true }
+    ]
+  },
+  "menuBoard": {
+    "logoImage": "/logo.png",
+    "brandLabel": "EMRAKEL",
+    "subtitle": "Burger, Pizza & Cocktail House",
+    "title": "Menu",
+    "foodTagline": "Good Food, Great Moments",
+    "foodBrand": "EMRAKEL",
+    "foodTitle": "MENU",
+    "emptyFoodText": "Food menu coming soon.",
+    "emptyDrinkText": "Drink menu coming soon.",
+    "emptySectionText": "Items coming soon.",
+    "priceSuffix": "birr"
+  },
+  "bookingPage": {
+    "backLabel": "Back to home",
+    "eyebrow": "Book a table",
+    "headline": "Reserve a table inside the EMRAKEL black-and-white house.",
+    "description": "Customers can login first to prefill their details, then send a booking request.",
+    "panelTitle": "Booking flow",
+    "panelText": "The booking route stores customer name, phone, email, date, time, guests, and notes. Admin can confirm or update the request from the dashboard.",
+    "submitLabel": "Send Booking",
+    "sendingMessage": "Sending booking...",
+    "nameLabel": "Full name",
+    "namePlaceholder": "Customer name",
+    "phoneLabel": "Phone",
+    "phonePlaceholder": "Phone number",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Email address",
+    "dateLabel": "Date",
+    "timeLabel": "Time",
+    "guestsLabel": "Guests",
+    "notesLabel": "Notes",
+    "notesPlaceholder": "Special request"
+  },
+  "loginPage": {
+    "eyebrow": "Customer and admin login",
+    "headline": "Secure account access for bookings, orders, and admin content.",
+    "description": "Admin and customer accounts are managed from the EMRAKEL users table.",
+    "loginPanelTitle": "Login purpose",
+    "registerPanelTitle": "Create customer account",
+    "panelText": "Admin users manage homepage text, images, menu items, gallery, bookings, and online orders. Customers can register, login, order from the menu, and book a table.",
+    "loginTabLabel": "Login",
+    "registerTabLabel": "Register",
+    "checkingMessage": "Checking login...",
+    "creatingMessage": "Creating account...",
+    "nameLabel": "Full name",
+    "namePlaceholder": "Customer name",
+    "phoneLabel": "Phone",
+    "phonePlaceholder": "Phone number",
+    "emailLabel": "Email",
+    "loginEmailPlaceholder": "admin@emrakel.com",
+    "registerEmailPlaceholder": "you@example.com",
+    "passwordLabel": "Password",
+    "loginPasswordPlaceholder": "Password",
+    "registerPasswordPlaceholder": "Minimum 8 characters",
+    "loginButtonLabel": "Login",
+    "registerButtonLabel": "Create Account"
+  },
+  "customerPage": {
+    "eyebrow": "Customer dashboard",
+    "headline": "Track your EMRAKEL orders and bookings.",
+    "description": "Customer accounts are separated from admin access. Orders and table bookings can be submitted from the public pages.",
+    "welcomePrefix": "Welcome",
+    "loginRequiredTitle": "Customer login required",
+    "panelText": "Use the menu page to place an order or the booking page to reserve a table. Admin-only content controls stay locked away from customer accounts.",
+    "orderButtonLabel": "Order Online",
+    "bookButtonLabel": "Book a Table",
+    "logoutButtonLabel": "Logout"
   },
   "categories": [
-    {
-      "id": "burgers",
-      "name": "Burgers"
-    },
-    {
-      "id": "pizza",
-      "name": "Pizza"
-    },
-    {
-      "id": "cocktails",
-      "name": "Cocktails"
-    }
+    { "id": "food", "name": "Food", "parentId": "", "description": "Burgers, pizza, sandwiches, and shawarma", "image": "/uploads/house/menu-board-reference.jpg", "menuSide": "food", "isActive": true },
+    { "id": "burgers", "name": "Burgers", "parentId": "food", "description": "House-grilled signatures", "image": "/uploads/house/menu-board-reference.jpg", "menuSide": "food", "isActive": true },
+    { "id": "pizza", "name": "Pizza", "parentId": "food", "description": "Hot house pizza", "image": "/uploads/house/menu-board-reference.jpg", "menuSide": "food", "isActive": true },
+    { "id": "sandwiches", "name": "Sandwiches", "parentId": "food", "description": "Toasted house sandwiches", "image": "/uploads/house/menu-board-reference.jpg", "menuSide": "food", "isActive": true },
+    { "id": "shawarma", "name": "Shawarma", "parentId": "food", "description": "Wrapped house favorites", "image": "/uploads/house/menu-board-reference.jpg", "menuSide": "food", "isActive": true },
+    { "id": "drinks", "name": "Drinks", "parentId": "", "description": "Refreshments and cocktails", "image": "/uploads/house/menu-board-reference.jpg", "menuSide": "drinks", "isActive": true },
+    { "id": "shakes", "name": "Shakes", "parentId": "drinks", "description": "Creamy milkshakes", "image": "/uploads/house/menu-board-reference.jpg", "menuSide": "drinks", "isActive": true },
+    { "id": "mojito", "name": "Mojito", "parentId": "drinks", "description": "Fresh mojito mixes", "image": "/uploads/house/menu-board-reference.jpg", "menuSide": "drinks", "isActive": true },
+    { "id": "cocktails", "name": "Alcoholic Cocktails", "parentId": "drinks", "description": "House cocktail selection", "image": "/uploads/house/menu-board-reference.jpg", "menuSide": "drinks", "isActive": true }
   ],
   "items": [
-    {
-      "id": "classic-burger",
-      "category": "burgers",
-      "name": "Classic House Burger",
-      "description": "Grilled beef, cheddar, house sauce, pickles, sesame bun.",
-      "price": 420,
-      "image": "/logo.jpg"
-    },
-    {
-      "id": "smoky-double",
-      "category": "burgers",
-      "name": "Smoky Double Burger",
-      "description": "Double patty, caramelized onion, smoked sauce, crisp lettuce.",
-      "price": 560,
-      "image": "/logo.jpg"
-    },
-    {
-      "id": "golden-margherita",
-      "category": "pizza",
-      "name": "House Margherita",
-      "description": "Mozzarella, tomato, basil, olive oil, crisp house crust.",
-      "price": 520,
-      "image": "/logo.jpg"
-    },
-    {
-      "id": "pepperoni-fire",
-      "category": "pizza",
-      "name": "Pepperoni House Pizza",
-      "description": "Pepperoni, mozzarella, oregano, and a rich tomato base.",
-      "price": 610,
-      "image": "/logo.jpg"
-    },
-    {
-      "id": "citrus-gold",
-      "category": "cocktails",
-      "name": "Citrus House",
-      "description": "Orange, lemon, house syrup, and a clean bright finish.",
-      "price": 330,
-      "image": "/logo.jpg"
-    },
-    {
-      "id": "ember-martini",
-      "category": "cocktails",
-      "name": "Black Label Martini",
-      "description": "Smooth, chilled, citrus edge, and a sharp lounge presentation.",
-      "price": 390,
-      "image": "/logo.jpg"
-    }
+    { "id": "classic-burger", "category": "burgers", "name": "Special Burger", "description": "House burger with beef, sauce, fresh garnish, and toasted bun.", "price": 900, "image": "/uploads/house/menu-board-reference.jpg", "isActive": true },
+    { "id": "smoky-double", "category": "burgers", "name": "Double Beef Burger", "description": "Double beef, house sauce, lettuce, cheese, and sesame bun.", "price": 850, "image": "/uploads/house/menu-board-reference.jpg", "isActive": true },
+    { "id": "golden-margherita", "category": "pizza", "name": "Special Pizza", "description": "Cheese pull, house tomato base, and premium toppings.", "price": 900, "image": "/uploads/house/menu-board-reference.jpg", "isActive": true },
+    { "id": "pepperoni-fire", "category": "pizza", "name": "Meat Lover Pizza", "description": "Meat toppings, mozzarella, oregano, and rich house sauce.", "price": 800, "image": "/uploads/house/menu-board-reference.jpg", "isActive": true },
+    { "id": "citrus-gold", "category": "shakes", "name": "Strawberry Milkshake", "description": "Cold milkshake with strawberry flavor and creamy finish.", "price": 350, "image": "/uploads/house/menu-board-reference.jpg", "isActive": true },
+    { "id": "ember-martini", "category": "mojito", "name": "Orange Mojito", "description": "Fresh orange mojito with mint and citrus.", "price": 400, "image": "/uploads/house/menu-board-reference.jpg", "isActive": true },
+    { "id": "chicken-sandwich", "category": "sandwiches", "name": "Chicken Sandwich", "description": "Toasted sandwich with chicken, sauce, and crisp garnish.", "price": 700, "image": "/uploads/house/menu-board-reference.jpg", "isActive": true },
+    { "id": "special-shawarma", "category": "shawarma", "name": "Special Shawarma", "description": "Warm wrap with seasoned filling and house sauce.", "price": 950, "image": "/uploads/house/menu-board-reference.jpg", "isActive": true },
+    { "id": "house-cocktail", "category": "cocktails", "name": "House Cocktail", "description": "Signature alcoholic cocktail served with fresh garnish.", "price": 450, "image": "/uploads/house/menu-board-reference.jpg", "isActive": true }
   ],
   "gallery": [
-    {
-      "id": "gallery-1",
-      "title": "Gallery 1",
-      "image": "/logo.jpg"
-    },
-    {
-      "id": "gallery-2",
-      "title": "Gallery 2",
-      "image": "/logo.jpg"
-    },
-    {
-      "id": "gallery-3",
-      "title": "Gallery 3",
-      "image": "/logo.jpg"
-    },
-    {
-      "id": "gallery-4",
-      "title": "Gallery 4",
-      "image": "/logo.jpg"
-    }
+    { "id": "gallery-1", "title": "Gallery 1", "image": "/uploads/house/interior-03.jpg" },
+    { "id": "gallery-2", "title": "Gallery 2", "image": "/uploads/house/interior-08.jpg" },
+    { "id": "gallery-3", "title": "Gallery 3", "image": "/uploads/house/interior-05.jpg" },
+    { "id": "gallery-4", "title": "Gallery 4", "image": "/uploads/house/interior-11.jpg" }
   ],
   "bookings": [],
-  "orders": []
+  "orders": [],
+  "customers": [],
+  "feedback": []
 }

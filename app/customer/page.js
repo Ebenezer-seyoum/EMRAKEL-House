@@ -3,12 +3,24 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Footer, Header } from "../shared";
+import { brand as defaultBrand, customerPageSettings, footerSettings } from "@/lib/data";
 
 export default function CustomerDashboardPage() {
   const [session, setSession] = useState(null);
+  const [brand, setBrand] = useState(defaultBrand);
+  const [footer, setFooter] = useState(footerSettings);
+  const [pageText, setPageText] = useState(customerPageSettings);
 
   useEffect(() => {
     setSession(JSON.parse(localStorage.getItem("emrakelSession") || "null"));
+    fetch("/api/settings")
+      .then((response) => response.json())
+      .then((data) => {
+        setBrand({ ...defaultBrand, ...(data.brand || {}) });
+        setFooter({ ...footerSettings, ...(data.footer || {}) });
+        setPageText({ ...customerPageSettings, ...(data.customerPage || {}) });
+      })
+      .catch(() => undefined);
   }, []);
 
   function logout() {
@@ -18,40 +30,34 @@ export default function CustomerDashboardPage() {
 
   return (
     <>
-      <Header />
+      <Header brandData={brand} />
       <main>
         <section className="pageHero">
-          <p className="eyebrow">Customer dashboard</p>
-          <h1>Track your EMRAKEL orders and bookings.</h1>
-          <p className="pageLead">
-            Customer accounts are separated from admin access. Orders and table bookings can be submitted from the
-            public pages.
-          </p>
+          <p className="eyebrow">{pageText.eyebrow}</p>
+          <h1>{pageText.headline}</h1>
+          <p className="pageLead">{pageText.description}</p>
         </section>
         <section className="section formWrap">
           <div className="panel">
-            <h2>{session?.role === "customer" ? `Welcome, ${session.name}` : "Customer login required"}</h2>
-            <p className="contactText">
-              Use the menu page to place an order or the booking page to reserve a table. Admin-only content controls
-              stay locked away from customer accounts.
-            </p>
+            <h2>{session?.role === "customer" ? `${pageText.welcomePrefix}, ${session.name}` : pageText.loginRequiredTitle}</h2>
+            <p className="contactText">{pageText.panelText}</p>
           </div>
           <div className="panel">
             <div className="actions">
               <Link className="button buttonGold" href="/menu">
-                Order Online
+                {pageText.orderButtonLabel}
               </Link>
               <Link className="button buttonLine" href="/book-table">
-                Book a Table
+                {pageText.bookButtonLabel}
               </Link>
               <button className="button buttonLine" type="button" onClick={logout}>
-                Logout
+                {pageText.logoutButtonLabel}
               </button>
             </div>
           </div>
         </section>
       </main>
-      <Footer />
+      <Footer brandData={brand} footerData={footer} />
     </>
   );
 }

@@ -67,6 +67,10 @@ export default function AdminDashboardClient() {
   const [footer, setFooter] = useState(null);
   const [jazz, setJazz] = useState(null);
   const [seo, setSeo] = useState(null);
+  const [menuBoard, setMenuBoard] = useState(null);
+  const [bookingPage, setBookingPage] = useState(null);
+  const [loginPage, setLoginPage] = useState(null);
+  const [customerPage, setCustomerPage] = useState(null);
   const [categories, setCategories] = useState([]);
   const [items, setItems] = useState([]);
   const [selectedMenuSide, setSelectedMenuSide] = useState("food");
@@ -126,6 +130,15 @@ export default function AdminDashboardClient() {
     loadDashboard();
   }, []);
 
+  useEffect(() => {
+    if (!status.type || !status.message) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => setStatus(emptyStatus), 3600);
+    return () => window.clearTimeout(timer);
+  }, [status.type, status.message]);
+
   async function loadDashboard() {
     setStatus({ type: "", message: "Loading dashboard..." });
     const [settingsRes, menuRes, galleryRes, bookingsRes, ordersRes, customersRes, feedbackRes] = await Promise.all([
@@ -155,6 +168,10 @@ export default function AdminDashboardClient() {
     setFooter(settingsData.footer);
     setJazz(settingsData.jazz);
     setSeo(settingsData.seo);
+    setMenuBoard(settingsData.menuBoard);
+    setBookingPage(settingsData.bookingPage);
+    setLoginPage(settingsData.loginPage);
+    setCustomerPage(settingsData.customerPage);
     setCategories(menuData.categories || []);
     setItems(menuData.items || []);
     setGallery(galleryData.gallery || []);
@@ -207,7 +224,7 @@ export default function AdminDashboardClient() {
     const response = await fetch("/api/settings", {
       method: "PUT",
       headers: adminHeaders(),
-      body: JSON.stringify({ brand, home, about, contact, footer, jazz, seo })
+      body: JSON.stringify({ brand, home, about, contact, footer, jazz, seo, menuBoard, bookingPage, loginPage, customerPage })
     });
     const data = await response.json();
     setStatus({ type: response.ok ? "success" : "error", message: data.message || data.error });
@@ -243,8 +260,8 @@ export default function AdminDashboardClient() {
       body: JSON.stringify({ id, status: nextStatus })
     });
     const data = await response.json();
-    setStatus({ type: response.ok ? "success" : "error", message: data.message || data.error });
     await loadDashboard();
+    setStatus({ type: response.ok ? "success" : "error", message: data.message || data.error });
   }
 
   async function updateOrder(id, nextStatus) {
@@ -254,8 +271,8 @@ export default function AdminDashboardClient() {
       body: JSON.stringify({ id, status: nextStatus })
     });
     const data = await response.json();
-    setStatus({ type: response.ok ? "success" : "error", message: data.message || data.error });
     await loadDashboard();
+    setStatus({ type: response.ok ? "success" : "error", message: data.message || data.error });
   }
 
   async function updateFeedback(id, nextStatus) {
@@ -265,8 +282,8 @@ export default function AdminDashboardClient() {
       body: JSON.stringify({ id, status: nextStatus })
     });
     const data = await response.json();
-    setStatus({ type: response.ok ? "success" : "error", message: data.message || data.error });
     await loadDashboard();
+    setStatus({ type: response.ok ? "success" : "error", message: data.message || data.error });
   }
 
   function addCategory(parentId = "", menuSide = "food") {
@@ -647,6 +664,58 @@ export default function AdminDashboardClient() {
     }));
   }
 
+  function updateFooterQuickLink(linkId, updates) {
+    setFooter((current) => ({
+      ...current,
+      quickLinks: (current.quickLinks || []).map((link) => (link.id === linkId ? { ...link, ...updates } : link))
+    }));
+  }
+
+  function addFooterQuickLink() {
+    const id = `footer-link-${Date.now()}`;
+    setFooter((current) => ({
+      ...current,
+      quickLinks: [
+        ...(current.quickLinks || []),
+        {
+          id,
+          label: "New Link",
+          url: "/",
+          enabled: true
+        }
+      ]
+    }));
+  }
+
+  function deleteFooterQuickLink(linkId) {
+    setFooter((current) => ({
+      ...current,
+      quickLinks: (current.quickLinks || []).filter((link) => link.id !== linkId)
+    }));
+  }
+
+  function updateHeaderNavLink(linkId, updates) {
+    setBrand((current) => ({
+      ...current,
+      navLinks: (current.navLinks || []).map((link) => (link.id === linkId ? { ...link, ...updates } : link))
+    }));
+  }
+
+  function addHeaderNavLink() {
+    const id = `header-link-${Date.now()}`;
+    setBrand((current) => ({
+      ...current,
+      navLinks: [...(current.navLinks || []), { id, label: "New Link", url: "/", enabled: true }]
+    }));
+  }
+
+  function deleteHeaderNavLink(linkId) {
+    setBrand((current) => ({
+      ...current,
+      navLinks: (current.navLinks || []).filter((link) => link.id !== linkId)
+    }));
+  }
+
   function addSeoSitelink() {
     const id = `sitelink-${Date.now()}`;
     setSeo((current) => ({
@@ -694,7 +763,7 @@ export default function AdminDashboardClient() {
     );
   }
 
-  if (!brand || !home || !about || !contact || !footer || !jazz || !seo) {
+  if (!brand || !home || !about || !contact || !footer || !jazz || !seo || !menuBoard || !bookingPage || !loginPage || !customerPage) {
     return (
       <section className="adminAuthState">
         <div className="panel">
@@ -707,11 +776,16 @@ export default function AdminDashboardClient() {
 
   return (
     <section className="adminShell">
+      {status.type && status.message ? (
+        <div className={`adminToast ${status.type}`} role="status">
+          {status.message}
+        </div>
+      ) : null}
       <aside className="adminSidebar">
         <div className="adminBrandBlock">
-          <img src="/logo.png" alt="" />
+          <img src={brand.logoImage || brandImage} alt="" />
           <div>
-            <strong>EMRAKEL</strong>
+            <strong>{brand.name}</strong>
             <span>Admin console</span>
           </div>
         </div>
@@ -779,7 +853,7 @@ export default function AdminDashboardClient() {
             <p className="eyebrow">Current section</p>
             <h2>{navItems.find(([id]) => id === activeTab)?.[1]}</h2>
           </div>
-          {status.message ? <p className={`adminStatus ${status.type}`}>{status.message}</p> : null}
+          {status.message && !status.type ? <p className="adminStatus">{status.message}</p> : null}
         </div>
 
       {activeTab === "home" ? (
@@ -792,6 +866,12 @@ export default function AdminDashboardClient() {
               value={brand.subtitle}
               onChange={(value) => setBrand({ ...brand, subtitle: value })}
             />
+            <ImageControl
+              label="Header logo"
+              value={brand.logoImage}
+              onChange={(value) => setBrand({ ...brand, logoImage: value })}
+              onUpload={uploadAdminImage}
+            />
             <TextInput label="Phone" value={brand.phone} onChange={(value) => setBrand({ ...brand, phone: value })} />
             <TextInput label="Email" value={brand.email} onChange={(value) => setBrand({ ...brand, email: value })} />
             <TextInput
@@ -800,6 +880,58 @@ export default function AdminDashboardClient() {
               onChange={(value) => setBrand({ ...brand, address: value })}
             />
             <TextInput label="Hours" value={brand.hours} onChange={(value) => setBrand({ ...brand, hours: value })} />
+            <TextInput label="Support bar label" value={brand.supportLabel} onChange={(value) => setBrand({ ...brand, supportLabel: value })} />
+            <TextInput
+              label="Header booking button"
+              value={brand.headerBookingLabel}
+              onChange={(value) => setBrand({ ...brand, headerBookingLabel: value })}
+            />
+            <TextInput
+              label="Booking dropdown eyebrow"
+              value={brand.bookingDropdownEyebrow}
+              onChange={(value) => setBrand({ ...brand, bookingDropdownEyebrow: value })}
+            />
+            <TextInput
+              label="Booking call button"
+              value={brand.bookingDropdownAction}
+              onChange={(value) => setBrand({ ...brand, bookingDropdownAction: value })}
+            />
+            <TextInput
+              label="Booking dropdown text"
+              textarea
+              value={brand.bookingDropdownText}
+              onChange={(value) => setBrand({ ...brand, bookingDropdownText: value })}
+            />
+            <div className="adminPanelHead">
+              <div>
+                <p className="eyebrow">Header links</p>
+                <h2>Navigation</h2>
+              </div>
+              <button className="button buttonLine compact" type="button" onClick={addHeaderNavLink}>
+                Add Link
+              </button>
+            </div>
+            <div className="footerSocialEditor">
+              {(brand.navLinks || []).map((link) => (
+                <article className="footerSocialEditorCard" key={link.id}>
+                  <label className="checkRow">
+                    <input
+                      checked={link.enabled !== false}
+                      onChange={(event) => updateHeaderNavLink(link.id, { enabled: event.target.checked })}
+                      type="checkbox"
+                    />
+                    Show in header
+                  </label>
+                  <div className="footerSocialEditorFields">
+                    <TextInput label="Label" value={link.label} onChange={(value) => updateHeaderNavLink(link.id, { label: value })} />
+                    <TextInput label="URL" value={link.url} onChange={(value) => updateHeaderNavLink(link.id, { url: value })} />
+                  </div>
+                  <button className="button buttonLine compact" type="button" onClick={() => deleteHeaderNavLink(link.id)}>
+                    Delete Link
+                  </button>
+                </article>
+              ))}
+            </div>
           </div>
           <div className="panel googleSearchEditorPanel">
             <div className="adminPanelHead">
@@ -952,6 +1084,61 @@ export default function AdminDashboardClient() {
               onChange={(value) => setHome({ ...home, contactViewMoreLabel: value })}
             />
           </div>
+          <div className="panel">
+            <h2>Menu Board Text</h2>
+            <ImageControl
+              label="Menu board logo"
+              value={menuBoard.logoImage}
+              onChange={(value) => setMenuBoard({ ...menuBoard, logoImage: value })}
+              onUpload={uploadAdminImage}
+            />
+            <TextInput label="Brand label" value={menuBoard.brandLabel} onChange={(value) => setMenuBoard({ ...menuBoard, brandLabel: value })} />
+            <TextInput label="Subtitle" value={menuBoard.subtitle} onChange={(value) => setMenuBoard({ ...menuBoard, subtitle: value })} />
+            <TextInput label="Title" value={menuBoard.title} onChange={(value) => setMenuBoard({ ...menuBoard, title: value })} />
+            <TextInput label="Food tagline" value={menuBoard.foodTagline} onChange={(value) => setMenuBoard({ ...menuBoard, foodTagline: value })} />
+            <TextInput label="Food brand" value={menuBoard.foodBrand} onChange={(value) => setMenuBoard({ ...menuBoard, foodBrand: value })} />
+            <TextInput label="Food title" value={menuBoard.foodTitle} onChange={(value) => setMenuBoard({ ...menuBoard, foodTitle: value })} />
+            <TextInput label="Price suffix" value={menuBoard.priceSuffix} onChange={(value) => setMenuBoard({ ...menuBoard, priceSuffix: value })} />
+            <TextInput label="Empty food text" value={menuBoard.emptyFoodText} onChange={(value) => setMenuBoard({ ...menuBoard, emptyFoodText: value })} />
+            <TextInput label="Empty drink text" value={menuBoard.emptyDrinkText} onChange={(value) => setMenuBoard({ ...menuBoard, emptyDrinkText: value })} />
+            <TextInput label="Empty section text" value={menuBoard.emptySectionText} onChange={(value) => setMenuBoard({ ...menuBoard, emptySectionText: value })} />
+          </div>
+          <div className="panel">
+            <h2>Book Table Page</h2>
+            <TextInput label="Back label" value={bookingPage.backLabel} onChange={(value) => setBookingPage({ ...bookingPage, backLabel: value })} />
+            <TextInput label="Eyebrow" value={bookingPage.eyebrow} onChange={(value) => setBookingPage({ ...bookingPage, eyebrow: value })} />
+            <TextInput label="Headline" value={bookingPage.headline} onChange={(value) => setBookingPage({ ...bookingPage, headline: value })} />
+            <TextInput label="Description" textarea value={bookingPage.description} onChange={(value) => setBookingPage({ ...bookingPage, description: value })} />
+            <TextInput label="Panel title" value={bookingPage.panelTitle} onChange={(value) => setBookingPage({ ...bookingPage, panelTitle: value })} />
+            <TextInput label="Panel text" textarea value={bookingPage.panelText} onChange={(value) => setBookingPage({ ...bookingPage, panelText: value })} />
+            <TextInput label="Submit button" value={bookingPage.submitLabel} onChange={(value) => setBookingPage({ ...bookingPage, submitLabel: value })} />
+            <TextInput label="Sending message" value={bookingPage.sendingMessage} onChange={(value) => setBookingPage({ ...bookingPage, sendingMessage: value })} />
+          </div>
+          <div className="panel">
+            <h2>Login Page</h2>
+            <TextInput label="Eyebrow" value={loginPage.eyebrow} onChange={(value) => setLoginPage({ ...loginPage, eyebrow: value })} />
+            <TextInput label="Headline" value={loginPage.headline} onChange={(value) => setLoginPage({ ...loginPage, headline: value })} />
+            <TextInput label="Description" textarea value={loginPage.description} onChange={(value) => setLoginPage({ ...loginPage, description: value })} />
+            <TextInput label="Login panel title" value={loginPage.loginPanelTitle} onChange={(value) => setLoginPage({ ...loginPage, loginPanelTitle: value })} />
+            <TextInput label="Register panel title" value={loginPage.registerPanelTitle} onChange={(value) => setLoginPage({ ...loginPage, registerPanelTitle: value })} />
+            <TextInput label="Panel text" textarea value={loginPage.panelText} onChange={(value) => setLoginPage({ ...loginPage, panelText: value })} />
+            <TextInput label="Login tab" value={loginPage.loginTabLabel} onChange={(value) => setLoginPage({ ...loginPage, loginTabLabel: value })} />
+            <TextInput label="Register tab" value={loginPage.registerTabLabel} onChange={(value) => setLoginPage({ ...loginPage, registerTabLabel: value })} />
+            <TextInput label="Login button" value={loginPage.loginButtonLabel} onChange={(value) => setLoginPage({ ...loginPage, loginButtonLabel: value })} />
+            <TextInput label="Register button" value={loginPage.registerButtonLabel} onChange={(value) => setLoginPage({ ...loginPage, registerButtonLabel: value })} />
+          </div>
+          <div className="panel">
+            <h2>Customer Page</h2>
+            <TextInput label="Eyebrow" value={customerPage.eyebrow} onChange={(value) => setCustomerPage({ ...customerPage, eyebrow: value })} />
+            <TextInput label="Headline" value={customerPage.headline} onChange={(value) => setCustomerPage({ ...customerPage, headline: value })} />
+            <TextInput label="Description" textarea value={customerPage.description} onChange={(value) => setCustomerPage({ ...customerPage, description: value })} />
+            <TextInput label="Welcome prefix" value={customerPage.welcomePrefix} onChange={(value) => setCustomerPage({ ...customerPage, welcomePrefix: value })} />
+            <TextInput label="Login required title" value={customerPage.loginRequiredTitle} onChange={(value) => setCustomerPage({ ...customerPage, loginRequiredTitle: value })} />
+            <TextInput label="Panel text" textarea value={customerPage.panelText} onChange={(value) => setCustomerPage({ ...customerPage, panelText: value })} />
+            <TextInput label="Order button" value={customerPage.orderButtonLabel} onChange={(value) => setCustomerPage({ ...customerPage, orderButtonLabel: value })} />
+            <TextInput label="Book button" value={customerPage.bookButtonLabel} onChange={(value) => setCustomerPage({ ...customerPage, bookButtonLabel: value })} />
+            <TextInput label="Logout button" value={customerPage.logoutButtonLabel} onChange={(value) => setCustomerPage({ ...customerPage, logoutButtonLabel: value })} />
+          </div>
           <button className="button buttonGold" type="submit">
             Save Homepage
           </button>
@@ -1075,6 +1262,43 @@ export default function AdminDashboardClient() {
         <form className="adminForm" onSubmit={saveSettings}>
           <div className="panel">
             <h2>Footer Content</h2>
+            <ImageControl
+              label="Footer logo"
+              value={footer.logoImage}
+              onChange={(value) => setFooter({ ...footer, logoImage: value })}
+              onUpload={uploadAdminImage}
+            />
+            <TextInput
+              label="Footer description"
+              textarea
+              value={footer.description}
+              onChange={(value) => setFooter({ ...footer, description: value })}
+            />
+            <TextInput
+              label="Visit heading"
+              value={footer.visitHeading}
+              onChange={(value) => setFooter({ ...footer, visitHeading: value })}
+            />
+            <TextInput
+              label="Contact heading"
+              value={footer.contactHeading}
+              onChange={(value) => setFooter({ ...footer, contactHeading: value })}
+            />
+            <TextInput
+              label="Quick links heading"
+              value={footer.quickLinksHeading}
+              onChange={(value) => setFooter({ ...footer, quickLinksHeading: value })}
+            />
+            <TextInput
+              label="Social heading"
+              value={footer.socialHeading}
+              onChange={(value) => setFooter({ ...footer, socialHeading: value })}
+            />
+            <TextInput
+              label="Book table footer link"
+              value={footer.bookTableLabel}
+              onChange={(value) => setFooter({ ...footer, bookTableLabel: value })}
+            />
             <TextInput
               label="Copyright"
               value={footer.copyright}
@@ -1092,6 +1316,38 @@ export default function AdminDashboardClient() {
               onChange={(value) => setBrand({ ...brand, address: value })}
             />
             <TextInput label="Hours" value={brand.hours} onChange={(value) => setBrand({ ...brand, hours: value })} />
+          </div>
+          <div className="panel footerSocialEditorPanel">
+            <div className="adminPanelHead">
+              <div>
+                <p className="eyebrow">Footer quick links</p>
+                <h2>Simple footer links</h2>
+              </div>
+              <button className="button buttonLine compact" type="button" onClick={addFooterQuickLink}>
+                Add Quick Link
+              </button>
+            </div>
+            <div className="footerSocialEditor">
+              {(footer.quickLinks || []).map((link) => (
+                <article className="footerSocialEditorCard" key={link.id}>
+                  <label className="checkRow">
+                    <input
+                      checked={link.enabled !== false}
+                      onChange={(event) => updateFooterQuickLink(link.id, { enabled: event.target.checked })}
+                      type="checkbox"
+                    />
+                    Show in footer
+                  </label>
+                  <div className="footerSocialEditorFields">
+                    <TextInput label="Label" value={link.label} onChange={(value) => updateFooterQuickLink(link.id, { label: value })} />
+                    <TextInput label="URL" value={link.url} onChange={(value) => updateFooterQuickLink(link.id, { url: value })} />
+                  </div>
+                  <button className="button buttonLine compact" type="button" onClick={() => deleteFooterQuickLink(link.id)}>
+                    Delete Quick Link
+                  </button>
+                </article>
+              ))}
+            </div>
           </div>
           <div className="panel footerSocialEditorPanel">
             <div className="adminPanelHead">

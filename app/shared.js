@@ -34,6 +34,9 @@ export function Header({
     "Built for today with space for future online booking and customer service."
   ];
   const displayText = heroText || houseStories[storyIndex];
+  const navLinks = (brandData.navLinks || links.map(([label, url], index) => ({ id: `${index}`, label, url, enabled: true }))).filter(
+    (link) => link.enabled !== false
+  );
 
   useEffect(() => {
     if (heroText || houseStories.length < 2) {
@@ -50,13 +53,13 @@ export function Header({
   return (
     <>
       <div className="topSupportBar">
-        <span>Customer Support -</span>
-        <a href="tel:+251991486512">+251991486512</a>
+        <span>{brandData.supportLabel || "Customer Support"} -</span>
+        <a href={`tel:${(brandData.phone || "").replace(/\s/g, "")}`}>{brandData.phone}</a>
       </div>
       <header className={headerClassName}>
         <Link className="brandMark" href="/" aria-label="EMRAKEL home">
           <span className="logoShell">
-            <img src={brandImage} alt="" />
+            <img src={brandData.logoImage || brandImage} alt="" />
           </span>
           <span className="brandText">
             <strong>{brandData.name}</strong>
@@ -64,9 +67,9 @@ export function Header({
           </span>
         </Link>
         <nav>
-          {links.map(([label, href]) => (
-            <Link key={href} href={href}>
-              {label}
+          {navLinks.map((link) => (
+            <Link key={link.id || link.url} href={link.url || "/"}>
+              {link.label}
             </Link>
           ))}
         </nav>
@@ -77,16 +80,16 @@ export function Header({
               onClick={() => setOpenPanel(openPanel === "book" ? "" : "book")}
               type="button"
             >
-              Book a Table
+              {brandData.headerBookingLabel || "Book a Table"}
             </button>
             {openPanel === "book" ? (
               <div className="headerDropdownPanel bookingDropdown">
-                <p className="dropdownEyebrow">Reserve by phone</p>
+                <p className="dropdownEyebrow">{brandData.bookingDropdownEyebrow || "Reserve by phone"}</p>
                 <strong>{brandData.phone}</strong>
                 <a className="button buttonGold compact" href={`tel:${brandData.phone.replace(/\s/g, "")}`}>
-                  Call Now
+                  {brandData.bookingDropdownAction || "Call Now"}
                 </a>
-                <p>Online table booking is prepared for the next upgrade. For now, call us and we will reserve your seat.</p>
+                <p>{brandData.bookingDropdownText}</p>
               </div>
             ) : null}
           </div>
@@ -104,6 +107,7 @@ export function Header({
 export function Footer({ brandData = brand, footerData }) {
   const fullBrandName = displayBrandName(brandData);
   const socialLinks = (footerData?.socialLinks || footerSettings.socialLinks).filter((link) => link.enabled !== false);
+  const quickLinks = (footerData?.quickLinks || footerSettings.quickLinks).filter((link) => link.enabled !== false);
   const copyrightText =
     footerData?.copyright === "Copyright 2026 EMRAKEL. All rights reserved."
       ? `Copyright 2026 ${fullBrandName}. All rights reserved.`
@@ -112,34 +116,34 @@ export function Footer({ brandData = brand, footerData }) {
   return (
     <footer className="footer">
       <div className="footerBrand">
-        <img src={brandImage} alt="" />
+        <img src={footerData?.logoImage || brandData.logoImage || brandImage} alt="" />
         <div>
           <h2>{fullBrandName}</h2>
           <p>{brandData.subtitle}</p>
-          <p>Premium burgers, stone-style pizza, crafted cocktails, and warm house hospitality.</p>
+          <p>{footerData?.description || footerSettings.description}</p>
         </div>
       </div>
       <div>
-        <h3>Visit</h3>
+        <h3>{footerData?.visitHeading || "Visit"}</h3>
         <p>{brandData.address}</p>
         <p>{brandData.hours}</p>
       </div>
       <div>
-        <h3>Contact</h3>
+        <h3>{footerData?.contactHeading || "Contact"}</h3>
         <p>{brandData.phone}</p>
         <p>{brandData.email}</p>
       </div>
       <div>
-        <h3>Quick Links</h3>
-        {links.map(([label, href]) => (
-          <Link key={href} href={href}>
-            {label}
+        <h3>{footerData?.quickLinksHeading || "Quick Links"}</h3>
+        {quickLinks.map((link) => (
+          <Link key={link.id || link.url} href={link.url || "/"}>
+            {link.label}
           </Link>
         ))}
-        <Link href="/book-table">Book Table</Link>
+        <Link href="/book-table">{footerData?.bookTableLabel || "Book Table"}</Link>
       </div>
       <div>
-        <h3>Social</h3>
+        <h3>{footerData?.socialHeading || "Social"}</h3>
         <div className="footerSocial">
           {socialLinks.map((link) => (
             <a href={link.url || "#"} key={link.id || link.name} aria-label={link.name} target="_blank" rel="noreferrer">

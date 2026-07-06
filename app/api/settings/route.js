@@ -11,6 +11,10 @@ export async function GET() {
     footer: content.footer,
     jazz: content.jazz,
     seo: content.seo,
+    menuBoard: content.menuBoard,
+    bookingPage: content.bookingPage,
+    loginPage: content.loginPage,
+    customerPage: content.customerPage,
     source: content.source
   });
 }
@@ -33,7 +37,11 @@ export async function PUT(request) {
       contact: { ...state.contact, ...(body.contact || {}) },
       footer: { ...state.footer, ...(body.footer || {}) },
       jazz: { ...state.jazz, ...(body.jazz || {}) },
-      seo: { ...state.seo, ...(body.seo || {}) }
+      seo: { ...state.seo, ...(body.seo || {}) },
+      menuBoard: { ...state.menuBoard, ...(body.menuBoard || {}) },
+      bookingPage: { ...state.bookingPage, ...(body.bookingPage || {}) },
+      loginPage: { ...state.loginPage, ...(body.loginPage || {}) },
+      customerPage: { ...state.customerPage, ...(body.customerPage || {}) }
     });
     return Response.json({ message, ...next, source: "local" });
   }
@@ -49,7 +57,11 @@ export async function PUT(request) {
     { setting_key: "contact", setting_value: body.contact || {} },
     { setting_key: "footer", setting_value: body.footer || {} },
     { setting_key: "jazz", setting_value: body.jazz || {} },
-    { setting_key: "seo", setting_value: body.seo || {} }
+    { setting_key: "seo", setting_value: body.seo || {} },
+    { setting_key: "menuBoard", setting_value: body.menuBoard || {} },
+    { setting_key: "bookingPage", setting_value: body.bookingPage || {} },
+    { setting_key: "loginPage", setting_value: body.loginPage || {} },
+    { setting_key: "customerPage", setting_value: body.customerPage || {} }
   ];
 
   let error;

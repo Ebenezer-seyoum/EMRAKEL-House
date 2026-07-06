@@ -14,7 +14,7 @@ export default async function MenuPage() {
           {content.home.backHomeLabel}
         </Link>
       </section>
-      <MenuOrderClient categories={content.categories} items={content.items} />
+      <MenuOrderClient categories={content.categories} items={content.items} menuBoard={content.menuBoard} />
     </main>
   );
 }

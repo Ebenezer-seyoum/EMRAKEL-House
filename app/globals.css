@@ -1632,6 +1632,32 @@ textarea {
   color: #780000;
 }
 
+.adminToast {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 1000;
+  max-width: min(420px, calc(100vw - 36px));
+  border: 1px solid rgba(21, 21, 21, 0.12);
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: #fff;
+  color: var(--charcoal);
+  box-shadow: 0 18px 48px rgba(9, 10, 12, 0.18);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.adminToast.success {
+  border-color: rgba(79, 111, 63, 0.36);
+  color: #254624;
+}
+
+.adminToast.error {
+  border-color: rgba(120, 0, 0, 0.28);
+  color: #780000;
+}
+
 .adminForm {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
