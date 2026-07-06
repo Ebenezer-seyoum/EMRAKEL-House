@@ -35,9 +35,11 @@ export async function generateMetadata() {
   const content = await getPublicContent();
   const seo = content.seo || {};
   const siteUrl = normalizeSiteUrl(seo.siteUrl);
-  const title = seo.title || content.brand?.name || "EMRAKEL";
+  const title = seo.tabTitle || seo.title || content.brand?.name || "EMRAKEL";
   const description = seo.description || content.home?.description || "";
   const image = absoluteUrl(seo.image || "/logo.png", siteUrl);
+  const favicon = seo.favicon || seo.logo || seo.image || "/logo.png";
+  const appleIcon = seo.appleIcon || seo.favicon || seo.logo || seo.image || "/logo.png";
   return {
     metadataBase: new URL(siteUrl),
     title,
@@ -61,9 +63,9 @@ export async function generateMetadata() {
       images: [image]
     },
     icons: {
-      icon: seo.logo || seo.image || "/logo.png",
-      shortcut: seo.logo || seo.image || "/logo.png",
-      apple: seo.logo || seo.image || "/logo.png"
+      icon: favicon,
+      shortcut: favicon,
+      apple: appleIcon
     }
   };
 }

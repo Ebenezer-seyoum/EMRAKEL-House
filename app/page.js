@@ -11,7 +11,9 @@ export default async function HomePage() {
   const content = await getPublicContent();
   const { about, brand, contact } = content;
   const galleryImages = content.gallery.map((image) => image.image);
-  const latestGalleryImages = galleryImages.slice(-3).reverse();
+  const latestGalleryImages = galleryImages.length ? galleryImages.slice(-3).reverse() : [content.home.galleryPreviewImage].filter(Boolean);
+  const aboutPreviewImage = content.home.aboutPreviewImage || about.image;
+  const contactPreviewImage = content.home.contactPreviewImage || contact.image;
 
   return (
     <>
@@ -43,7 +45,7 @@ export default async function HomePage() {
               {content.home.menuViewMoreLabel}
             </Link>
           </div>
-          <MenuOrderClient categories={content.categories} items={content.items} menuBoard={content.menuBoard} previewLimitItems={3} />
+          <MenuOrderClient categories={content.categories} defaultSectionImage={content.home.menuPreviewImage} items={content.items} menuBoard={content.menuBoard} previewLimitItems={3} />
         </div>
 
         <div id="gallery" className="homeScrollSection">
@@ -60,7 +62,7 @@ export default async function HomePage() {
 
         <section id="about" className="section aboutStoryGrid homeScrollSection">
           <div className="aboutStoryImage">
-            <img src={about.image} alt="" />
+            <img src={aboutPreviewImage} alt="" />
           </div>
           <div className="aboutStoryText">
             <p className="eyebrow">{about.eyebrow}</p>
@@ -88,7 +90,7 @@ export default async function HomePage() {
             <p className="contactText">{brand.hours}</p>
             <p className="contactText">{brand.phone}</p>
             <p className="contactText">{brand.email}</p>
-            <img src={contact.image} alt="" />
+            <img src={contactPreviewImage} alt="" />
           </div>
           <div className="formPanel feedbackPanel">
             <p className="eyebrow">{contact.formEyebrow}</p>

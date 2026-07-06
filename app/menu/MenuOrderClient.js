@@ -2,7 +2,7 @@
 
 import { menuBoardSettings } from "@/lib/data";
 
-export default function MenuOrderClient({ categories, items, previewLimitItems = 0, menuBoard = menuBoardSettings }) {
+export default function MenuOrderClient({ categories, defaultSectionImage = "", items, previewLimitItems = 0, menuBoard = menuBoardSettings }) {
   const topCategories = categories.filter((category) => !category.parentId);
   const childCategories = (parentId) => categories.filter((category) => category.parentId === parentId);
   const categoryItems = (categoryId) => items.filter((item) => item.category === categoryId);
@@ -20,7 +20,7 @@ export default function MenuOrderClient({ categories, items, previewLimitItems =
     drinks: boardSections.filter((section) => section.menuSide === "drinks")
   };
   const renderSection = (section) => {
-    const sectionImage = section.image;
+    const sectionImage = section.image || defaultSectionImage;
 
     return (
       <article className="menuBoardSection" key={section.id}>

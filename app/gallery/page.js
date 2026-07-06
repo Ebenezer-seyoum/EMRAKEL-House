@@ -13,7 +13,7 @@ export default async function GalleryPage() {
       eyebrow={content.home.galleryEyebrow}
       title={content.home.galleryHeadline}
       description={content.home.galleryDescription}
-      image={galleryImages[0] || "/uploads/house/interior-08.jpg"}
+      image={galleryImages[0] || content.home.galleryPreviewImage}
       backLabel={content.home.backHomeLabel}
     >
       <GalleryClient images={galleryImages} />

@@ -871,10 +871,13 @@ export default function AdminDashboardClient() {
               </button>
             </div>
             <div className="adminSeoGrid">
+              <TextInput label="Browser tab name" value={seo.tabTitle} onChange={(value) => setSeo({ ...seo, tabTitle: value })} />
               <TextInput label="Google title" value={seo.title} onChange={(value) => setSeo({ ...seo, title: value })} />
               <TextInput label="Site URL" value={seo.siteUrl} onChange={(value) => setSeo({ ...seo, siteUrl: value })} />
               <TextInput label="Google description" textarea value={seo.description} onChange={(value) => setSeo({ ...seo, description: value })} />
               <TextInput label="Keywords" value={seo.keywords} onChange={(value) => setSeo({ ...seo, keywords: value })} />
+              <ImageControl label="Browser tab favicon" value={seo.favicon} onChange={(value) => setSeo({ ...seo, favicon: value })} onUpload={uploadAdminImage} />
+              <ImageControl label="Apple / mobile tab icon" value={seo.appleIcon} onChange={(value) => setSeo({ ...seo, appleIcon: value })} onUpload={uploadAdminImage} />
               <ImageControl label="Google logo / preview image" value={seo.image} onChange={(value) => setSeo({ ...seo, image: value })} onUpload={uploadAdminImage} />
               <ImageControl label="Business schema logo" value={seo.logo} onChange={(value) => setSeo({ ...seo, logo: value })} onUpload={uploadAdminImage} />
             </div>
@@ -1067,6 +1070,12 @@ export default function AdminDashboardClient() {
               onChange={(value) => setHome({ ...home, menuPageImage: value })}
               onUpload={uploadAdminImage}
             />
+            <ImageControl
+              label="Menu preview image"
+              value={home.menuPreviewImage}
+              onChange={(value) => setHome({ ...home, menuPreviewImage: value })}
+              onUpload={uploadAdminImage}
+            />
             <TextInput
               label="Menu view more label"
               value={home.menuViewMoreLabel}
@@ -1088,15 +1097,33 @@ export default function AdminDashboardClient() {
               value={home.galleryDescription}
               onChange={(value) => setHome({ ...home, galleryDescription: value })}
             />
+            <ImageControl
+              label="Gallery preview image"
+              value={home.galleryPreviewImage}
+              onChange={(value) => setHome({ ...home, galleryPreviewImage: value })}
+              onUpload={uploadAdminImage}
+            />
             <TextInput
               label="Gallery view more label"
               value={home.galleryViewMoreLabel}
               onChange={(value) => setHome({ ...home, galleryViewMoreLabel: value })}
             />
+            <ImageControl
+              label="About preview image"
+              value={home.aboutPreviewImage}
+              onChange={(value) => setHome({ ...home, aboutPreviewImage: value })}
+              onUpload={uploadAdminImage}
+            />
             <TextInput
               label="About view more label"
               value={home.aboutViewMoreLabel}
               onChange={(value) => setHome({ ...home, aboutViewMoreLabel: value })}
+            />
+            <ImageControl
+              label="Contact preview image"
+              value={home.contactPreviewImage}
+              onChange={(value) => setHome({ ...home, contactPreviewImage: value })}
+              onUpload={uploadAdminImage}
             />
             <TextInput
               label="Contact view more label"

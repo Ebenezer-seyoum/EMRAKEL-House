@@ -5532,6 +5532,40 @@ body:has(.homeHeroHeader) .scanMenuPage {
   padding-top: clamp(36px, 5vw, 72px);
 }
 
+/* Mobile booking dropdown visibility fix */
+.siteHeader.homeHeroHeader {
+  overflow: visible;
+}
+
+.siteHeader.homeHeroHeader::before {
+  pointer-events: none;
+}
+
+.homeHeroHeader .headerDropdownWrap {
+  position: relative;
+  z-index: 75;
+}
+
+.homeHeroHeader .headerDropdownPanel {
+  z-index: 120;
+  background:
+    linear-gradient(180deg, rgba(12, 9, 6, 0.98), rgba(25, 18, 10, 0.96));
+  box-shadow: 0 24px 72px rgba(0, 0, 0, 0.62);
+}
+
+@media (max-width: 760px) {
+  .homeHeroHeader .headerDropdownWrap {
+    width: 100%;
+  }
+
+  .homeHeroHeader .headerDropdownPanel {
+    left: 50%;
+    right: auto;
+    width: min(360px, calc(100vw - 32px));
+    transform: translateX(-50%);
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }
