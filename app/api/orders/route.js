@@ -43,6 +43,7 @@ export async function POST(request) {
     phone: body.phone,
     email: body.email || null,
     order_type: body.order_type || "pickup",
+    table_number: body.table_number || null,
     address: body.address || null,
     notes: body.notes || null,
     status: "pending",
@@ -105,7 +106,9 @@ export async function PATCH(request) {
     const orders = state.orders.map((order) =>
       order.id === body.id ? { ...order, status: body.status, updated_at: new Date().toISOString() } : order
     );
-    await saveLocalState({ ...state, orders });
+    const income = state.income || [];
+    const nextIncome = body.status === "paid" && !income.some((item) => item.order_id === body.id) ? [{ id: newId("income"), order_id: body.id, category: "food_sales", description: "Order " + body.id, amount: Number(orders.find((item) => item.id === body.id)?.total_amount || 0), payment_method: body.payment_method || "cash", transaction_date: new Date().toISOString().slice(0, 10), created_at: new Date().toISOString() }, ...income] : income;
+    await saveLocalState({ ...state, orders, income: nextIncome });
     return ok({ message: "Order updated locally.", orders, source: "local" });
   }
 
@@ -122,3 +125,5 @@ export async function PATCH(request) {
 
   return ok({ message: "Order updated.", order: data, source: "supabase" });
 }
+
+
