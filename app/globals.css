@@ -6401,3 +6401,9 @@ html {
 .transactionRow > div { flex: 1; }
 @media (max-width: 900px) { .operationsGrid, .financeGrid { grid-template-columns: 1fr; } .orderCart { position: static; } }
 @media (max-width: 620px) { .operationsHeader { align-items: start; flex-direction: column; } .orderMenuGrid, .financeCards { grid-template-columns: 1fr; } .orderMenuCard { grid-template-columns: 88px 1fr; } .orderMenuCard img { width: 88px; height: 88px; } }
+.adminNavGroup { display: grid; gap: 7px; margin-bottom: 16px; }
+.adminNavGroupLabel { padding: 0 14px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.adminNavGroupTabs { display: grid; gap: 3px; }
+.adminNavGroupTabs button { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 10px 14px; border: 0; border-radius: 8px; background: transparent; color: inherit; cursor: pointer; text-align: left; font: inherit; }
+.adminNavGroupTabs button:hover { background: rgba(196,154,69,.10); }
+.adminNavGroupTabs button.active { background: var(--charcoal); color: white; }

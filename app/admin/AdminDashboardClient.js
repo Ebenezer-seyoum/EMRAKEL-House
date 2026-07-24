@@ -4,20 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import { brandImage } from "@/lib/data";
 
 const emptyStatus = { type: "", message: "" };
-const navItems = [
-  ["home", "Home"],
-  ["seo", "Google SEO"],
-  ["menu", "Menu"],
-  ["gallery", "Gallery"],
-  ["about", "About Us"],
-  ["contact", "Contact"],
-  ["footer", "Footer"],
-  ["orders", "Orders"],
-  ["bookings", "Book Tables"],
-  ["customers", "Customers"],
-  ["feedback", "Feedback"],
-  ["jazz", "Jazz"]
+const navGroups = [
+  { label: "Website", items: [["home", "Home"], ["menu", "Menu"], ["gallery", "Gallery"], ["about", "About Us"], ["contact", "Contact"], ["footer", "Footer"], ["seo", "Google SEO"]] },
+  { label: "Operations", items: [["orders", "Orders"], ["finance", "Finance"]] },
+  { label: "Customers", items: [["bookings", "Book Tables"], ["customers", "Customers"], ["feedback", "Feedback"]] },
+  { label: "Extras", items: [["jazz", "Jazz"]] }
 ];
+const navItems = navGroups.flatMap((group) => group.items);
 
 function adminHeaders() {
   return {
@@ -57,6 +50,63 @@ function ImageControl({ label, value, onChange, onUpload }) {
   );
 }
 
+function FinanceAdminTab() {
+  const [data, setData] = useState({ income: [], expenses: [], totals: { income: 0, expenses: 0, profit: 0 } });
+  const [filter, setFilter] = useState("all");
+  const [form, setForm] = useState({ category: "Maintenance", description: "", amount: "", payment_method: "cash" });
+
+  async function loadFinance() {
+    const response = await fetch("/api/hono/finance");
+    if (response.ok) setData(await response.json());
+  }
+
+  useEffect(() => {
+    loadFinance();
+  }, []);
+
+  async function addExpense(event) {
+    event.preventDefault();
+    const response = await fetch("/api/hono/expenses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-emrakel-role": "admin" },
+      body: JSON.stringify(form)
+    });
+    if (response.ok) {
+      setForm({ ...form, description: "", amount: "" });
+      loadFinance();
+    }
+  }
+
+  const rows = [
+    ...(filter === "expenses" ? [] : data.income.map((item) => ({ ...item, kind: "Income", date: item.transaction_date }))),
+    ...(filter === "income" ? [] : data.expenses.map((item) => ({ ...item, kind: "Expense", date: item.expense_date })))
+  ].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+
+  return (
+    <div className="adminFinanceWorkspace">
+      <div className="metricGrid">
+        <div className="adminMetricCard"><span>Total income</span><strong>{Number(data.totals.income || 0).toLocaleString()} ETB</strong></div>
+        <div className="adminMetricCard"><span>Total expenses</span><strong>{Number(data.totals.expenses || 0).toLocaleString()} ETB</strong></div>
+        <div className="adminMetricCard"><span>Net profit</span><strong>{Number(data.totals.profit || 0).toLocaleString()} ETB</strong></div>
+      </div>
+      <div className="financeGrid">
+        <form className="panel expenseForm" onSubmit={addExpense}>
+          <p className="eyebrow">Owner control</p>
+          <h2>Add manual expense</h2>
+          <label>Category<select value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })}>{["Ingredients", "Maintenance", "Salaries", "Rent", "Utilities", "Transport", "Marketing", "Other"].map((item) => <option key={item}>{item}</option>)}</select></label>
+          <label>Description<input required value={form.description} placeholder="TV maintenance" onChange={(event) => setForm({ ...form, description: event.target.value })} /></label>
+          <label>Amount (ETB)<input required min="1" type="number" value={form.amount} placeholder="500" onChange={(event) => setForm({ ...form, amount: event.target.value })} /></label>
+          <label>Payment method<select value={form.payment_method} onChange={(event) => setForm({ ...form, payment_method: event.target.value })}><option value="cash">Cash</option><option value="card">Card</option><option value="telebirr">Telebirr</option><option value="other">Other</option></select></label>
+          <button className="button buttonGold fullButton">Save expense</button>
+        </form>
+        <div className="panel financeList">
+          <div className="adminPanelHead"><div><p className="eyebrow">Finance records</p><h2>Income and expenses</h2></div><select value={filter} onChange={(event) => setFilter(event.target.value)}><option value="all">All</option><option value="income">Income only</option><option value="expenses">Expenses only</option></select></div>
+          {rows.length ? rows.map((row) => <div className="transactionRow" key={row.id}><div><strong>{row.description}</strong><span>{row.category} · {row.date}</span></div><b className={row.kind === "Expense" ? "expenseAmount" : "incomeAmount"}>{row.kind === "Expense" ? "-" : "+"}{Number(row.amount || 0).toLocaleString()} ETB</b></div>) : <p className="mutedText">No finance transactions yet.</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
 function normalizeAdminUrl(value) {
   return String(value || "")
     .trim()
@@ -874,14 +924,21 @@ export default function AdminDashboardClient() {
             <span>Admin console</span>
           </div>
         </div>
-        <nav className="adminSideNav" aria-label="Admin sections">
-          {navItems.map(([id, label]) => (
-            <button className={activeTab === id ? "active" : ""} key={id} onClick={() => setActiveTab(id)} type="button">
-              <span>{label}</span>
-              {id === "bookings" && totals.pendingBookings ? <small>{totals.pendingBookings}</small> : null}
-              {id === "orders" && totals.pendingOrders ? <small>{totals.pendingOrders}</small> : null}
-              {id === "feedback" && totals.newFeedback ? <small>{totals.newFeedback}</small> : null}
-            </button>
+                <nav className="adminSideNav" aria-label="Admin sections">
+          {navGroups.map((group) => (
+            <div className="adminNavGroup" key={group.label}>
+              <span className="adminNavGroupLabel">{group.label}</span>
+              <div className="adminNavGroupTabs">
+                {group.items.map(([id, label]) => (
+                  <button className={activeTab === id ? "active" : ""} key={id} onClick={() => setActiveTab(id)} type="button">
+                    <span>{label}</span>
+                    {id === "bookings" && totals.pendingBookings ? <small>{totals.pendingBookings}</small> : null}
+                    {id === "orders" && totals.pendingOrders ? <small>{totals.pendingOrders}</small> : null}
+                    {id === "feedback" && totals.newFeedback ? <small>{totals.newFeedback}</small> : null}
+                  </button>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
         <div className="adminSidebarFooter">
@@ -1862,6 +1919,7 @@ export default function AdminDashboardClient() {
         </div>
       ) : null}
 
+      {activeTab === "finance" ? <FinanceAdminTab /> : null}
       {activeTab === "orders" ? (
         <div className="adminTableWrap">
           <table className="adminTable">
@@ -1902,3 +1960,6 @@ export default function AdminDashboardClient() {
     </section>
   );
 }
+
+
+
