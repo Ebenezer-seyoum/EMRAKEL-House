@@ -123,8 +123,21 @@ export async function PATCH(request) {
     return Response.json({ error: error.message }, { status: 500 });
   }
 
+  if ((body.status === "paid" || body.status === "finished") && data) {
+    const { error: incomeError } = await supabase.from("income_transactions").upsert({
+      order_id: data.id,
+      category: "food_sales",
+      description: "Order " + data.id,
+      amount: Number(data.total_amount || 0),
+      payment_method: body.payment_method || "cash",
+      transaction_date: new Date().toISOString().slice(0, 10)
+    }, { onConflict: "order_id" });
+    if (incomeError) return Response.json({ error: incomeError.message }, { status: 500 });
+  }
+
   return ok({ message: "Order updated.", order: data, source: "supabase" });
 }
+
 
 
 
